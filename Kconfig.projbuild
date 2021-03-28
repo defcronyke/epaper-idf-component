@@ -1,0 +1,95 @@
+menu "Project display config"
+    comment "Single e-paper SPI displays only section (GoodDisplay/WaveShare)"
+    config EPAPER_IDF_SPI_MOSI
+        int "SPI GPIO for MOSI (MOSI or DIN)"
+        range 0 35
+        default 23
+    config EPAPER_IDF_SPI_CLK
+        int "SPI GPIO for Clock (CLK)"
+        range 0 37
+        default 18
+    config EPAPER_IDF_SPI_CS
+        int "SPI GPIO for Chip Select (CS)"
+        range -1 34
+        default 32
+    config EPAPER_IDF_DC
+        int "SPI GPIO for DC (DC)"
+        range -1 34
+        default 27
+    config EPAPER_IDF_RST
+        int "SPI GPIO for Reset (RST)"
+        range -1 34
+        default 26
+    config EPAPER_IDF_BUSY
+        int "SPI GPIO for Busy (BUSY or DONE)"
+        range -1 39
+        default 35
+    
+    comment "Important: Set the below GPIO options to -1 unless using SPI multi-channel displays (wave12I48 or Plasticlogic)"
+    comment "The CS2 and MISO pins are only for Plasticlogic displays"
+    
+    config EPAPER_IDF_SPI_CS2
+        int "SPI GPIO for Chip Select2 (CS2)"
+        range -1 34
+        default -1
+    config EPAPER_IDF_SPI_MISO
+        int "SPI GPIO for MISO (MISO)"
+        range -1 36
+        default -1
+        
+    comment "Important: The below options are only for 4-module displays, like wave12I48 which has 4 SPI CS and BUSY pins (14 pins)"
+    comment "You can leave them as-is if you aren't using on of these displays"
+    comment "S2 - M2"
+    comment " | + | "
+    comment "M1 - S1"
+    config EPAPER_IDF_SPI_M1_CS
+        int "* CS M1"
+        range 0 23
+        default 23
+    config EPAPER_IDF_SPI_S1_CS
+        int "* CS S1"
+        range 0 23
+        default 22
+    config EPAPER_IDF_SPI_M2_CS
+        int "* CS M2 do not use 16-17 when using PSRAM"
+        range 0 27
+        default 16
+    config EPAPER_IDF_SPI_S2_CS
+        int "* CS S2"
+        range 0 23
+        default 19
+
+    config EPAPER_IDF_SPI_M1_BUSY
+        int "* BUSY M1"
+        range 0 32
+        default 32
+    config EPAPER_IDF_SPI_S1_BUSY
+        int "* BUSY S1"
+        range 0 32
+        default 26
+    config EPAPER_IDF_SPI_M2_BUSY
+        int "* BUSY M2"
+        range 0 32
+        default 18
+    config EPAPER_IDF_SPI_S2_BUSY
+        int "* BUSY S2"
+        range 0 32
+        default 4
+
+    config EPAPER_IDF_M1S1_DC
+        int "* M1S1_DC: M1 & S1 share DC & RST"
+        range 0 25
+        default 25
+    config EPAPER_IDF_M2S2_DC
+        int "* M2S2_DC do not use 16-17 when using PSRAM"
+        range 0 27
+        default 17
+    config EPAPER_IDF_M1S1_RST
+        int "* M1S1_RST"
+        range 0 33
+        default 33
+    config EPAPER_IDF_M2S2_RST
+        int "* M2S2_RST"
+        range 0 33
+        default 5
+endmenu
