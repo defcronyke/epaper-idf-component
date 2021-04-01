@@ -1,4 +1,17 @@
-menu "Project display config"
+menu "Project display config"    
+    choice EPAPER_IDF_DEVICE_MODEL_CHOICE
+        prompt "Select e-paper device"
+        default EPAPER_IDF_DEVICE_MODEL_NONE_OPTION
+        help
+            Choose your e-paper device.
+
+        config EPAPER_IDF_DEVICE_MODEL_NONE_OPTION
+            bool "none"
+
+        config EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPTION
+            bool "Gdew075T8"
+    endchoice
+
     comment "Single e-paper SPI displays only section (GoodDisplay/WaveShare)"
     config EPAPER_IDF_SPI_MOSI
         int "SPI GPIO for MOSI (MOSI or DIN)"
@@ -27,7 +40,6 @@ menu "Project display config"
     
     comment "Important: Set the below GPIO options to -1 unless using SPI multi-channel displays (wave12I48 or Plasticlogic)"
     comment "The CS2 and MISO pins are only for Plasticlogic displays"
-    
     config EPAPER_IDF_SPI_CS2
         int "SPI GPIO for Chip Select2 (CS2)"
         range -1 34
