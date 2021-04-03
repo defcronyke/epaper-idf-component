@@ -10,6 +10,21 @@ menu "Project display config"
 
         config EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPTION
             bool "Gdew075T8"
+
+        # config EPAPER_IDF_DEVICE_MODEL_GDEW075T7_OPTION
+        #     bool "Gdew075T7"
+
+        # config EPAPER_IDF_DEVICE_MODEL_GDEH0154D67_OPTION
+        #     bool "Gdeh0154d67"
+            
+        # config EPAPER_IDF_DEVICE_MODEL_GDEH0213B73_OPTION
+        #     bool "Gdeh0213b73"
+
+        # config EPAPER_IDF_DEVICE_MODEL_GDEP015OC1_OPTION
+        #     bool "Gdep015OC1"
+
+        # config EPAPER_IDF_DEVICE_MODEL_GDEW0213I5F_OPTION
+        #     bool "Gdew0213i5f"
     endchoice
 
     comment "Single e-paper SPI displays only section (GoodDisplay/WaveShare)"
@@ -24,19 +39,19 @@ menu "Project display config"
     config EPAPER_IDF_SPI_CS
         int "SPI GPIO for Chip Select (CS)"
         range -1 34
-        default 32
+        default 5
     config EPAPER_IDF_DC
         int "SPI GPIO for DC (DC)"
         range -1 34
-        default 27
+        default 13
     config EPAPER_IDF_RST
         int "SPI GPIO for Reset (RST)"
         range -1 34
-        default 26
+        default 16
     config EPAPER_IDF_BUSY
         int "SPI GPIO for Busy (BUSY or DONE)"
         range -1 39
-        default 35
+        default 4
     
     comment "Important: Set the below GPIO options to -1 unless using SPI multi-channel displays (wave12I48 or Plasticlogic)"
     comment "The CS2 and MISO pins are only for Plasticlogic displays"

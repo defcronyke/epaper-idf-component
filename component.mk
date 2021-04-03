@@ -1,1 +1,3 @@
 COMPONENT_ADD_INCLUDEDIRS := include
+
+COMPONENT_EMBED_TXTFILES :=  ${PROJECT_PATH}/certs/ca_cert.pem
