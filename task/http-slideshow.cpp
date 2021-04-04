@@ -8,6 +8,7 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
+#include "task/http-slideshow.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -26,9 +27,7 @@
 #include "driver/rtc_io.h"
 #include "soc/rtc.h"
 #include "protocol_examples_common.h"
-#include "epaper-idf-task.h"
 #include "epaper-idf-device.h"
-#include "task/epaper-idf-task-http-slideshow.h"
 #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
 #include "epaper-idf-ota.h"

@@ -20,17 +20,17 @@ menu "Project task config"
     config EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW
         string "Project main task override"
         depends on EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
-        default "task/epaper-idf-task-http-slideshow.h" if EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
+        default "task/http-slideshow.h" if EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
         
     config EPAPER_IDF_MAIN_TASK_USER
         string "Project main task override"
         depends on EPAPER_IDF_MAIN_TASK_USER_OPT
-        default "task/epaper-idf-task-none.h" if EPAPER_IDF_MAIN_TASK_USER_OPT
+        default "task/none.h" if EPAPER_IDF_MAIN_TASK_USER_OPT
         
     config EPAPER_IDF_MAIN_TASK_NONE
         string "Project main task override"
         depends on EPAPER_IDF_MAIN_TASK_NONE_OPT
-        default "task/epaper-idf-task-none.h" if EPAPER_IDF_MAIN_TASK_NONE_OPT
+        default "task/none.h" if EPAPER_IDF_MAIN_TASK_NONE_OPT
                 
     comment "Task Settings"
         depends on EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT || EPAPER_IDF_MAIN_TASK_USER_OPT
@@ -101,17 +101,17 @@ menu "Project display config"
     config EPAPER_IDF_DEVICE_MODEL_USER
         string "e-paper device override"
         depends on EPAPER_IDF_DEVICE_MODEL_USER_OPT
-        default "device/epaper-idf-device-none.h" if EPAPER_IDF_DEVICE_MODEL_USER_OPT
+        default "device/none.h" if EPAPER_IDF_DEVICE_MODEL_USER_OPT
 
     config EPAPER_IDF_DEVICE_MODEL_GDEW075T8
         string "e-paper device override"
         depends on EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT
-        default "device/epaper-idf-device-Gdew075T8.h" if EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT
+        default "device/Gdew075T8.h" if EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT
 
     config EPAPER_IDF_DEVICE_MODEL_NONE
         string "e-paper device override"
         depends on EPAPER_IDF_DEVICE_MODEL_NONE_OPT
-        default "device/epaper-idf-device-none.h" if EPAPER_IDF_DEVICE_MODEL_NONE_OPT
+        default "device/none.h" if EPAPER_IDF_DEVICE_MODEL_NONE_OPT
 
     comment "Display Settings"
         depends on EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT || EPAPER_IDF_DEVICE_MODEL_USER_OPT

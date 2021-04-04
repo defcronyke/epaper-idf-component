@@ -7,6 +7,8 @@ idf_component_register(
 
     "device/Gdew075T8.cpp"
 
+    "task/http-slideshow.cpp"
+
     $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/connect.c
     $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/addr_from_stdin.c
     $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/stdin_out.c
