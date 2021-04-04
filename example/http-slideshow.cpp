@@ -98,6 +98,6 @@ void main_http_slideshow(void)
   xTaskCreate(&ota_task, ota_task_name, 1024 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", ota_task_name);
 
-  xTaskCreate(&main_task, main_task_name, 1024 * 8, NULL, 5, NULL);
+  xTaskCreate(&main_task, main_task_name, 2048 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", main_task_name);
 }
