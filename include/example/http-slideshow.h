@@ -10,6 +10,6 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-void main_http_slideshow(void);
+void http_slideshow(void);
 
 #endif

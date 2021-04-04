@@ -105,7 +105,6 @@ void ota_task(void *pvParameter)
   if (err != ESP_OK)
   {
     ESP_LOGE(TAG, "ESP HTTPS OTA Begin failed");
-    // vTaskDelete(NULL);
     goto ota_end;
   }
 
@@ -129,14 +128,6 @@ void ota_task(void *pvParameter)
     if (err != ESP_ERR_HTTPS_OTA_IN_PROGRESS)
     {
       break;
-      // while (1)
-      // {
-      // printf("OTA update not needed. Moving on...");
-      // printf("Sending task queue value: %lu \n", counter);
-      // xQueueSend(epaper_idf_taskqueue, (void *)NULL, (TickType_t)0);
-      // xQueueSend(epaper_idf_taskqueue, (void *)&counter, (TickType_t)0);
-      // counter++;
-      // }
     }
 
     // esp_https_ota_perform returns after every read operation which gives user the ability to
@@ -171,10 +162,6 @@ ota_end:
 
     xQueueSend(epaper_idf_taskqueue, (void *)&start, (TickType_t)0);
 
-    while (1)
-    {
-      vTaskDelay(10000 / portTICK_PERIOD_MS);
-    }
-    // vTaskDelete(NULL);
+    vTaskDelete(NULL);
   }
 }
