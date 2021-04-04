@@ -166,9 +166,9 @@ ota_end:
     }
     ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed %d", ota_finish_err);
 
-    unsigned long counter = 0;
+    unsigned long start = 1;
 
-    xQueueSend(epaper_idf_taskqueue, (void *)&counter, (TickType_t)0);
+    xQueueSend(epaper_idf_taskqueue, (void *)&start, (TickType_t)0);
 
     while (1)
     {

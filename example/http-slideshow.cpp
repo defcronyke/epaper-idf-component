@@ -21,15 +21,13 @@
 #include "epaper-idf-spi.h"
 #include "epaper-idf-ota.h"
 
-const char *TAG = "main";
-const char *main_task_name = "main_task";
+const char *TAG = "http-slideshow";
+const char *main_task_name = "http_slideshow_task";
 QueueHandle_t epaper_idf_taskqueue = NULL;
 
 void main_task(void *pvParameter)
 {
   // Wait for OTA task to finish first.
-  unsigned long counter;
-
   if (epaper_idf_taskqueue == NULL)
   {
     ESP_LOGI(TAG, "Task queue is not ready.\n");
@@ -40,14 +38,20 @@ void main_task(void *pvParameter)
   EpaperIDFSPI io;
   EpaperIDFDevice dev(io);
 
+  unsigned long start = 0;
+
   while (1)
   {
-    // xQueueReceive(epaper_idf_taskqueue, (void *)NULL, (TickType_t)(1000 / portTICK_PERIOD_MS));
-    xQueueReceive(epaper_idf_taskqueue, &counter, (TickType_t)(1000 / portTICK_PERIOD_MS));
+    while (start != 1)
+    {
+      xQueueReceive(epaper_idf_taskqueue, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
 
-    ESP_LOGI(TAG, "Main task loop iteration start.");
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 
-    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    ESP_LOGI(TAG, "task tick");
+
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 }
 
