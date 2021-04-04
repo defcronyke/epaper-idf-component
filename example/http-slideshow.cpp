@@ -49,7 +49,7 @@ void main_task(void *pvParameter)
       vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
-    ESP_LOGI(TAG, "task tick");
+    ESP_LOGI(TAG, "task loop");
 
     vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
