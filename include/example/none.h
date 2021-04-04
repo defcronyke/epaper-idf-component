@@ -1,5 +1,5 @@
-#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_HTTP_SLIDESHOW_H_INCLUDED__
-#define __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_HTTP_SLIDESHOW_H_INCLUDED__
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_NONE_H_INCLUDED__
+#define __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_NONE_H_INCLUDED__
 /*  epaper-idf-component - example - http-slideshow
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
@@ -10,8 +10,11 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-void http_slideshow(void);
+void none(void)
+{
+#error "ERROR: No main task selected. You can choose which main task to run in the project's Kconfig menu. Run the following command and select a project main task in the 'Project config' menu: idf.py menuconfig"
+}
 
-#define main_fn http_slideshow
+#define main_fn none
 
 #endif

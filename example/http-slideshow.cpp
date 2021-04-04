@@ -22,10 +22,10 @@
 #include "epaper-idf-ota.h"
 
 const char *TAG = "http-slideshow";
-const char *main_task_name = "main_task";
+const char *task_name = "http_slideshow_task";
 QueueHandle_t epaper_idf_taskqueue = NULL;
 
-void main_task(void *pvParameter)
+void http_slideshow_task(void *pvParameter)
 {
   // Wait for task queue to be initialized first.
   if (epaper_idf_taskqueue == NULL)
@@ -49,7 +49,7 @@ void main_task(void *pvParameter)
       vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
-    ESP_LOGI(TAG, "%s loop", main_task_name);
+    ESP_LOGI(TAG, "%s loop", task_name);
 
     vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
@@ -100,8 +100,8 @@ void http_slideshow(void)
   // TODO: Do we need to wait for 1 second here?
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&main_task, main_task_name, 4096 * 8, NULL, 5, NULL);
-  ESP_LOGI(TAG, "Task started: %s", main_task_name);
+  xTaskCreate(&http_slideshow_task, task_name, 4096 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", task_name);
 
   xTaskCreate(&ota_task, ota_task_name, 1024 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", ota_task_name);
