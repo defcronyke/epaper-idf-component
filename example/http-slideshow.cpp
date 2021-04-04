@@ -42,6 +42,7 @@ void main_task(void *pvParameter)
 
   while (1)
   {
+    // xQueueReceive(epaper_idf_taskqueue, (void *)NULL, (TickType_t)(1000 / portTICK_PERIOD_MS));
     xQueueReceive(epaper_idf_taskqueue, &counter, (TickType_t)(1000 / portTICK_PERIOD_MS));
 
     ESP_LOGI(TAG, "Main task loop iteration start.");
@@ -95,9 +96,9 @@ void main_http_slideshow(void)
   // TODO: Do we need to wait for 1 second here?
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&ota_task, ota_task_name, 1024 * 8, NULL, 5, NULL);
-  ESP_LOGI(TAG, "Task started: %s", ota_task_name);
-
   xTaskCreate(&main_task, main_task_name, 4096 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", main_task_name);
+
+  xTaskCreate(&ota_task, ota_task_name, 1024 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", ota_task_name);
 }

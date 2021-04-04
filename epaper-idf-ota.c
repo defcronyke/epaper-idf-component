@@ -124,7 +124,6 @@ void ota_task(void *pvParameter)
 
   while (1)
   {
-    // unsigned long counter = 1;
     err = esp_https_ota_perform(https_ota_handle);
     if (err != ESP_ERR_HTTPS_OTA_IN_PROGRESS)
     {
@@ -167,8 +166,14 @@ ota_end:
     }
     ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed %d", ota_finish_err);
 
-    xQueueSend(epaper_idf_taskqueue, (void *)NULL, (TickType_t)0);
+    unsigned long counter = 0;
 
-    vTaskDelete(NULL);
+    xQueueSend(epaper_idf_taskqueue, (void *)&counter, (TickType_t)0);
+
+    while (1)
+    {
+      vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+    // vTaskDelete(NULL);
   }
 }
