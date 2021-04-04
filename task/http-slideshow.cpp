@@ -9,12 +9,22 @@
 		part of this project in any way.
 */
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
+#include <math.h>
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "esp_event.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
+#include "esp_sleep.h"
+#include "esp_log.h"
+#include "esp32/ulp.h"
+#include "driver/rtc_io.h"
+#include "soc/rtc.h"
 #include "protocol_examples_common.h"
 #include "epaper-idf-task.h"
 #include "epaper-idf-device.h"
@@ -23,9 +33,14 @@
 #include "epaper-idf-spi.h"
 #include "epaper-idf-ota.h"
 
+#define EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN 15
+#define EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX -15
+
 const char *TAG = "http-slideshow";
 const char *task_name = "http_slideshow_task";
 QueueHandle_t epaper_idf_taskqueue = NULL;
+
+static RTC_DATA_ATTR struct timeval sleep_enter_time;
 
 void http_slideshow_task(void *pvParameter)
 {
@@ -35,6 +50,35 @@ void http_slideshow_task(void *pvParameter)
     ESP_LOGI(TAG, "Task queue is not ready.\n");
     return;
   }
+
+  struct timeval now;
+  gettimeofday(&now, NULL);
+
+  int32_t delay_secs = (int32_t)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS;
+  bool no_deep_sleep = false;
+  if (delay_secs < 0) {
+    no_deep_sleep = true;
+    delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
+  } else {
+    delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
+  }
+
+  int sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
+
+  switch (esp_sleep_get_wakeup_cause()) {
+    case ESP_SLEEP_WAKEUP_TIMER:
+      ESP_LOGI(TAG, "Wake up from timer. Time spent in deep sleep: %d ms\n", sleep_time_ms);
+      break;
+
+    case ESP_SLEEP_WAKEUP_UNDEFINED:
+    default:
+      ESP_LOGI(TAG, "not a deep sleep reset\n");
+  }
+
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  printf("Enabling deep sleep timer wakeup after: %d secs\n", delay_secs);
+  esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
 
   // Use the appropriate epaper device.
   EpaperIDFSPI io;
@@ -52,6 +96,24 @@ void http_slideshow_task(void *pvParameter)
     }
 
     ESP_LOGI(TAG, "%s loop", task_name);
+
+    if (no_deep_sleep) {
+      ESP_LOGI(TAG, "waiting for %d secs", delay_secs);
+    } else {
+      ESP_LOGI(TAG, "deep sleeping for %d secs", delay_secs);
+
+#if CONFIG_IDF_TARGET_ESP32
+      // Isolate GPIO12 pin from external circuits. This is needed for modules
+      // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
+      // to minimize current consumption.
+      rtc_gpio_isolate(GPIO_NUM_12);
+#endif
+
+      ESP_LOGI(TAG, "entering deep sleep...\n");
+      gettimeofday(&sleep_enter_time, NULL);
+
+      esp_deep_sleep_start();
+    }
 
     vTaskDelay(1000 / portTICK_PERIOD_MS);
   }

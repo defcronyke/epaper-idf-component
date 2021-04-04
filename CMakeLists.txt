@@ -26,6 +26,7 @@ idf_component_register(
     $ENV{IDF_PATH}/components/nghttp/port/include
     $ENV{IDF_PATH}/components/nvs_flash/include
     $ENV{IDF_PATH}/components/spi_flash/include
+    $ENV{IDF_PATH}/components/ulp/include
 
     $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/include
 

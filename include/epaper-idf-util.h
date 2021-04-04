@@ -46,4 +46,20 @@
 #define EPAPER_IDF_LOG_VERB EPAPER_IDF_LOG_VERB_DEFAULT
 #endif
 
+// Clamp a number into a fixed range.
+inline float epaper_idf_clamp(float x, float min, float max) {
+  if (x < min) {
+    return min;
+  } else if (x >= max) {
+    return max;
+  } else {
+    return x;
+  }
+}
+
+// Map a number into a different range.
+inline float epaper_idf_map(float x, float in_min, float in_max, float out_min, float out_max) {
+  return out_min + ((out_max - out_min) / (in_max - in_min)) * (x - in_min);
+}
+
 #endif
