@@ -20,9 +20,9 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "esp_sleep.h"
 #include "esp_log.h"
-#include "esp32/ulp.h"
+#include "esp_sleep.h"
+#include "esp_wifi.h"
 #include "driver/rtc_io.h"
 #include "soc/rtc.h"
 #include "protocol_examples_common.h"
@@ -39,8 +39,6 @@
 const char *TAG = "http-slideshow";
 const char *task_name = "http_slideshow_task";
 QueueHandle_t epaper_idf_taskqueue = NULL;
-
-static RTC_DATA_ATTR struct timeval sleep_enter_time;
 
 void http_slideshow_task_main(void) {
   ESP_LOGI(TAG, "task main");
@@ -67,22 +65,7 @@ void http_slideshow_task(void *pvParameter)
     delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
   }
 
-  int sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
-
-  switch (esp_sleep_get_wakeup_cause()) {
-    case ESP_SLEEP_WAKEUP_TIMER:
-      ESP_LOGI(TAG, "Wake up from timer. Time spent in deep sleep: %f secs", (float)sleep_time_ms / 1000);
-      break;
-
-    case ESP_SLEEP_WAKEUP_UNDEFINED:
-    default:
-      ESP_LOGI(TAG, "not a deep sleep reset");
-  }
-
   vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-  ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after: %d secs", delay_secs);
-  esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
 
   // Use the appropriate epaper device.
   EpaperIDFSPI io;
@@ -111,17 +94,32 @@ void http_slideshow_task(void *pvParameter)
     } else {
       http_slideshow_task_main();
 
-      ESP_LOGI(TAG, "deep sleeping for %d secs", delay_secs);
+      ESP_LOGI(TAG, "deep sleeping for approx: %d secs", delay_secs);
 
-#if CONFIG_IDF_TARGET_ESP32
+      // Disable wifi for deep sleep.
+      esp_wifi_stop();
+
+      ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after approx: %d secs", delay_secs);
+      esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
+
       // Isolate GPIO12 pin from external circuits. This is needed for modules
       // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
       // to minimize current consumption.
       rtc_gpio_isolate(GPIO_NUM_12);
-#endif
+      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_SPI_MOSI);
+      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_SPI_CLK);
+      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_SPI_CS);
+      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_DC);
+      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_RST);
+      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_BUSY);
+
+      // Hibernate for lowest power consumption.
+      esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
+      esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
+      esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL, ESP_PD_OPTION_OFF);
+      esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
 
       ESP_LOGI(TAG, "entering deep sleep...\n");
-      gettimeofday(&sleep_enter_time, NULL);
 
       esp_deep_sleep_start();
     }
