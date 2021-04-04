@@ -7,6 +7,10 @@ idf_component_register(
 
     "device/Gdew075T8.cpp"
 
+    $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/connect.c
+    $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/addr_from_stdin.c
+    $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/stdin_out.c
+
     $ENV{IDF_PATH}/components/esp_https_ota/src/esp_https_ota.c
 
   REQUIRES
@@ -22,6 +26,8 @@ idf_component_register(
     $ENV{IDF_PATH}/components/nghttp/port/include
     $ENV{IDF_PATH}/components/nvs_flash/include
     $ENV{IDF_PATH}/components/spi_flash/include
+
+    $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/include
 
   # Embed the server root certificate into the final binary
   EMBED_TXTFILES 

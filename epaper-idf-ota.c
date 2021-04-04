@@ -32,22 +32,15 @@ extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
 #define OTA_URL_SIZE 256
 
-static esp_err_t validate_image_header(esp_app_desc_t *new_app_info)
+static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_desc_t *running_app_info)
 {
-  if (new_app_info == NULL)
+  if (new_app_info == NULL || running_app_info == NULL)
   {
     return ESP_ERR_INVALID_ARG;
   }
 
-  const esp_partition_t *running = esp_ota_get_running_partition();
-  esp_app_desc_t running_app_info;
-  if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK)
-  {
-    ESP_LOGI(TAG, "Running firmware version: %s", running_app_info.version);
-  }
-
 #ifndef CONFIG_PROJECT_SKIP_VERSION_CHECK
-  if (memcmp(new_app_info->version, running_app_info.version, sizeof(new_app_info->version)) == 0)
+  if (memcmp(new_app_info->version, running_app_info->version, sizeof(new_app_info->version)) == 0)
   {
     ESP_LOGW(TAG, "Current running version is the same as a new. We will not continue the update.");
     return ESP_FAIL;
@@ -57,7 +50,7 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info)
   return ESP_OK;
 }
 
-void ota_task(void *pvParameter)
+void epaper_idf_ota_task(void *pvParameter)
 {
   if (epaper_idf_taskqueue == 0)
   {
@@ -65,14 +58,22 @@ void ota_task(void *pvParameter)
     return;
   }
 
-  ESP_LOGI(TAG, "Starting OTA");
+  ESP_LOGI(TAG, "Starting OTA Task");
+
+  const esp_partition_t *running = esp_ota_get_running_partition();
+  esp_app_desc_t running_app_info;
+  if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK)
+  {
+    ESP_LOGI(TAG, "Running firmware version: %s", running_app_info.version);
+  }
 
   esp_err_t ota_finish_err = ESP_OK;
+
   esp_http_client_config_t config = {
-      .url = CONFIG_PROJECT_FIRMWARE_UPGRADE_URL,
-      .cert_pem = (char *)server_cert_pem_start,
-      .timeout_ms = CONFIG_PROJECT_OTA_RECV_TIMEOUT,
-      .keep_alive_enable = true,
+    .url = CONFIG_PROJECT_FIRMWARE_UPGRADE_URL,
+    .cert_pem = (char *)server_cert_pem_start,
+    .timeout_ms = CONFIG_PROJECT_OTA_RECV_TIMEOUT,
+    .keep_alive_enable = true,
   };
 
 #ifdef CONFIG_PROJECT_FIRMWARE_UPGRADE_URL_FROM_STDIN
@@ -115,7 +116,7 @@ void ota_task(void *pvParameter)
     ESP_LOGE(TAG, "esp_https_ota_read_img_desc failed");
     goto ota_end;
   }
-  err = validate_image_header(&app_desc);
+  err = validate_image_header(&app_desc, &running_app_info);
   if (err != ESP_OK)
   {
     ESP_LOGE(TAG, "image header verification failed");

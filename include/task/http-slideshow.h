@@ -10,6 +10,8 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
+#include "epaper-idf-task.h"
+
 void http_slideshow(void);
 
 #define main_fn http_slideshow

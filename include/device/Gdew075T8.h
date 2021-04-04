@@ -12,7 +12,7 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "epaper-idf-util.h"
+#include "epaper-idf-device.h"
 #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
 

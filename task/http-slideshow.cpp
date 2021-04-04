@@ -16,7 +16,9 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "protocol_examples_common.h"
-#include "epaper-idf-util.h"
+#include "epaper-idf-task.h"
+#include "epaper-idf-device.h"
+#include "task/http-slideshow.h"
 #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
 #include "epaper-idf-ota.h"
@@ -103,6 +105,6 @@ void http_slideshow(void)
   xTaskCreate(&http_slideshow_task, task_name, 4096 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", task_name);
 
-  xTaskCreate(&ota_task, ota_task_name, 1024 * 8, NULL, 5, NULL);
-  ESP_LOGI(TAG, "Task started: %s", ota_task_name);
+  xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 1024 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
 }

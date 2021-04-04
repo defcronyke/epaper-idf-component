@@ -10,12 +10,14 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-#include "epaper-idf-util.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "esp_log.h"
 #include "Adafruit_GFX.h"
+#include "epaper-idf-util.h"
+
+#define EpaperIDFGFX EPAPER_IDF_VERSION_CLASS
 
 #ifndef EPAPER_IDF_DEVICE_CLASS
 #define EPAPER_IDF_DEVICE_CLASS EPAPER_IDF_QUOTE(EPAPER_IDF_DEVICE_MODEL)

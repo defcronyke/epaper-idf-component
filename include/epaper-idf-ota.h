@@ -10,8 +10,8 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-extern "C" void ota_task(void *pvParameter);
+extern "C" void epaper_idf_ota_task(void *pvParameter);
 
-const char* ota_task_name = "ota_task";
+const char* epaper_idf_ota_task_name = "epaper_idf_ota_task";
 
 #endif
