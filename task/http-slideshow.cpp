@@ -42,12 +42,16 @@ QueueHandle_t epaper_idf_taskqueue = NULL;
 
 static RTC_DATA_ATTR struct timeval sleep_enter_time;
 
+void http_slideshow_task_main(void) {
+  ESP_LOGI(TAG, "task main");
+}
+
 void http_slideshow_task(void *pvParameter)
 {
   // Wait for task queue to be initialized first.
   if (epaper_idf_taskqueue == NULL)
   {
-    ESP_LOGI(TAG, "Task queue is not ready.\n");
+    ESP_LOGI(TAG, "Task queue is not ready.");
     return;
   }
 
@@ -67,17 +71,17 @@ void http_slideshow_task(void *pvParameter)
 
   switch (esp_sleep_get_wakeup_cause()) {
     case ESP_SLEEP_WAKEUP_TIMER:
-      ESP_LOGI(TAG, "Wake up from timer. Time spent in deep sleep: %d ms\n", sleep_time_ms);
+      ESP_LOGI(TAG, "Wake up from timer. Time spent in deep sleep: %f secs", (float)sleep_time_ms / 1000);
       break;
 
     case ESP_SLEEP_WAKEUP_UNDEFINED:
     default:
-      ESP_LOGI(TAG, "not a deep sleep reset\n");
+      ESP_LOGI(TAG, "not a deep sleep reset");
   }
 
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  printf("Enabling deep sleep timer wakeup after: %d secs\n", delay_secs);
+  ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after: %d secs", delay_secs);
   esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
 
   // Use the appropriate epaper device.
@@ -98,8 +102,15 @@ void http_slideshow_task(void *pvParameter)
     ESP_LOGI(TAG, "%s loop", task_name);
 
     if (no_deep_sleep) {
-      ESP_LOGI(TAG, "waiting for %d secs", delay_secs);
+      http_slideshow_task_main();
+
+      ESP_LOGI(TAG, "waiting for %d secs\n", delay_secs);
+
+      vTaskDelay((delay_secs * 1000) / portTICK_PERIOD_MS);
+
     } else {
+      http_slideshow_task_main();
+
       ESP_LOGI(TAG, "deep sleeping for %d secs", delay_secs);
 
 #if CONFIG_IDF_TARGET_ESP32
