@@ -25,9 +25,9 @@ const char *TAG = "http-slideshow";
 const char *main_task_name = "http_slideshow_task";
 QueueHandle_t epaper_idf_taskqueue = NULL;
 
-void main_task(void *pvParameter)
+void http_slideshow_task(void *pvParameter)
 {
-  // Wait for OTA task to finish first.
+  // Wait for task queue to be initialized first.
   if (epaper_idf_taskqueue == NULL)
   {
     ESP_LOGI(TAG, "Task queue is not ready.\n");
@@ -42,10 +42,10 @@ void main_task(void *pvParameter)
 
   while (1)
   {
+    // Wait for OTA task to finish first.
     while (start != 1)
     {
       xQueueReceive(epaper_idf_taskqueue, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
-
       vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
@@ -55,7 +55,7 @@ void main_task(void *pvParameter)
   }
 }
 
-void main_http_slideshow(void)
+void http_slideshow(void)
 {
   // Initialize NVS.
   esp_err_t err = nvs_flash_init();
@@ -100,8 +100,8 @@ void main_http_slideshow(void)
   // TODO: Do we need to wait for 1 second here?
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&main_task, main_task_name, 4096 * 8, NULL, 5, NULL);
-  ESP_LOGI(TAG, "Task started: %s", main_task_name);
+  xTaskCreate(&http_slideshow_task, http_slideshow_task_name, 4096 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", http_slideshow_task_name);
 
   xTaskCreate(&ota_task, ota_task_name, 1024 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", ota_task_name);
