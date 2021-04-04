@@ -20,17 +20,17 @@ menu "Project task config"
     config EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW
         depends on EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
         string "Project main task override"
-        default "task/http-slideshow.h" if EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
+        default "task/epaper-idf-task-http-slideshow.h" if EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
 
     config EPAPER_IDF_MAIN_TASK_USER
         depends on EPAPER_IDF_MAIN_TASK_USER_OPT
         string "Project main task override"
-        default "task/none.h" if EPAPER_IDF_MAIN_TASK_USER_OPT
+        default "task/epaper-idf-task-none.h" if EPAPER_IDF_MAIN_TASK_USER_OPT
     
     config EPAPER_IDF_MAIN_TASK_NONE
         depends on EPAPER_IDF_MAIN_TASK_NONE_OPT
         string "Project main task override"
-        default "task/none.h" if EPAPER_IDF_MAIN_TASK_NONE_OPT
+        default "task/epaper-idf-task-none.h" if EPAPER_IDF_MAIN_TASK_NONE_OPT
 endmenu
 
 menu "Project display config"    
@@ -71,17 +71,17 @@ menu "Project display config"
     config EPAPER_IDF_DEVICE_MODEL_GDEW075T8
         depends on EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT
         string "e-paper device override"
-        default "device/Gdew075T8.h" if EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT
+        default "device/epaper-idf-device-Gdew075T8.h" if EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT
 
     config EPAPER_IDF_DEVICE_MODEL_USER
         depends on EPAPER_IDF_DEVICE_MODEL_USER_OPT
         string "e-paper device override"
-        default "device/none.h" if EPAPER_IDF_DEVICE_MODEL_USER_OPT
+        default "device/epaper-idf-device-none.h" if EPAPER_IDF_DEVICE_MODEL_USER_OPT
 
     config EPAPER_IDF_DEVICE_MODEL_NONE
         depends on EPAPER_IDF_DEVICE_MODEL_NONE_OPT
         string "e-paper device override"
-        default "device/none.h" if EPAPER_IDF_DEVICE_MODEL_NONE_OPT
+        default "device/epaper-idf-device-none.h" if EPAPER_IDF_DEVICE_MODEL_NONE_OPT
 
     comment "Single e-paper SPI displays only section (GoodDisplay/WaveShare)"
     config EPAPER_IDF_SPI_MOSI

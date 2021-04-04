@@ -11,6 +11,8 @@
 		part of this project in any way.
 */
 
+#define EpaperIDFDevice EpaperIDFDeviceNone
+
 #error "ERROR: ----- ¡INITIAL SETUP NOT COMPLETE! -----  No e-paper display device selected. You need to choose a device to use from the Kconfig 'Project display config' menu first. Run this command and make sure you set everything up in all the 'Project ...' menus correctly before you try to build this again: idf.py menuconfig"
 
 #endif

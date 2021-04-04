@@ -18,7 +18,7 @@
 #include "protocol_examples_common.h"
 #include "epaper-idf-task.h"
 #include "epaper-idf-device.h"
-#include "task/http-slideshow.h"
+#include "task/epaper-idf-task-http-slideshow.h"
 #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
 #include "epaper-idf-ota.h"

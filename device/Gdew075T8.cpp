@@ -8,7 +8,7 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-#include "device/Gdew075T8.h"
+#include "device/epaper-idf-device-Gdew075T8.h"
 #include "epaper-idf-spi.h"
 #include "Adafruit_GFX.h"
 
