@@ -35,8 +35,13 @@
 #include "epaper-idf-ota.h"
 #include "epaper-idf-http.h"
 
+#ifndef EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN 15
+#endif
+
+#ifndef EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX -15
+#endif
 
 extern "C" void http_slideshow_task(void *pvParameter);
 

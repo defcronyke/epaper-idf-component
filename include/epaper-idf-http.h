@@ -12,12 +12,14 @@
 */
 #include "esp_event_base.h"
 
+// An event base type for "epaper-idf-http".
 ESP_EVENT_DECLARE_BASE(EPAPER_IDF_HTTP_EVENT);
-enum
+enum	// The events.
 {
-	EPAPER_IDF_HTTP_EVENT_FINISH,
+	EPAPER_IDF_HTTP_EVENT_FINISH,	// An event for "this task is finished".
 };
 
+// The event loop handle.
 extern esp_event_loop_handle_t epaper_idf_http_event_loop_handle;
 
 #ifdef __cplusplus
@@ -25,6 +27,7 @@ extern "C"
 {
 #endif
 
+	// The esp-idf task function.
 	void epaper_idf_http_task(void *pvParameter);
 
 #ifdef __cplusplus

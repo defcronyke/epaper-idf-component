@@ -272,6 +272,7 @@ void epaper_idf_http_task(void *pvParameter)
 			break;
 		}
 
+		// Send an event which says "this task is finished".
 		ESP_ERROR_CHECK(esp_event_post_to(epaper_idf_http_event_loop_handle, EPAPER_IDF_HTTP_EVENT, EPAPER_IDF_HTTP_EVENT_FINISH, NULL, 0, portMAX_DELAY));
 
 		vTaskDelete(NULL);

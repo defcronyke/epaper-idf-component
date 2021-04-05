@@ -169,6 +169,7 @@ void epaper_idf_ota_task(void *pvParameter)
 			ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed %d", ota_finish_err);
 		}
 
+		// Send an event which says "this task is finished".
 		ESP_ERROR_CHECK(esp_event_post_to(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, NULL, 0, portMAX_DELAY));
 
 		vTaskDelete(NULL);
