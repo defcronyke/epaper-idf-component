@@ -189,7 +189,7 @@ void http_slideshow(void)
   // TODO: Do we need to wait for 1 second here?
   // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&http_slideshow_task, task_name, 3072 * 8, NULL, 5, NULL);
+  xTaskCreate(&http_slideshow_task, task_name, 8192 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", task_name);
 
   // vTaskDelay(1000 / portTICK_PERIOD_MS);
