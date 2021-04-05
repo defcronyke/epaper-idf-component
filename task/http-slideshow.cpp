@@ -41,7 +41,7 @@
 const char *TAG = "http-slideshow";
 const char *task_name = "http_slideshow_task";
 
-ESP_EVENT_DEFINE_BASE(WIFI_EVENT);
+// ESP_EVENT_DEFINE_BASE(WIFI_EVENT);
 
 // static EventGroupHandle_t wifi_event_group;
 
