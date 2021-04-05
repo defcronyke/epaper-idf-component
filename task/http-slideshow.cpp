@@ -50,8 +50,8 @@ const char *task_name = "http_slideshow_task";
 // QueueHandle_t epaper_idf_taskqueue_http = NULL;
 // QueueHandle_t epaper_idf_taskqueue_ota = NULL;
 
-static void wifi_connected_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
-  ESP_LOGI(TAG, "!!! WIFI CONNECTED EVENT !!!: %s", epaper_idf_ota_task_name);
+static void sta_got_ip_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
+  ESP_LOGI(TAG, "!!! GOT IP EVENT !!!: %s", epaper_idf_ota_task_name);
 
   xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
@@ -241,7 +241,8 @@ void http_slideshow(void)
   ESP_ERROR_CHECK(esp_netif_init());
   ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-  ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, wifi_connected_handler, NULL, NULL));
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, sta_got_ip_handler, NULL, NULL));
+  // ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, wifi_connected_handler, NULL, NULL));
 
   /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
 		 * Read "Establishing Wi-Fi or Ethernet Connection" section in
