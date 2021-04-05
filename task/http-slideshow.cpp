@@ -43,15 +43,15 @@ extern "C" void http_slideshow_task(void *pvParameter);
 const char *TAG = "http-slideshow";
 
 const char *http_slideshow_task_name = "http_slideshow_task";
-const uint32_t http_slideshow_task_stack_depth = 4096 * 8;
+const uint32_t http_slideshow_task_stack_depth = 4096;
 UBaseType_t http_slideshow_task_priority = 5;
 
 const char *epaper_idf_ota_task_name = "epaper_idf_ota_task";
-const uint32_t epaper_idf_ota_task_stack_depth = 2048 * 8;
+const uint32_t epaper_idf_ota_task_stack_depth = 2048;
 UBaseType_t epaper_idf_ota_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
-const uint32_t epaper_idf_http_task_stack_depth = 1024 * 8;
+const uint32_t epaper_idf_http_task_stack_depth = 2048;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
 static void http_slideshow_task_main(void)
@@ -67,7 +67,7 @@ static void sta_got_ip_event_handler(void *handler_arg, esp_event_base_t base, i
 {
 	ESP_LOGI(TAG, "event received: IP_EVENT_STA_GOT_IP");
 
-	xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, epaper_idf_ota_task_stack_depth, NULL, epaper_idf_ota_task_priority, NULL);
+	xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, epaper_idf_ota_task_stack_depth * 8, NULL, epaper_idf_ota_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
 }
 
@@ -75,7 +75,7 @@ static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_bas
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_OTA_EVENT_FINISH");
 
-	xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth, NULL, epaper_idf_http_task_priority, NULL);
+	xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 }
 
@@ -83,7 +83,7 @@ static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_ba
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTP_EVENT_FINISH");
 
-	xTaskCreate(&http_slideshow_task, http_slideshow_task_name, http_slideshow_task_stack_depth, NULL, http_slideshow_task_priority, NULL);
+	xTaskCreate(&http_slideshow_task, http_slideshow_task_name, http_slideshow_task_stack_depth * 8, NULL, http_slideshow_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", http_slideshow_task_name);
 }
 
@@ -194,7 +194,7 @@ void http_slideshow(void)
 			.queue_size = 5,
 			.task_name = "epaper_idf_ota_event_loop_task", // task will be created
 			.task_priority = uxTaskPriorityGet(NULL),
-			.task_stack_size = 2048,
+			.task_stack_size = epaper_idf_ota_task_stack_depth,
 			.task_core_id = tskNO_AFFINITY};
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_ota_event_loop_args, &epaper_idf_ota_event_loop_handle));
@@ -205,7 +205,7 @@ void http_slideshow(void)
 			.queue_size = 5,
 			.task_name = "epaper_idf_http_event_loop_task", // task will be created
 			.task_priority = uxTaskPriorityGet(NULL),
-			.task_stack_size = 512,
+			.task_stack_size = epaper_idf_http_task_stack_depth,
 			.task_core_id = tskNO_AFFINITY};
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_http_event_loop_args, &epaper_idf_http_event_loop_handle));
