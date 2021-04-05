@@ -43,7 +43,7 @@
   Kconfig menu). */
 #include EPAPER_IDF_MAIN_TASK_HEADER
 
-extern QueueHandle_t epaper_idf_taskqueue_ota;
-extern QueueHandle_t epaper_idf_taskqueue_http;
+// extern QueueHandle_t epaper_idf_taskqueue_ota;
+// extern QueueHandle_t epaper_idf_taskqueue_http;
 
 #endif

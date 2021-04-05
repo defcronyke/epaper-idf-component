@@ -12,6 +12,14 @@
 */
 #include "epaper-idf-task.h"
 
+// enum {
+//     WIFI_EVENT_ID_START,
+//     WIFI_EVENT_ID_CONNECT,
+//     WIFI_EVENT_ID_DISCONNECT,
+// };
+
+// ESP_EVENT_DECLARE_BASE(WIFI_EVENT);
+
 void http_slideshow(void);
 
 #define main_fn http_slideshow

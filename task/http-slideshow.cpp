@@ -21,6 +21,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
+#include "freertos/event_groups.h"
 #include "esp_log.h"
 #include "esp_sleep.h"
 #include "esp_wifi.h"
@@ -40,24 +41,110 @@
 const char *TAG = "http-slideshow";
 const char *task_name = "http_slideshow_task";
 
-QueueHandle_t epaper_idf_taskqueue_http = NULL;
-QueueHandle_t epaper_idf_taskqueue_ota = NULL;
+// static EventGroupHandle_t wifi_event_group;
+
+// ESP_EVENT_DEFINE_BASE(WIFI_EVENT);
+
+// QueueHandle_t epaper_idf_taskqueue_http = NULL;
+// QueueHandle_t epaper_idf_taskqueue_ota = NULL;
+
+static void wifi_connected_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
+  ESP_LOGI(TAG, "!!! WIFI CONNECTED EVENT !!!: %s", epaper_idf_ota_task_name);
+
+  xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
+}
+
+// static esp_err_t wifi_event_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data)
+// {
+//   if (base != WIFI_EVENT) {
+//     ESP_LOGW(TAG, "warning: Wrong type of event. Ignoring.");
+//     return;
+//   }
+
+//   switch(id) {
+//     case SYSTEM_EVENT_STA_START:
+//       // Connect wifi.
+//       esp_wifi_connect();
+
+//       // Disable wifi power saving modes for best throughput.
+//       esp_wifi_set_ps(WIFI_PS_NONE);
+//       break;
+
+//     case SYSTEM_EVENT_STA_GOT_IP:
+//       xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_EVENT);
+//       ESP_LOGI(TAG, "!!! WIFI CONNECTED EVENT !!!: %s", epaper_idf_ota_task_name);
+//       break;
+
+//     case SYSTEM_EVENT_STA_DISCONNECTED:
+//       xEventGroupSetBits(wifi_event_group, WIFI_DISCONNECTED_EVENT);
+//       break;
+
+//     default:
+//       break;
+//     }
+// 	return ESP_OK;
+// }
 
 static void http_slideshow_task_main(void)
 {
-  // Wait for other task to finish first.
-  unsigned long start = 0;
-  while (start != 1)
-  {
-    xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
+  // // Wait for other task to finish first.
+  // unsigned long start = 0;
+  // while (start != 1)
+  // {
+  //   xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
+  //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+  // }
 
   ESP_LOGI(TAG, "task main");
+
+  // xEventGroupWaitBits(wifi_event_group, WIFI_CONNECTED_EVENT, true, true, portMAX_DELAY);
+
+  // xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
+  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
+  
+  // xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
+  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+
+  // Use the appropriate epaper device.
+  EpaperIDFSPI io;
+  EpaperIDFDevice dev(io);
 }
 
 extern "C" void http_slideshow_task(void *pvParameter)
 {
+  // Create the default event loop
+  // ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+
+
+
+  // esp_event_loop_args_t wifi_event_loop_args = {
+  //   .queue_size = 20,
+  //   .task_name = "wifi_event_loop",
+  //   .task_priority = 5,
+  //   .task_stack_size = 4096,
+  //   .task_core_id = -1
+  // };
+
+  // esp_event_loop_handle_t wifi_event_loop_handle;
+
+  // esp_event_loop_create(&wifi_event_loop_args, &wifi_event_loop_handle);
+
+  // esp_event_handler_register_with(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, wifi_event_handler, NULL);
+
+  // esp_event_post_to(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, NULL, 0, portMAX_DELAY);
+
+  // Unregister an event handler.
+  // esp_event_handler_unregister_with(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, wifi_event_handler);
+
+  // Delete an event loop.
+  // esp_event_loop_delete(wifi_event_loop_handle);
+
+  // // Create event group.
+  // wifi_event_group = xEventGroupCreate();
+  // ESP_ERROR_CHECK(esp_event_loop_init(wifi_event_handler, NULL));
+
   while (1) {
     struct timeval now;
     gettimeofday(&now, NULL);
@@ -74,11 +161,7 @@ extern "C" void http_slideshow_task(void *pvParameter)
       delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
     }
 
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    // Use the appropriate epaper device.
-    EpaperIDFSPI io;
-    EpaperIDFDevice dev(io);
+    // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
     // unsigned long start = 0;
 
@@ -110,6 +193,9 @@ extern "C" void http_slideshow_task(void *pvParameter)
         // Disable wifi for deep sleep.
         esp_wifi_stop();
 
+        // esp_event_handler_unregister_with(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, wifi_event_handler);
+        // esp_event_loop_delete(wifi_event_loop_handle);
+
         ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after approx: %d secs", delay_secs);
         esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
 
@@ -130,7 +216,7 @@ extern "C" void http_slideshow_task(void *pvParameter)
         esp_deep_sleep_start();
       }
 
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      // vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
   }
 }
@@ -157,50 +243,48 @@ void http_slideshow(void)
 		 * Read "Establishing Wi-Fi or Ethernet Connection" section in
 		 * examples/protocols/README.md for more information about this function.
 		*/
-  ESP_ERROR_CHECK(example_connect());
+  // ESP_ERROR_CHECK(example_connect());
 
-#if CONFIG_PROJECT_CONNECT_WIFI
-  /* Ensure to disable any WiFi power save mode, this allows best throughput
-		 * and hence timings for overall OTA operation.
-		 */
-  esp_wifi_set_ps(WIFI_PS_NONE);
-#endif // CONFIG_PROJECT_CONNECT_WIFI
+// #if CONFIG_PROJECT_CONNECT_WIFI
+//   /* Ensure to disable any WiFi power save mode, this allows best throughput
+// 		 * and hence timings for overall OTA operation.
+// 		 */
+//   esp_wifi_set_ps(WIFI_PS_NONE);
+// #endif // CONFIG_PROJECT_CONNECT_WIFI
 
-  ESP_LOGI(TAG, "Creating task queue ota...");
+  // ESP_LOGI(TAG, "Creating task queue ota...");
 
-  epaper_idf_taskqueue_ota = xQueueCreate(20, sizeof(unsigned long));
-  if (epaper_idf_taskqueue_ota == NULL)
-  {
-    ESP_LOGE(TAG, "Task queue ota creation failed.");
-    return;
-  }
+  // epaper_idf_taskqueue_ota = xQueueCreate(20, sizeof(unsigned long));
+  // if (epaper_idf_taskqueue_ota == NULL)
+  // {
+  //   ESP_LOGE(TAG, "Task queue ota creation failed.");
+  //   return;
+  // }
 
-  ESP_LOGI(TAG, "Creating task queue http...");
+  // ESP_LOGI(TAG, "Creating task queue http...");
 
-  epaper_idf_taskqueue_http = xQueueCreate(20, sizeof(unsigned long));
-  if (epaper_idf_taskqueue_http == NULL)
-  {
-    ESP_LOGE(TAG, "Task queue http creation failed.");
-    return;
-  }
+  // epaper_idf_taskqueue_http = xQueueCreate(20, sizeof(unsigned long));
+  // if (epaper_idf_taskqueue_http == NULL)
+  // {
+  //   ESP_LOGE(TAG, "Task queue http creation failed.");
+  //   return;
+  // }
 
-  ESP_LOGI(TAG, "Task queue created.");
+  // ESP_LOGI(TAG, "Task queue created.");
 
-  // TODO: Do we need to wait for 1 second here?
+  // TODO: Do we need to wait here?
   // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&http_slideshow_task, task_name, 8192 * 8, NULL, 5, NULL);
-  ESP_LOGI(TAG, "Task started: %s", task_name);
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, wifi_connected_handler, NULL, NULL));
 
-  // vTaskDelay(1000 / portTICK_PERIOD_MS);
+  // xTaskCreate(&http_slideshow_task, task_name, 8192 * 8, NULL, 5, NULL);
+  // ESP_LOGI(TAG, "Task started: %s", task_name);
 
-  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
-  ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
-
-  // vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-  xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
-  ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
+  // xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
+  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
+  
+  // xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
+  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 
   // while(1) {
   //   vTaskDelay(1000 / portTICK_PERIOD_MS);

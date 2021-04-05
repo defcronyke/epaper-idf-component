@@ -52,12 +52,12 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_des
 void epaper_idf_ota_task(void *pvParameter)
 {
   while (1) {
-    if (epaper_idf_taskqueue_ota == 0)
-    {
-      printf("Task queue ota is not ready.\n");
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
-      continue;
-    }
+    // if (epaper_idf_taskqueue_ota == 0)
+    // {
+    //   printf("Task queue ota is not ready.\n");
+    //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+    //   continue;
+    // }
 
     ESP_LOGI(TAG, "Starting OTA Task");
 
@@ -161,9 +161,9 @@ void epaper_idf_ota_task(void *pvParameter)
       }
       ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed %d", ota_finish_err);
 
-      unsigned long start = 1;
+      // unsigned long start = 1;
 
-      xQueueSend(epaper_idf_taskqueue_ota, (void *)&start, (TickType_t)0);
+      // xQueueSend(epaper_idf_taskqueue_ota, (void *)&start, (TickType_t)0);
 
       while(1) {
         vTaskDelay(1000 / portTICK_PERIOD_MS);

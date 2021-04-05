@@ -46,27 +46,27 @@ static const char *REQUEST = "GET " CONFIG_EPAPER_IDF_IMAGES_INDEX_JSON_URL " HT
 
 void epaper_idf_http_task(void *pvParameter) {
   while (1) {
-    if (epaper_idf_taskqueue_http == 0)
-    {
-      printf("Task queue http is not ready.\n");
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
-      continue;
-    }
+    // if (epaper_idf_taskqueue_http == 0)
+    // {
+    //   printf("Task queue http is not ready.\n");
+    //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+    //   continue;
+    // }
 
-    if (epaper_idf_taskqueue_ota == 0)
-    {
-      printf("Task queue http is not ready.\n");
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
-      continue;
-    }
+    // if (epaper_idf_taskqueue_ota == 0)
+    // {
+    //   printf("Task queue http is not ready.\n");
+    //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+    //   continue;
+    // }
 
-    // Wait for other task to finish first.
-    unsigned long start = 0;
-    while (start != 1)
-    {
-      xQueueReceive(epaper_idf_taskqueue_ota, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+    // // Wait for other task to finish first.
+    // unsigned long start = 0;
+    // while (start != 1)
+    // {
+    //   xQueueReceive(epaper_idf_taskqueue_ota, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
+    //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+    // }
 
     
     char buf[1024];
@@ -81,7 +81,7 @@ void epaper_idf_http_task(void *pvParameter) {
 
     esp_tls_cfg_t cfg = {
       // .use_global_ca_store = true,
-      // .crt_bundle_attach = esp_crt_bundle_attach,
+      .crt_bundle_attach = esp_crt_bundle_attach,
       .skip_common_name = true,
     };
 
@@ -103,7 +103,6 @@ void epaper_idf_http_task(void *pvParameter) {
     {
       printf("!!!!  WEB_URL: %s  !!!!\n", CONFIG_EPAPER_IDF_IMAGES_INDEX_JSON_URL);
       printf("!!!!  REQUEST:\n%s  !!!!\n", REQUEST);
-      // printf("!!!!  ret: %d  !!!!\n", ret);
 
       ret = esp_tls_conn_write(tls,
         REQUEST + written_bytes,
@@ -118,11 +117,6 @@ void epaper_idf_http_task(void *pvParameter) {
         ESP_LOGE(TAG, "esp_tls_conn_write  returned 0x%x", ret);
         goto exit;
       } 
-      // else {
-      //   printf("!!!!  WEB_URL: %s  !!!!\n", WEB_URL);
-      //   printf("!!!!  REQUEST: %s  !!!!\n", REQUEST);
-      //   printf("!!!!  ret: %d  !!!!\n", ret);
-      // }
     } while (written_bytes < strlen(REQUEST));
 
     ESP_LOGI(TAG, "Reading HTTP response...");
@@ -171,9 +165,9 @@ void epaper_idf_http_task(void *pvParameter) {
     }
     ESP_LOGI(TAG, "Starting again!");
 
-    unsigned long start2 = 1;
+    // unsigned long start2 = 1;
 
-    xQueueSend(epaper_idf_taskqueue_http, (void *)&start2, (TickType_t)0);
+    // xQueueSend(epaper_idf_taskqueue_http, (void *)&start2, (TickType_t)0);
 
     while(1) {
       vTaskDelay(1000 / portTICK_PERIOD_MS);
