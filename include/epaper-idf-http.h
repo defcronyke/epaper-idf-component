@@ -10,7 +10,15 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-extern "C" void epaper_idf_http_task(void *pvParameter);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void epaper_idf_http_task(void *pvParameter);
+
+#ifdef __cplusplus
+}
+#endif
 
 const char* epaper_idf_http_task_name = "epaper_idf_http_task";
 

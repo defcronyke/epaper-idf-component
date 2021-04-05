@@ -30,9 +30,9 @@
 #include "epaper-idf-device.h"
 #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
+#include "epaper-idf-task.h"
 #include "epaper-idf-ota.h"
 #include "epaper-idf-http.h"
-#include "epaper-idf-task.h"
 
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN 15
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX -15
@@ -43,7 +43,7 @@ const char *task_name = "http_slideshow_task";
 QueueHandle_t epaper_idf_taskqueue_http = NULL;
 QueueHandle_t epaper_idf_taskqueue_ota = NULL;
 
-void http_slideshow_task_main(void)
+static void http_slideshow_task_main(void)
 {
   // Wait for other task to finish first.
   unsigned long start = 0;
@@ -56,80 +56,82 @@ void http_slideshow_task_main(void)
   ESP_LOGI(TAG, "task main");
 }
 
-void http_slideshow_task(void *pvParameter)
+extern "C" void http_slideshow_task(void *pvParameter)
 {
-  struct timeval now;
-  gettimeofday(&now, NULL);
+  while (1) {
+    struct timeval now;
+    gettimeofday(&now, NULL);
 
-  int32_t delay_secs = (int32_t)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS;
-  bool no_deep_sleep = false;
-  if (delay_secs < 0)
-  {
-    no_deep_sleep = true;
-    delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
-  }
-  else
-  {
-    delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
-  }
-
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-  // Use the appropriate epaper device.
-  EpaperIDFSPI io;
-  EpaperIDFDevice dev(io);
-
-  // unsigned long start = 0;
-
-  while (1)
-  {
-    // Wait for another task to finish first.
-    // while (start != 1)
-    // {
-    //   xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
-    //   vTaskDelay(1000 / portTICK_PERIOD_MS);
-    // }
-
-    ESP_LOGI(TAG, "%s loop", task_name);
-
-    if (no_deep_sleep)
+    int32_t delay_secs = (int32_t)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS;
+    bool no_deep_sleep = false;
+    if (delay_secs < 0)
     {
-      http_slideshow_task_main();
-
-      ESP_LOGI(TAG, "waiting for %d secs\n", delay_secs);
-
-      vTaskDelay((delay_secs * 1000) / portTICK_PERIOD_MS);
+      no_deep_sleep = true;
+      delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
     }
     else
     {
-      http_slideshow_task_main();
-
-      ESP_LOGI(TAG, "deep sleeping for approx: %d secs", delay_secs);
-
-      // Disable wifi for deep sleep.
-      esp_wifi_stop();
-
-      ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after approx: %d secs", delay_secs);
-      esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
-
-      // Isolate GPIO12 pin from external circuits. This is needed for modules
-      // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
-      // to minimize current consumption.
-      rtc_gpio_isolate(GPIO_NUM_12);
-
-      // Hibernate for lowest power consumption.
-      esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
-      esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
-      esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL, ESP_PD_OPTION_OFF);
-      esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
-      esp_sleep_pd_config(ESP_PD_DOMAIN_MAX, ESP_PD_OPTION_OFF);
-
-      ESP_LOGI(TAG, "entering deep sleep...\n");
-
-      esp_deep_sleep_start();
+      delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
     }
 
     vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    // Use the appropriate epaper device.
+    EpaperIDFSPI io;
+    EpaperIDFDevice dev(io);
+
+    // unsigned long start = 0;
+
+    while (1)
+    {
+      // Wait for another task to finish first.
+      // while (start != 1)
+      // {
+      //   xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
+      //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+      // }
+
+      ESP_LOGI(TAG, "%s loop", task_name);
+
+      if (no_deep_sleep)
+      {
+        http_slideshow_task_main();
+
+        ESP_LOGI(TAG, "waiting for %d secs\n", delay_secs);
+
+        vTaskDelay((delay_secs * 1000) / portTICK_PERIOD_MS);
+      }
+      else
+      {
+        http_slideshow_task_main();
+
+        ESP_LOGI(TAG, "deep sleeping for approx: %d secs", delay_secs);
+
+        // Disable wifi for deep sleep.
+        esp_wifi_stop();
+
+        ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after approx: %d secs", delay_secs);
+        esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
+
+        // Isolate GPIO12 pin from external circuits. This is needed for modules
+        // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
+        // to minimize current consumption.
+        rtc_gpio_isolate(GPIO_NUM_12);
+
+        // Hibernate for lowest power consumption.
+        esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
+        esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
+        esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL, ESP_PD_OPTION_OFF);
+        esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
+        esp_sleep_pd_config(ESP_PD_DOMAIN_MAX, ESP_PD_OPTION_OFF);
+
+        ESP_LOGI(TAG, "entering deep sleep...\n");
+
+        esp_deep_sleep_start();
+      }
+
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
   }
 }
 
@@ -185,22 +187,22 @@ void http_slideshow(void)
   ESP_LOGI(TAG, "Task queue created.");
 
   // TODO: Do we need to wait for 1 second here?
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&http_slideshow_task, task_name, 4096 * 8, NULL, 5, NULL);
+  xTaskCreate(&http_slideshow_task, task_name, 3072 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", task_name);
 
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 1024 * 8, NULL, 5, NULL);
+  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 256 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 1024 * 8, NULL, 5, NULL);
+  xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 128 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
 
-  while(1) {
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
+  // while(1) {
+  //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+  // }
 }
