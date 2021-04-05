@@ -194,12 +194,12 @@ void http_slideshow(void)
 
   // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 256 * 8, NULL, 5, NULL);
+  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 
   // vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 128 * 8, NULL, 5, NULL);
+  xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
 
   // while(1) {
