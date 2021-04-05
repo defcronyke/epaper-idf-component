@@ -10,6 +10,10 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+#include "freertos/event_groups.h"
 #include "esp_system.h"
 
 #ifndef EPAPER_IDF_MAIN_TASK_HEADER
@@ -38,5 +42,8 @@
   own task if you added it above and chose it from the
   Kconfig menu). */
 #include EPAPER_IDF_MAIN_TASK_HEADER
+
+extern QueueHandle_t epaper_idf_taskqueue_ota;
+extern QueueHandle_t epaper_idf_taskqueue_http;
 
 #endif

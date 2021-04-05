@@ -19,18 +19,17 @@
 #include "esp_http_client.h"
 #include "esp_https_ota.h"
 #include "nvs.h"
+#include "epaper-idf-task.h"
 
 #if CONFIG_PROJECT_CONNECT_WIFI
 #include "esp_wifi.h"
 #endif
 
-extern QueueHandle_t epaper_idf_taskqueue;
+#define OTA_URL_SIZE 256
 
 static const char *TAG = "ota";
 extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
 extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
-
-#define OTA_URL_SIZE 256
 
 static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_desc_t *running_app_info)
 {
@@ -52,9 +51,9 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_des
 
 void epaper_idf_ota_task(void *pvParameter)
 {
-  if (epaper_idf_taskqueue == 0)
+  if (epaper_idf_taskqueue_ota == 0)
   {
-    printf("Task queue is not ready.\n");
+    printf("Task queue ota is not ready.\n");
     return;
   }
 
@@ -161,8 +160,10 @@ ota_end:
 
     unsigned long start = 1;
 
-    xQueueSend(epaper_idf_taskqueue, (void *)&start, (TickType_t)0);
+    xQueueSend(epaper_idf_taskqueue_ota, (void *)&start, (TickType_t)0);
 
-    vTaskDelete(NULL);
+    while(1) {
+      vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
   }
 }

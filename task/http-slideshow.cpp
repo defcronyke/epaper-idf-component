@@ -31,36 +31,45 @@
 #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
 #include "epaper-idf-ota.h"
+#include "epaper-idf-http.h"
+#include "epaper-idf-task.h"
 
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN 15
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX -15
 
 const char *TAG = "http-slideshow";
 const char *task_name = "http_slideshow_task";
-QueueHandle_t epaper_idf_taskqueue = NULL;
 
-void http_slideshow_task_main(void) {
+QueueHandle_t epaper_idf_taskqueue_http = NULL;
+QueueHandle_t epaper_idf_taskqueue_ota = NULL;
+
+void http_slideshow_task_main(void)
+{
+  // Wait for other task to finish first.
+  unsigned long start = 0;
+  while (start != 1)
+  {
+    xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+  }
+
   ESP_LOGI(TAG, "task main");
 }
 
 void http_slideshow_task(void *pvParameter)
 {
-  // Wait for task queue to be initialized first.
-  if (epaper_idf_taskqueue == NULL)
-  {
-    ESP_LOGI(TAG, "Task queue is not ready.");
-    return;
-  }
-
   struct timeval now;
   gettimeofday(&now, NULL);
 
   int32_t delay_secs = (int32_t)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS;
   bool no_deep_sleep = false;
-  if (delay_secs < 0) {
+  if (delay_secs < 0)
+  {
     no_deep_sleep = true;
     delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
-  } else {
+  }
+  else
+  {
     delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
   }
 
@@ -70,27 +79,29 @@ void http_slideshow_task(void *pvParameter)
   EpaperIDFSPI io;
   EpaperIDFDevice dev(io);
 
-  unsigned long start = 0;
+  // unsigned long start = 0;
 
   while (1)
   {
-    // Wait for OTA task to finish first.
-    while (start != 1)
-    {
-      xQueueReceive(epaper_idf_taskqueue, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+    // Wait for another task to finish first.
+    // while (start != 1)
+    // {
+    //   xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
+    //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+    // }
 
     ESP_LOGI(TAG, "%s loop", task_name);
 
-    if (no_deep_sleep) {
+    if (no_deep_sleep)
+    {
       http_slideshow_task_main();
 
       ESP_LOGI(TAG, "waiting for %d secs\n", delay_secs);
 
       vTaskDelay((delay_secs * 1000) / portTICK_PERIOD_MS);
-
-    } else {
+    }
+    else
+    {
       http_slideshow_task_main();
 
       ESP_LOGI(TAG, "deep sleeping for approx: %d secs", delay_secs);
@@ -105,12 +116,6 @@ void http_slideshow_task(void *pvParameter)
       // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
       // to minimize current consumption.
       rtc_gpio_isolate(GPIO_NUM_12);
-      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_SPI_MOSI);
-      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_SPI_CLK);
-      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_SPI_CS);
-      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_DC);
-      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_RST);
-      rtc_gpio_isolate((gpio_num_t)CONFIG_EPAPER_IDF_BUSY);
 
       // Hibernate for lowest power consumption.
       esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
@@ -159,12 +164,21 @@ void http_slideshow(void)
   esp_wifi_set_ps(WIFI_PS_NONE);
 #endif // CONFIG_PROJECT_CONNECT_WIFI
 
-  ESP_LOGI(TAG, "Creating task queue...");
+  ESP_LOGI(TAG, "Creating task queue ota...");
 
-  epaper_idf_taskqueue = xQueueCreate(20, sizeof(unsigned long));
-  if (epaper_idf_taskqueue == NULL)
+  epaper_idf_taskqueue_ota = xQueueCreate(20, sizeof(unsigned long));
+  if (epaper_idf_taskqueue_ota == NULL)
   {
-    ESP_LOGE(TAG, "Task queue creation failed.");
+    ESP_LOGE(TAG, "Task queue ota creation failed.");
+    return;
+  }
+
+  ESP_LOGI(TAG, "Creating task queue http...");
+
+  epaper_idf_taskqueue_http = xQueueCreate(20, sizeof(unsigned long));
+  if (epaper_idf_taskqueue_http == NULL)
+  {
+    ESP_LOGE(TAG, "Task queue http creation failed.");
     return;
   }
 
@@ -176,6 +190,17 @@ void http_slideshow(void)
   xTaskCreate(&http_slideshow_task, task_name, 4096 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", task_name);
 
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 1024 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
   xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 1024 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
+
+  while(1) {
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+  }
 }
