@@ -194,7 +194,7 @@ void http_slideshow(void)
 			.queue_size = 5,
 			.task_name = "epaper_idf_ota_event_loop_task", // task will be created
 			.task_priority = uxTaskPriorityGet(NULL),
-			.task_stack_size = 512,
+			.task_stack_size = 2048,
 			.task_core_id = tskNO_AFFINITY};
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_ota_event_loop_args, &epaper_idf_ota_event_loop_handle));
