@@ -41,6 +41,8 @@
 const char *TAG = "http-slideshow";
 const char *task_name = "http_slideshow_task";
 
+ESP_EVENT_DEFINE_BASE(WIFI_EVENT);
+
 // static EventGroupHandle_t wifi_event_group;
 
 // ESP_EVENT_DEFINE_BASE(WIFI_EVENT);
@@ -239,6 +241,8 @@ void http_slideshow(void)
   ESP_ERROR_CHECK(esp_netif_init());
   ESP_ERROR_CHECK(esp_event_loop_create_default());
 
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, wifi_connected_handler, NULL, NULL));
+
   /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
 		 * Read "Establishing Wi-Fi or Ethernet Connection" section in
 		 * examples/protocols/README.md for more information about this function.
@@ -274,8 +278,6 @@ void http_slideshow(void)
 
   // TODO: Do we need to wait here?
   // vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-  ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, wifi_connected_handler, NULL, NULL));
 
   // xTaskCreate(&http_slideshow_task, task_name, 8192 * 8, NULL, 5, NULL);
   // ESP_LOGI(TAG, "Task started: %s", task_name);
