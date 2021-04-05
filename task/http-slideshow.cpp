@@ -243,14 +243,14 @@ void http_slideshow(void)
 		 * Read "Establishing Wi-Fi or Ethernet Connection" section in
 		 * examples/protocols/README.md for more information about this function.
 		*/
-  // ESP_ERROR_CHECK(example_connect());
+  ESP_ERROR_CHECK(example_connect());
 
-// #if CONFIG_PROJECT_CONNECT_WIFI
-//   /* Ensure to disable any WiFi power save mode, this allows best throughput
-// 		 * and hence timings for overall OTA operation.
-// 		 */
-//   esp_wifi_set_ps(WIFI_PS_NONE);
-// #endif // CONFIG_PROJECT_CONNECT_WIFI
+#if CONFIG_PROJECT_CONNECT_WIFI
+  /* Ensure to disable any WiFi power save mode, this allows best throughput
+		 * and hence timings for overall OTA operation.
+		 */
+  esp_wifi_set_ps(WIFI_PS_NONE);
+#endif // CONFIG_PROJECT_CONNECT_WIFI
 
   // ESP_LOGI(TAG, "Creating task queue ota...");
 

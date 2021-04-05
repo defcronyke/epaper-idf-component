@@ -165,9 +165,11 @@ void epaper_idf_ota_task(void *pvParameter)
 
       // xQueueSend(epaper_idf_taskqueue_ota, (void *)&start, (TickType_t)0);
 
-      while(1) {
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-      }
+      vTaskDelete(NULL);
+
+      // while(1) {
+      //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+      // }
     }
   }
 }
