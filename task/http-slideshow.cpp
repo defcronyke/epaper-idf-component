@@ -47,7 +47,7 @@ const uint32_t http_slideshow_task_stack_depth = 4096 * 8;
 UBaseType_t http_slideshow_task_priority = 5;
 
 const char *epaper_idf_ota_task_name = "epaper_idf_ota_task";
-const uint32_t epaper_idf_ota_task_stack_depth = 1024 * 8;
+const uint32_t epaper_idf_ota_task_stack_depth = 2048 * 8;
 UBaseType_t epaper_idf_ota_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
