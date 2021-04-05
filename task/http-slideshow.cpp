@@ -41,72 +41,35 @@
 const char *TAG = "http-slideshow";
 const char *task_name = "http_slideshow_task";
 
-// ESP_EVENT_DEFINE_BASE(WIFI_EVENT);
+const char* epaper_idf_ota_task_name = "epaper_idf_ota_task";
+const char* epaper_idf_http_task_name = "epaper_idf_http_task";
 
-// static EventGroupHandle_t wifi_event_group;
+extern "C" void http_slideshow_task(void *pvParameter);
 
-// ESP_EVENT_DEFINE_BASE(WIFI_EVENT);
-
-// QueueHandle_t epaper_idf_taskqueue_http = NULL;
-// QueueHandle_t epaper_idf_taskqueue_ota = NULL;
-
-static void sta_got_ip_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
-  ESP_LOGI(TAG, "!!! GOT IP EVENT !!!: %s", epaper_idf_ota_task_name);
+static void sta_got_ip_event_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
+  ESP_LOGI(TAG, "event received: IP_EVENT_STA_GOT_IP");
 
   xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
 }
 
-// static esp_err_t wifi_event_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data)
-// {
-//   if (base != WIFI_EVENT) {
-//     ESP_LOGW(TAG, "warning: Wrong type of event. Ignoring.");
-//     return;
-//   }
+static void epaper_idf_ota_finish_event_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
+  ESP_LOGI(TAG, "event received: EPAPER_IDF_OTA_EVENT_FINISH");
 
-//   switch(id) {
-//     case SYSTEM_EVENT_STA_START:
-//       // Connect wifi.
-//       esp_wifi_connect();
+  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+}
 
-//       // Disable wifi power saving modes for best throughput.
-//       esp_wifi_set_ps(WIFI_PS_NONE);
-//       break;
+static void epaper_idf_http_finish_event_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
+  ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTP_EVENT_FINISH");
 
-//     case SYSTEM_EVENT_STA_GOT_IP:
-//       xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_EVENT);
-//       ESP_LOGI(TAG, "!!! WIFI CONNECTED EVENT !!!: %s", epaper_idf_ota_task_name);
-//       break;
-
-//     case SYSTEM_EVENT_STA_DISCONNECTED:
-//       xEventGroupSetBits(wifi_event_group, WIFI_DISCONNECTED_EVENT);
-//       break;
-
-//     default:
-//       break;
-//     }
-// 	return ESP_OK;
-// }
+  xTaskCreate(&http_slideshow_task, task_name, 4096 * 8, NULL, 5, NULL);
+  ESP_LOGI(TAG, "Task started: %s", task_name);
+}
 
 static void http_slideshow_task_main(void)
 {
-  // // Wait for other task to finish first.
-  // unsigned long start = 0;
-  // while (start != 1)
-  // {
-  //   xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
-  //   vTaskDelay(1000 / portTICK_PERIOD_MS);
-  // }
-
   ESP_LOGI(TAG, "task main");
-
-  // xEventGroupWaitBits(wifi_event_group, WIFI_CONNECTED_EVENT, true, true, portMAX_DELAY);
-
-  // xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
-  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
-  
-  // xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
-  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 
   // Use the appropriate epaper device.
   EpaperIDFSPI io;
@@ -115,38 +78,6 @@ static void http_slideshow_task_main(void)
 
 extern "C" void http_slideshow_task(void *pvParameter)
 {
-  // Create the default event loop
-  // ESP_ERROR_CHECK(esp_event_loop_create_default());
-
-
-
-
-  // esp_event_loop_args_t wifi_event_loop_args = {
-  //   .queue_size = 20,
-  //   .task_name = "wifi_event_loop",
-  //   .task_priority = 5,
-  //   .task_stack_size = 4096,
-  //   .task_core_id = -1
-  // };
-
-  // esp_event_loop_handle_t wifi_event_loop_handle;
-
-  // esp_event_loop_create(&wifi_event_loop_args, &wifi_event_loop_handle);
-
-  // esp_event_handler_register_with(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, wifi_event_handler, NULL);
-
-  // esp_event_post_to(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, NULL, 0, portMAX_DELAY);
-
-  // Unregister an event handler.
-  // esp_event_handler_unregister_with(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, wifi_event_handler);
-
-  // Delete an event loop.
-  // esp_event_loop_delete(wifi_event_loop_handle);
-
-  // // Create event group.
-  // wifi_event_group = xEventGroupCreate();
-  // ESP_ERROR_CHECK(esp_event_loop_init(wifi_event_handler, NULL));
-
   while (1) {
     struct timeval now;
     gettimeofday(&now, NULL);
@@ -163,19 +94,8 @@ extern "C" void http_slideshow_task(void *pvParameter)
       delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
     }
 
-    // vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    // unsigned long start = 0;
-
     while (1)
     {
-      // Wait for another task to finish first.
-      // while (start != 1)
-      // {
-      //   xQueueReceive(epaper_idf_taskqueue_http, &start, (TickType_t)(1000 / portTICK_PERIOD_MS));
-      //   vTaskDelay(1000 / portTICK_PERIOD_MS);
-      // }
-
       ESP_LOGI(TAG, "%s loop", task_name);
 
       if (no_deep_sleep)
@@ -195,8 +115,14 @@ extern "C" void http_slideshow_task(void *pvParameter)
         // Disable wifi for deep sleep.
         esp_wifi_stop();
 
-        // esp_event_handler_unregister_with(wifi_event_loop_handle, WIFI_EVENT, WIFI_START_EVENT, wifi_event_handler);
-        // esp_event_loop_delete(wifi_event_loop_handle);
+        esp_event_handler_unregister_with(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, epaper_idf_ota_finish_event_handler);
+        esp_event_loop_delete(epaper_idf_ota_event_loop_handle);
+
+        esp_event_handler_unregister_with(epaper_idf_http_event_loop_handle, EPAPER_IDF_HTTP_EVENT, EPAPER_IDF_HTTP_EVENT_FINISH, epaper_idf_http_finish_event_handler);
+        esp_event_loop_delete(epaper_idf_http_event_loop_handle);
+        
+        esp_event_handler_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, sta_got_ip_event_handler);
+        esp_event_loop_delete_default();
 
         ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after approx: %d secs", delay_secs);
         esp_sleep_enable_timer_wakeup(delay_secs * 1000000);
@@ -216,9 +142,9 @@ extern "C" void http_slideshow_task(void *pvParameter)
         ESP_LOGI(TAG, "entering deep sleep...\n");
 
         esp_deep_sleep_start();
-      }
 
-      // vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelete(NULL);
+      }
     }
   }
 }
@@ -239,10 +165,34 @@ void http_slideshow(void)
   ESP_ERROR_CHECK(err);
 
   ESP_ERROR_CHECK(esp_netif_init());
+
   ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-  ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, sta_got_ip_handler, NULL, NULL));
-  // ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, wifi_connected_handler, NULL, NULL));
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, sta_got_ip_event_handler, NULL, NULL));
+
+  esp_event_loop_args_t epaper_idf_ota_event_loop_args = {
+    .queue_size = 5,
+    .task_name = "epaper_idf_ota_event_loop_task", // task will be created
+    .task_priority = uxTaskPriorityGet(NULL),
+    .task_stack_size = 2048,
+    .task_core_id = tskNO_AFFINITY
+  };
+
+  ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_ota_event_loop_args, &epaper_idf_ota_event_loop_handle));
+
+  ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, epaper_idf_ota_finish_event_handler, epaper_idf_ota_event_loop_handle, NULL));
+
+  esp_event_loop_args_t epaper_idf_http_event_loop_args = {
+    .queue_size = 5,
+    .task_name = "epaper_idf_http_event_loop_task", // task will be created
+    .task_priority = uxTaskPriorityGet(NULL),
+    .task_stack_size = 2048,
+    .task_core_id = tskNO_AFFINITY
+  };
+
+  ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_http_event_loop_args, &epaper_idf_http_event_loop_handle));
+
+  ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_http_event_loop_handle, EPAPER_IDF_HTTP_EVENT, EPAPER_IDF_HTTP_EVENT_FINISH, epaper_idf_http_finish_event_handler, epaper_idf_http_event_loop_handle, NULL));
 
   /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
 		 * Read "Establishing Wi-Fi or Ethernet Connection" section in
@@ -256,40 +206,4 @@ void http_slideshow(void)
 		 */
   esp_wifi_set_ps(WIFI_PS_NONE);
 #endif // CONFIG_PROJECT_CONNECT_WIFI
-
-  // ESP_LOGI(TAG, "Creating task queue ota...");
-
-  // epaper_idf_taskqueue_ota = xQueueCreate(20, sizeof(unsigned long));
-  // if (epaper_idf_taskqueue_ota == NULL)
-  // {
-  //   ESP_LOGE(TAG, "Task queue ota creation failed.");
-  //   return;
-  // }
-
-  // ESP_LOGI(TAG, "Creating task queue http...");
-
-  // epaper_idf_taskqueue_http = xQueueCreate(20, sizeof(unsigned long));
-  // if (epaper_idf_taskqueue_http == NULL)
-  // {
-  //   ESP_LOGE(TAG, "Task queue http creation failed.");
-  //   return;
-  // }
-
-  // ESP_LOGI(TAG, "Task queue created.");
-
-  // TODO: Do we need to wait here?
-  // vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-  // xTaskCreate(&http_slideshow_task, task_name, 8192 * 8, NULL, 5, NULL);
-  // ESP_LOGI(TAG, "Task started: %s", task_name);
-
-  // xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, 4096 * 8, NULL, 5, NULL);
-  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
-  
-  // xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
-  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
-
-  // while(1) {
-  //   vTaskDelay(1000 / portTICK_PERIOD_MS);
-  // }
 }

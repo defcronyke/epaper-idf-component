@@ -12,14 +12,16 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "freertos/event_groups.h"
 #include "esp_system.h"
 #include "esp_log.h"
 #include "esp_ota_ops.h"
 #include "esp_http_client.h"
 #include "esp_https_ota.h"
 #include "nvs.h"
+#include "esp_event.h"
+#include "esp_event_base.h"
 #include "epaper-idf-task.h"
+#include "epaper-idf-ota.h"
 
 #if CONFIG_PROJECT_CONNECT_WIFI
 #include "esp_wifi.h"
@@ -30,6 +32,17 @@
 static const char *TAG = "ota";
 extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
 extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
+
+esp_event_loop_handle_t epaper_idf_ota_event_loop_handle;
+
+ESP_EVENT_DEFINE_BASE(EPAPER_IDF_OTA_EVENT);
+
+// static void epaper_idf_ota_finish_event_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
+//   ESP_LOGI(TAG, "event received: EPAPER_IDF_OTA_EVENT_FINISH");
+
+//   xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
+//   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+// }
 
 static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_desc_t *running_app_info)
 {
@@ -52,13 +65,6 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_des
 void epaper_idf_ota_task(void *pvParameter)
 {
   while (1) {
-    // if (epaper_idf_taskqueue_ota == 0)
-    // {
-    //   printf("Task queue ota is not ready.\n");
-    //   vTaskDelay(1000 / portTICK_PERIOD_MS);
-    //   continue;
-    // }
-
     ESP_LOGI(TAG, "Starting OTA Task");
 
     const esp_partition_t *running = esp_ota_get_running_partition();
@@ -160,16 +166,10 @@ void epaper_idf_ota_task(void *pvParameter)
         ESP_LOGE(TAG, "Image validation failed, image is corrupted");
       }
       ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed %d", ota_finish_err);
-
-      // unsigned long start = 1;
-
-      // xQueueSend(epaper_idf_taskqueue_ota, (void *)&start, (TickType_t)0);
-
-      vTaskDelete(NULL);
-
-      // while(1) {
-      //   vTaskDelay(1000 / portTICK_PERIOD_MS);
-      // }
     }
+
+    ESP_ERROR_CHECK(esp_event_post_to(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, NULL, 0, portMAX_DELAY));
+
+    vTaskDelete(NULL);
   }
 }

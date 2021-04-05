@@ -10,8 +10,23 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-extern "C" void epaper_idf_ota_task(void *pvParameter);
+#include "esp_event_base.h"
 
-const char* epaper_idf_ota_task_name = "epaper_idf_ota_task";
+ESP_EVENT_DECLARE_BASE(EPAPER_IDF_OTA_EVENT);
+enum {
+    EPAPER_IDF_OTA_EVENT_FINISH,
+};
+
+extern esp_event_loop_handle_t epaper_idf_ota_event_loop_handle;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void epaper_idf_ota_task(void *pvParameter);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
