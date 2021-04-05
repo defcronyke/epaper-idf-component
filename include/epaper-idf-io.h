@@ -13,13 +13,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-class EpaperIDFIO {
-  public:
-    virtual void _is_derived() = 0;
-    virtual void init(uint8_t freq, uint32_t verbose);
+class EpaperIDFIO
+{
+public:
+	virtual void _is_derived() = 0;
+	virtual void init(uint8_t freq, uint32_t verbose);
 
-  private:
-    uint32_t verbose;
+private:
+	uint32_t verbose;
 };
 
 #endif

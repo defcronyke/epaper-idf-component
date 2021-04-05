@@ -21,15 +21,16 @@
 #define EPAPER_IDF_IO_SPI_FREQ EPAPER_IDF_IO_SPI_FREQ_DEFAULT
 #endif
 
-class EpaperIDFSPI : public virtual EpaperIDFIO {
-  public:
-    spi_device_handle_t spi;
+class EpaperIDFSPI : public virtual EpaperIDFIO
+{
+public:
+	spi_device_handle_t spi;
 
-    void _is_derived();
-    void init(uint8_t freq = EPAPER_IDF_IO_SPI_FREQ, uint32_t verbose = 0) override;
+	void _is_derived();
+	void init(uint8_t freq = EPAPER_IDF_IO_SPI_FREQ, uint32_t verbose = 0) override;
 
-  private:
-    uint32_t verbose = EPAPER_IDF_LOG_VERB;
+private:
+	uint32_t verbose = EPAPER_IDF_LOG_VERB;
 };
 
 #endif

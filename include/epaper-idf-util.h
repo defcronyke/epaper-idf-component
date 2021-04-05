@@ -33,33 +33,40 @@
 #define EPAPER_IDF_VER_HIDDEN(pre, ver) #pre "" #ver
 #define EPAPER_IDF_VER(pre, ver) EPAPER_IDF_VER_HIDDEN(pre, ver)
 
-#define EPAPER_IDF_VER_CL_HIDDEN(pre, sep, ver, a, b, c) pre ## sep ## ver ## a ## sep ## b ## sep ## c
+#define EPAPER_IDF_VER_CL_HIDDEN(pre, sep, ver, a, b, c) pre##sep##ver##a##sep##b##sep##c
 #define EPAPER_IDF_VER_CL(pre, sep, ver, a, b, c) EPAPER_IDF_VER_CL_HIDDEN(pre, sep, ver, a, b, c)
 
 #define EPAPER_IDF_VERSION_SHORT EPAPER_IDF_NAME2(EPAPER_IDF_VERSION_MAJOR, EPAPER_IDF_VERSION_MINOR, EPAPER_IDF_VERSION_SEP)
 #define EPAPER_IDF_VERSION EPAPER_IDF_VER(EPAPER_IDF_VERSION_PRE, EPAPER_IDF_NAME2(EPAPER_IDF_VERSION_SHORT, EPAPER_IDF_VERSION_MICRO, EPAPER_IDF_VERSION_SEP))
 #define EPAPER_IDF_VERSION_CLASS EPAPER_IDF_VER_CL(EPAPER_IDF_VERSION_CLASS_PRE, EPAPER_IDF_VERSION_CLASS_SEP, EPAPER_IDF_VERSION_PRE, EPAPER_IDF_VERSION_MAJOR, EPAPER_IDF_VERSION_MINOR, EPAPER_IDF_VERSION_MICRO)
 
-#define EPAPER_IDF_LOG_VERB_DEFAULT	0
+#define EPAPER_IDF_LOG_VERB_DEFAULT 0
 
 #ifndef EPAPER_IDF_LOG_VERB
 #define EPAPER_IDF_LOG_VERB EPAPER_IDF_LOG_VERB_DEFAULT
 #endif
 
 // Clamp a number into a fixed range.
-inline float epaper_idf_clamp(float x, float min, float max) {
-  if (x < min) {
-    return min;
-  } else if (x >= max) {
-    return max;
-  } else {
-    return x;
-  }
+inline float epaper_idf_clamp(float x, float min, float max)
+{
+	if (x < min)
+	{
+		return min;
+	}
+	else if (x >= max)
+	{
+		return max;
+	}
+	else
+	{
+		return x;
+	}
 }
 
 // Map a number into a different range.
-inline float epaper_idf_map(float x, float in_min, float in_max, float out_min, float out_max) {
-  return out_min + ((out_max - out_min) / (in_max - in_min)) * (x - in_min);
+inline float epaper_idf_map(float x, float in_min, float in_max, float out_min, float out_max)
+{
+	return out_min + ((out_max - out_min) / (in_max - in_min)) * (x - in_min);
 }
 
 #endif

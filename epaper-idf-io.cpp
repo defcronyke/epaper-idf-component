@@ -10,11 +10,13 @@
 */
 #include "epaper-idf-io.h"
 
-void EpaperIDFIO::init(uint8_t frequency, uint32_t verbose) {
-  this->verbose = verbose;
-  if (this->verbose > 0) {
-    printf("EpaperIDFIO initialized verbose message.\n");
-  }
+void EpaperIDFIO::init(uint8_t frequency, uint32_t verbose)
+{
+	this->verbose = verbose;
+	if (this->verbose > 0)
+	{
+		printf("EpaperIDFIO initialized verbose message.\n");
+	}
 
-  printf("EpaperIDFIO initialized.\n");
+	printf("EpaperIDFIO initialized.\n");
 }

@@ -14,11 +14,13 @@
 
 void EpaperIDFSPI::_is_derived() {}
 
-void EpaperIDFSPI::init(uint8_t frequency, uint32_t verbose) {
-  this->verbose = verbose;
-  if (this->verbose > 0) {
-    printf("EpaperIDFSPI initialized verbose message.\n");
-  }
+void EpaperIDFSPI::init(uint8_t frequency, uint32_t verbose)
+{
+	this->verbose = verbose;
+	if (this->verbose > 0)
+	{
+		printf("EpaperIDFSPI initialized verbose message.\n");
+	}
 
-  printf("EpaperIDFSPI initialized.\n");
+	printf("EpaperIDFSPI initialized.\n");
 }

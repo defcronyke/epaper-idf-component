@@ -24,21 +24,23 @@
 
 #define EPAPER_IDF_GDEW075T8_BUFFER_SIZE ((uint32_t(EPAPER_IDF_GDEW075T8_WIDTH) * uint32_t(EPAPER_IDF_GDEW075T8_HEIGHT) * uint32_t(EPAPER_IDF_GDEW075T8_NUM_COLOURS)) / EPAPER_IDF_GDEW075T8_NUM_BITS)
 
-class EpaperIDFDevice : public virtual EpaperIDFGFX {
-  public:
-    EpaperIDFDevice(EpaperIDFSPI& io);
+class EpaperIDFDevice : public virtual EpaperIDFGFX
+{
+public:
+	EpaperIDFDevice(EpaperIDFSPI &io);
+	virtual ~EpaperIDFDevice();
 
-    void _is_derived();
-    void init(uint32_t verbose = 0);
-    void drawPixel(int16_t x, int16_t y, uint16_t colour);
-    void update();
+	void _is_derived();
+	void init(uint32_t verbose = 0);
+	void drawPixel(int16_t x, int16_t y, uint16_t colour);
+	void update();
 
-  private:
-    EpaperIDFSPI& io;
-    const char *tag;
-    uint32_t verbose;
-    uint32_t num_colours;
-    uint8_t buffer[EPAPER_IDF_GDEW075T8_BUFFER_SIZE];
+private:
+	EpaperIDFSPI &io;
+	const char *tag;
+	uint32_t verbose;
+	uint32_t num_colours;
+	uint8_t buffer[EPAPER_IDF_GDEW075T8_BUFFER_SIZE];
 };
 
 #endif

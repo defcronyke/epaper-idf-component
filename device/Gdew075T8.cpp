@@ -12,39 +12,46 @@
 #include "epaper-idf-spi.h"
 #include "Adafruit_GFX.h"
 
-EpaperIDFDevice::EpaperIDFDevice(EpaperIDFSPI& io)
-: Adafruit_GFX(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),
-  EpaperIDFGFX(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),
-  io(io),
-  tag("epaper-idf-device"),
-  verbose(0),
-  num_colours(EPAPER_IDF_GDEW075T8_NUM_COLOURS)
+EpaperIDFDevice::EpaperIDFDevice(EpaperIDFSPI &io)
+		: Adafruit_GFX(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),
+			EpaperIDFGFX(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),
+			io(io),
+			tag("epaper-idf-device"),
+			verbose(0),
+			num_colours(EPAPER_IDF_GDEW075T8_NUM_COLOURS)
 {
-  ESP_LOGI(this->tag, "EpaperIDFDeviceGdew075T8 constructed.");
+	ESP_LOGI(this->tag, EPAPER_IDF_QUOTE(EpaperIDFDevice) " constructed");
+}
+
+EpaperIDFDevice::~EpaperIDFDevice()
+{
+	ESP_LOGI(this->tag, EPAPER_IDF_QUOTE(EpaperIDFDevice) " deconstructed");
 }
 
 void EpaperIDFDevice::_is_derived() {}
 
-void EpaperIDFDevice::init(uint32_t verbose) {
-  this->verbose = verbose;
+void EpaperIDFDevice::init(uint32_t verbose)
+{
+	this->verbose = verbose;
 
-  ESP_LOGI(tag, "EpaperIDFDeviceGdew075T8 initializing...");
+	ESP_LOGI(tag, EPAPER_IDF_QUOTE(EpaperIDFDevice) " initializing...");
 
-  this->io.init(EPAPER_IDF_IO_SPI_FREQ, this->verbose);
+	this->io.init(EPAPER_IDF_IO_SPI_FREQ, this->verbose);
 
-  // TODO: Maybe need to tweak watchdog timer settings here.
+	// TODO: Maybe need to tweak watchdog timer settings here.
 
-  if (this->verbose > 0) {
-    ESP_LOGI(tag, "EpaperIDFDeviceGdew075T8 initialized verbose message.");
-  }
+	if (this->verbose > 0)
+	{
+		ESP_LOGI(tag, EPAPER_IDF_QUOTE(EpaperIDFDevice) " initialized verbose message");
+	}
 
-  ESP_LOGI(tag, "EpaperIDFDeviceGdew075T8 initialized.");
+	ESP_LOGI(tag, EPAPER_IDF_QUOTE(EpaperIDFDevice) " initialized");
 }
 
-void EpaperIDFDevice::drawPixel(int16_t x, int16_t y, uint16_t colour) {
-
+void EpaperIDFDevice::drawPixel(int16_t x, int16_t y, uint16_t colour)
+{
 }
 
-void EpaperIDFDevice::update() {
-
+void EpaperIDFDevice::update()
+{
 }
