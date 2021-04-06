@@ -1,4 +1,5 @@
 menu "Project task config"
+    
     choice EPAPER_IDF_MAIN_TASK_CHOICE
         prompt "Select project main task"
         default EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
@@ -68,9 +69,12 @@ menu "Project task config"
         default "defcronyke.gitlab.io"
         help
             The first part of the URL above, without the protocol at the beginning.
+
 endmenu
 
-menu "Project display config"    
+
+menu "Project display config"
+
     choice EPAPER_IDF_DEVICE_MODEL_CHOICE
         prompt "Select e-paper device"
         default EPAPER_IDF_DEVICE_MODEL_NONE_OPT
@@ -256,18 +260,23 @@ menu "Project display config"
         depends on EPAPER_IDF_DEVICE_MODEL_USER_OPT
         range 0 33
         default 5
+
 endmenu
+
 
 menu "Project connection config"
 
     config EXAMPLE_CONNECT_WIFI
-        bool "connect using WiFi interface"
+        bool "Connect using WiFi interface"
         default y
         help
             Protocol examples can use Wi-Fi and/or Ethernet to connect to the network.
             Choose this option to connect with WiFi
 
     if EXAMPLE_CONNECT_WIFI
+
+        comment "WiFi Settings"
+
         config EXAMPLE_WIFI_SSID
             string "WiFi SSID"
             default "myssid"
@@ -280,6 +289,95 @@ menu "Project connection config"
             help
                 WiFi password (WPA or WPA2) for the example to use.
                 Can be left blank if the network has no security set.
+
+        comment "End WiFi Settings"
+
+    endif
+
+    config EXAMPLE_WIFI_AP_ENABLED
+        bool "Enable WiFi Access Point (conditionally)"
+        default y
+        help
+            Start up a dedicated WiFi Access Point (AP) running on the 
+            device if some conditions are met, which can then be used 
+            to change the device's WiFi connection settings through a 
+            web page.
+            
+            See the options below this one for more details.
+
+    if EXAMPLE_WIFI_AP_ENABLED
+
+        comment "WiFi Access Point Settings"
+
+        config EXAMPLE_WIFI_MAX_CONNECTION_RETRIES
+            int "WiFi Maximum Connection Retries Before AP Start"
+            default 10
+            range 0 10000
+            help
+                If a WiFi connection can't be established for whatever reason,
+                retry this number of times before starting up a dedicated access
+                point which the user can access to change the WiFi connection
+                settings.
+
+        config EXAMPLE_WIFI_CONNECTION_RETRY_TIMEOUT
+            int "WiFi Connection Retry Timeout (secs)"
+            default 10
+            range 5 10000
+            help
+                If a WiFi connection can't be established after this number of 
+                seconds, try to connect again, incrementing the counter for max 
+                connection retries.
+
+        config EXAMPLE_WIFI_AP_SSID
+            string "WiFi Access Point SSID"
+            default "wifi-net-15455"
+            help
+                If a WiFi connection can't be established after the maximum number 
+                of retries, start up an access point with this SSID, which you can
+                connect to and then access a web page where you can change the 
+                device's WiFi settings.
+
+        config EXAMPLE_WIFI_AP_PASSWORD
+            string "WiFi Access Point Password"
+            default "T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s"
+            help
+                If a WiFi connection can't be established after the maximum number 
+                of retries, start up an access point with this Password, which you 
+                can connect to and then access a web page where you can change the 
+                device's WiFi settings.
+
+        config EXAMPLE_WIFI_AP_IP
+            string "WiFi Access Point IP Address"
+            default "192.168.4.1"
+            help
+                If a WiFi connection can't be established after the maximum number 
+                of retries, start up an access point with this IP Address, which you 
+                can connect to and then access a web page where you can change the 
+                device's WiFi settings.
+
+        config EXAMPLE_WIFI_AP_ALWAYS_ON
+            bool "WiFi Access Point Always On"
+            default n
+            help
+                Enable this option to keep the device's WiFi Access Point on all the 
+                time, rather than having it only turn on when a connection to your
+                WiFi network can't be established.
+
+                Normally this device only runs an access point as a fallback if a 
+                connection to your WiFi network can't be established for some reason,
+                so you can log into the device and change its WiFi connection settings,
+                to fix the issue, if for example it needs to be set to connect to some
+                new WiFi network, or if the WiFi password was changed.
+
+                It's less secure to turn on this option, because it means the device
+                can be directly connected to if someone knows the password, and they
+                can then direct the device to connect to a different WiFi network.
+                With this disabled, the device would need to fail at establishing
+                a WiFi connection some number of times first, before its dedicated
+                access point would become available.
+        
+        comment "End WiFi Access Point Settings"
+
     endif
 
     config EXAMPLE_CONNECT_ETHERNET

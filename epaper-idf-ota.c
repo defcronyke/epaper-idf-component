@@ -1,7 +1,17 @@
-/* epaper-idf - ota.c
+/*	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
+		This code is released under the license terms contained in the
+		file named LICENSE, which is found in the top-level folder in
+		this project. You must agree to follow those license terms,
+		otherwise you aren't allowed to copy, distribute, or use any 
+		part of this project in any way.
+
+		Contains some modified example code from here:
+		https://github.com/espressif/esp-idf/blob/release/v4.2/examples/system/ota/advanced_https_ota/main/advanced_https_ota_example.c
+
+		Original Example Code Header:
 		This code is in the Public Domain (or CC0 licensed, at your option.)
 
 		Unless required by applicable law or agreed to in writing, this

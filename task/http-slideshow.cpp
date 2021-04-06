@@ -16,7 +16,7 @@
 #include <sys/time.h>
 #include <math.h>
 #include "esp_system.h"
-#include "nvs_flash.h"
+// #include "nvs_flash.h"
 #include "esp_event.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -47,9 +47,9 @@ extern "C" void http_slideshow_task(void *pvParameter);
 
 const char *TAG = "http-slideshow";
 
-const char *http_slideshow_task_name = "http_slideshow_task";
-const uint32_t http_slideshow_task_stack_depth = 4096;
-UBaseType_t http_slideshow_task_priority = 5;
+const char *epaper_idf_wifi_task_name = "epaper_idf_wifi_task";
+const uint32_t epaper_idf_wifi_task_stack_depth = 2048;
+UBaseType_t epaper_idf_wifi_task_priority = 5;
 
 const char *epaper_idf_ota_task_name = "epaper_idf_ota_task";
 const uint32_t epaper_idf_ota_task_stack_depth = 2048;
@@ -59,13 +59,16 @@ const char *epaper_idf_http_task_name = "epaper_idf_http_task";
 const uint32_t epaper_idf_http_task_stack_depth = 2048;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
-static void http_slideshow_task_main(void)
-{
-	ESP_LOGI(TAG, "task main");
+const char *http_slideshow_task_name = "http_slideshow_task";
+const uint32_t http_slideshow_task_stack_depth = 4096;
+UBaseType_t http_slideshow_task_priority = 5;
 
-	// Use the appropriate epaper device.
-	EpaperIDFSPI io;
-	EpaperIDFDevice dev(io);
+static void epaper_idf_wifi_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
+{
+	ESP_LOGI(TAG, "event received: EPAPER_IDF_WIFI_EVENT_FINISH");
+
+	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, NULL, epaper_idf_wifi_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_wifi_task_name);
 }
 
 static void sta_got_ip_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
@@ -90,6 +93,15 @@ static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_ba
 
 	xTaskCreate(&http_slideshow_task, http_slideshow_task_name, http_slideshow_task_stack_depth * 8, NULL, http_slideshow_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", http_slideshow_task_name);
+}
+
+static void http_slideshow_task_main(void)
+{
+	ESP_LOGI(TAG, "task main");
+
+	// Use the appropriate epaper device.
+	EpaperIDFSPI io;
+	EpaperIDFDevice dev(io);
 }
 
 // Enter deep sleep.
@@ -176,20 +188,11 @@ extern "C" void http_slideshow_task(void *pvParameter)
 
 void http_slideshow(void)
 {
-	// Initialize NVS.
-	esp_err_t err = nvs_flash_init();
-	if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
-	{
-		// 1.OTA app partition table has a smaller NVS partition size than the non-OTA
-		// partition table. This size mismatch may cause NVS initialization to fail.
-		// 2.NVS partition contains data in new format and cannot be recognized by this version of code.
-		// If this happens, we erase NVS partition and initialize NVS again.
-		ESP_ERROR_CHECK(nvs_flash_erase());
-		err = nvs_flash_init();
-	}
-	ESP_ERROR_CHECK(err);
 
-	ESP_ERROR_CHECK(esp_netif_init());
+
+
+
+
 
 	ESP_ERROR_CHECK(esp_event_loop_create_default());
 

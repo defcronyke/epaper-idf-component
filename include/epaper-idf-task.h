@@ -1,5 +1,5 @@
-#ifndef __EPAPER_IDF_TASK_H_INCLUDED__
-#define __EPAPER_IDF_TASK_H_INCLUDED__
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_TASK_H_INCLUDED__
+#define __EPAPER_IDF_COMPONENT_EPAPER_IDF_TASK_H_INCLUDED__
 /*  epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>

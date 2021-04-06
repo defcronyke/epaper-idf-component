@@ -11,6 +11,7 @@
 		Contains some modified example code from here:
 		https://github.com/espressif/esp-idf/blob/release/v4.2/examples/protocols/https_mbedtls/main/https_mbedtls_example_main.c
 
+		Original Example Code Header:
 		Original Copyright (C) 2006-2016, ARM Limited, All Rights Reserved, Apache 2.0 License.
 		Additions Copyright (C) Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD, Apache 2.0 License.
 

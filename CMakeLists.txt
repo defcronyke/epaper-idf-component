@@ -5,6 +5,7 @@ idf_component_register(
     "epaper-idf-io.cpp"
     "epaper-idf-ota.c"
     "epaper-idf-spi.cpp"
+    "epaper-idf-wifi.c"
 
     "device/Gdew075T8.cpp"
 
