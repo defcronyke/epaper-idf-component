@@ -34,22 +34,23 @@ menu "[<>] Project connection config"
                 WiFi password (WPA or WPA2) for the example to use.
                 Can be left blank if the network has no security set.
 
-        config EXAMPLE_WIFI_INITIAL_CONNECTION_TIMEOUT
-            int "WiFi Initial Connection Timeout (secs)"
+        config EXAMPLE_WIFI_CONNECT_TIMEOUT
+            int "WiFi Connect Timeout (secs)"
             default 20
             range 1 10000
             help
                 If a WiFi connection can't be established after this number of 
-                seconds at startup, try to connect again (if retries are enabled 
-                in the below option).
+                seconds, try to connect again (if retries are enabled in the 
+                below option).
 
         config EXAMPLE_WIFI_MAX_CONNECTION_RETRIES
             int "WiFi Maximum Connection Retries"
-            default 0
-            range 0 10000
+            default -1
+            range -1 10000
             help
                 If a WiFi connection can't be established for whatever reason,
-                retry this number of times before giving up.
+                retry this number of times before giving up. Set to -1 for infinite 
+                retries.
 
         comment " ----- End WiFi Settings ----- "
 
@@ -73,7 +74,7 @@ menu "[<>] Project connection config"
 
         choice EXAMPLE_WIFI_AP_STARTUP_CONDITION
             prompt "WiFi Access Point Startup"
-            default EXAMPLE_WIFI_AP_STARTUP_MAX_CONNECTION_RETRIES if EXAMPLE_CONNECT_WIFI
+            default EXAMPLE_WIFI_AP_STARTUP_MAX_CONNECTION_RETRIES_OPT if EXAMPLE_CONNECT_WIFI
             default EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON if !EXAMPLE_CONNECT_WIFI
             help
                 Choose the condition when the device's built-in
@@ -82,19 +83,19 @@ menu "[<>] Project connection config"
                 device and access a web page where you can change
                 the device's WiFi connection settings.
 
-            config EXAMPLE_WIFI_AP_STARTUP_MAX_CONNECTION_RETRIES
-                bool "Max Connection Retries"
+            config EXAMPLE_WIFI_AP_STARTUP_MAX_CONNECTION_RETRIES_OPT
+                bool "After Max Connection Retries"
                 depends on EXAMPLE_CONNECT_WIFI
                 help
                     The device's built-in WiFi Access Point will become available
                     after the device fails to connect to its configured WiFi network
-                    after a maximum number of retries (defined in an earlier setting).
+                    after a maximum number of retries (defined below).
 
                     You can then connect to the device directly through this WiFi
                     Access Point, and access a web page where you can change its
                     WiFi connection settings.
 
-            config EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON
+            config EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
                 bool "Always On"
                 help
                     Keep the device's built-in WiFi Access Point turned on all the time.
@@ -105,6 +106,17 @@ menu "[<>] Project connection config"
                     different WiFi network.
 
         endchoice
+
+        config EXAMPLE_WIFI_AP_STARTUP_MAX_CONNECTION_RETRIES
+            int "Max Connection Retries Before Starting WiFi AP"
+            depends on EXAMPLE_WIFI_AP_STARTUP_MAX_CONNECTION_RETRIES_OPT
+            default 1
+            range 0 10000
+            help
+                The device's built-in WiFi Access Point will become available
+                after the device fails to connect to a WiFi network, and then
+                after attempting to reconnect this number of times and still
+                failing.
 
         config EXAMPLE_WIFI_AP_SSID
             string "WiFi Access Point SSID"
