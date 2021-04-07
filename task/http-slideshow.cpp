@@ -51,7 +51,7 @@ extern "C" void http_slideshow_task(void *pvParameter);
 const char *TAG = "http-slideshow";
 
 const char *epaper_idf_wifi_task_name = "epaper_idf_wifi_task";
-const uint32_t epaper_idf_wifi_task_stack_depth = 2048;
+const uint32_t epaper_idf_wifi_task_stack_depth = 4096;
 UBaseType_t epaper_idf_wifi_task_priority = 5;
 
 const char *epaper_idf_ota_task_name = "epaper_idf_ota_task";
