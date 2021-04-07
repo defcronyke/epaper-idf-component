@@ -26,7 +26,6 @@
 #include "esp_system.h"
 #include "esp_event.h"
 #include "nvs_flash.h"
-
 #if CONFIG_EXAMPLE_CONNECT_WIFI
 #include "esp_wifi.h"
 #endif
@@ -55,6 +54,9 @@ static void epaper_idf_wifi_init(void) {
 void epaper_idf_wifi_task(void* pvParameter) {
 	while (1) {
 		epaper_idf_wifi_init();
+
+		// Send an event which says "this task is finished".
+		ESP_ERROR_CHECK(esp_event_post_to(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, NULL, 0, portMAX_DELAY));
 
 		vTaskDelete(NULL);
 	}

@@ -24,7 +24,9 @@
 // #include "nvs_flash.h"
 #include "esp_event.h"
 #include "esp_sleep.h"
+#if CONFIG_EXAMPLE_CONNECT_WIFI
 #include "esp_wifi.h"
+#endif
 #include "driver/rtc_io.h"
 #include "soc/rtc.h"
 #include "protocol_examples_common.h"
