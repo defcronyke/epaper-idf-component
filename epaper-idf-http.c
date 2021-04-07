@@ -27,19 +27,21 @@
 		See the License for the specific language governing permissions and
 		limitations under the License.
 */
+#include "epaper-idf-http.h"
 #include <string.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "freertos/event_groups.h"
+// #include "freertos/event_groups.h"
 #include "esp_log.h"
-#include "protocol_examples_common.h"
-#include "esp_netif.h"
-#include "esp_wifi.h"
-#include "esp_event.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
+#include "esp_event.h"
+#include "esp_netif.h"
+#if CONFIG_EXAMPLE_CONNECT_WIFI
+#include "esp_wifi.h"
+#endif
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
@@ -54,11 +56,9 @@
 #include "mbedtls/error.h"
 #include "mbedtls/certs.h"
 #include "esp_crt_bundle.h"
+#include "protocol_examples_common.h"
 #include "epaper-idf-task.h"
-#include "epaper-idf-http.h"
 
-#if CONFIG_PROJECT_CONNECT_WIFI
-#endif
 
 static const char *TAG = "epaper-idf-http";
 

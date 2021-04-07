@@ -24,8 +24,16 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_log.h"
 #include "esp_system.h"
+#include "esp_event.h"
 #include "nvs_flash.h"
+
+#if CONFIG_EXAMPLE_CONNECT_WIFI
 #include "esp_wifi.h"
+#endif
+
+esp_event_loop_handle_t epaper_idf_wifi_event_loop_handle;
+
+ESP_EVENT_DEFINE_BASE(EPAPER_IDF_WIFI_EVENT);
 
 static void epaper_idf_wifi_init(void) {
 	// Initialize NVS.

@@ -15,14 +15,14 @@
 #include <time.h>
 #include <sys/time.h>
 #include <math.h>
-#include "esp_system.h"
-// #include "nvs_flash.h"
-#include "esp_event.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "freertos/event_groups.h"
+// #include "freertos/event_groups.h"
 #include "esp_log.h"
+#include "esp_system.h"
+// #include "nvs_flash.h"
+#include "esp_event.h"
 #include "esp_sleep.h"
 #include "esp_wifi.h"
 #include "driver/rtc_io.h"
@@ -31,7 +31,8 @@
 #include "epaper-idf-device.h"
 #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
-#include "epaper-idf-task.h"
+// #include "epaper-idf-task.h"
+#include "epaper-idf-wifi.h"
 #include "epaper-idf-ota.h"
 #include "epaper-idf-http.h"
 
@@ -67,8 +68,18 @@ static void epaper_idf_wifi_finish_event_handler(void *handler_arg, esp_event_ba
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_WIFI_EVENT_FINISH");
 
-	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, NULL, epaper_idf_wifi_task_priority, NULL);
-	ESP_LOGI(TAG, "Task started: %s", epaper_idf_wifi_task_name);
+	/* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
+		 * Read "Establishing Wi-Fi or Ethernet Connection" section in
+		 * examples/protocols/README.md for more information about this function.
+		*/
+	ESP_ERROR_CHECK(example_connect());
+
+#if CONFIG_PROJECT_CONNECT_WIFI
+	/* Ensure to disable any WiFi power save mode, this allows best throughput
+		 * and hence timings for overall OTA operation.
+		 */
+	esp_wifi_set_ps(WIFI_PS_NONE);
+#endif // CONFIG_PROJECT_CONNECT_WIFI
 }
 
 static void sta_got_ip_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
@@ -112,6 +123,9 @@ static void http_slideshow_deep_sleep(int32_t delay_secs)
 	// Disable wifi for deep sleep.
 	ESP_ERROR_CHECK(example_disconnect());
 	esp_wifi_stop();
+
+	esp_event_handler_unregister_with(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, epaper_idf_wifi_finish_event_handler);
+	esp_event_loop_delete(epaper_idf_wifi_event_loop_handle);
 
 	esp_event_handler_unregister_with(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, epaper_idf_ota_finish_event_handler);
 	esp_event_loop_delete(epaper_idf_ota_event_loop_handle);
@@ -188,15 +202,18 @@ extern "C" void http_slideshow_task(void *pvParameter)
 
 void http_slideshow(void)
 {
-
-
-
-
-
-
 	ESP_ERROR_CHECK(esp_event_loop_create_default());
-
 	ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, sta_got_ip_event_handler, NULL, NULL));
+
+	esp_event_loop_args_t epaper_idf_wifi_event_loop_args = {
+			.queue_size = 5,
+			.task_name = "epaper_idf_wifi_event_loop_task", // task will be created
+			.task_priority = uxTaskPriorityGet(NULL),
+			.task_stack_size = epaper_idf_wifi_task_stack_depth,
+			.task_core_id = tskNO_AFFINITY};
+
+	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_wifi_event_loop_args, &epaper_idf_wifi_event_loop_handle));
+	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, epaper_idf_wifi_finish_event_handler, epaper_idf_wifi_event_loop_handle, NULL));
 
 	esp_event_loop_args_t epaper_idf_ota_event_loop_args = {
 			.queue_size = 5,
@@ -206,7 +223,6 @@ void http_slideshow(void)
 			.task_core_id = tskNO_AFFINITY};
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_ota_event_loop_args, &epaper_idf_ota_event_loop_handle));
-
 	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, epaper_idf_ota_finish_event_handler, epaper_idf_ota_event_loop_handle, NULL));
 
 	esp_event_loop_args_t epaper_idf_http_event_loop_args = {
@@ -217,19 +233,9 @@ void http_slideshow(void)
 			.task_core_id = tskNO_AFFINITY};
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_http_event_loop_args, &epaper_idf_http_event_loop_handle));
-
 	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_http_event_loop_handle, EPAPER_IDF_HTTP_EVENT, EPAPER_IDF_HTTP_EVENT_FINISH, epaper_idf_http_finish_event_handler, epaper_idf_http_event_loop_handle, NULL));
 
-	/* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
-		 * Read "Establishing Wi-Fi or Ethernet Connection" section in
-		 * examples/protocols/README.md for more information about this function.
-		*/
-	ESP_ERROR_CHECK(example_connect());
-
-#if CONFIG_PROJECT_CONNECT_WIFI
-	/* Ensure to disable any WiFi power save mode, this allows best throughput
-		 * and hence timings for overall OTA operation.
-		 */
-	esp_wifi_set_ps(WIFI_PS_NONE);
-#endif // CONFIG_PROJECT_CONNECT_WIFI
+	// Initialize wifi.
+	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, NULL, epaper_idf_wifi_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_wifi_task_name);
 }
