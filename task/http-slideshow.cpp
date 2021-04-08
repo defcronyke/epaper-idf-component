@@ -57,13 +57,13 @@ static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_ba
 	ESP_LOGI(TAG, "Task started: %s", http_slideshow_task_name);
 }
 
+// Disable wifi for deep sleep.
+static const epaper_idf_wifi_task_action_t wifi_task_action = EPAPER_IDF_WIFI_TASK_ACTION_STOP;
+
 // Enter deep sleep.
 static void http_slideshow_deep_sleep(int32_t delay_secs)
 {
 	ESP_LOGI(TAG, "preparing for deep sleep");
-
-	// Disable wifi for deep sleep.
-	static const epaper_idf_wifi_task_action_t wifi_task_action = EPAPER_IDF_WIFI_TASK_ACTION_STOP;
 
 	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, (void*)&wifi_task_action, epaper_idf_wifi_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_wifi_task_name);
