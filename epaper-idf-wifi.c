@@ -77,7 +77,7 @@ static void epaper_idf_wifi_disconnect(void) {
 void epaper_idf_wifi_task(void* pvParameter) {	
 	bool wifi_is_init = false;
 
-	enum epaper_idf_wifi_task_action_t action = *(enum epaper_idf_wifi_task_action_t*)pvParameter;
+	epaper_idf_wifi_task_action_t action = *(epaper_idf_wifi_task_action_t*)pvParameter;
 
 	while (1) {
 		switch (action) {
