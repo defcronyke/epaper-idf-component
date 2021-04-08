@@ -115,6 +115,19 @@ extern "C" void http_slideshow_task(void *pvParameter)
 {
 	ESP_LOGI(TAG, "task %s is running", http_slideshow_task_name);
 
+	// Number of seconds to delay (either with deep sleep or the vTaskDelay function).
+	int32_t delay_secs = (int32_t)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS;
+	bool no_deep_sleep = false;
+	if (delay_secs < 0)
+	{
+		no_deep_sleep = true;
+		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
+	}
+	else
+	{
+		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
+	}
+
 	while (1)
 	{
 		struct timeval now;
@@ -126,30 +139,19 @@ extern "C" void http_slideshow_task(void *pvParameter)
 		EpaperIDFSPI io;
 		EpaperIDFDevice dev(io);
 
-		// Number of seconds to delay (either with deep sleep or the vTaskDelay function).
-		int32_t delay_secs = (int32_t)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS;
-		bool no_deep_sleep = false;
-		if (delay_secs < 0)
-		{
-			no_deep_sleep = true;
-			delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
-		}
-		else
-		{
-			delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
-		}
-
 		if (no_deep_sleep)
 		{
 			ESP_LOGI(TAG, "waiting for %d secs\n", delay_secs);
 			vTaskDelay((delay_secs * 1000) / portTICK_PERIOD_MS);
 		} else {
-			// Enter deep sleep.
-			http_slideshow_stop_wifi(delay_secs);
-
-			vTaskDelete(NULL);
+			break;
 		}
 	}
+
+	// Enter deep sleep.
+	http_slideshow_stop_wifi(delay_secs);
+
+	vTaskDelete(NULL);
 }
 
 void http_slideshow(void)
