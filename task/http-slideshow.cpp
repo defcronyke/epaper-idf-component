@@ -57,15 +57,16 @@ static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_ba
 	ESP_LOGI(TAG, "Task started: %s", http_slideshow_task_name);
 }
 
-// Disable wifi for deep sleep.
-static const epaper_idf_wifi_task_action_t wifi_task_action = EPAPER_IDF_WIFI_TASK_ACTION_STOP;
 
 // Enter deep sleep.
 static void http_slideshow_deep_sleep(int32_t delay_secs)
 {
 	ESP_LOGI(TAG, "preparing for deep sleep");
 
-	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, (void*)&wifi_task_action, epaper_idf_wifi_task_priority, NULL);
+	// Disable wifi for deep sleep.
+	static const epaper_idf_wifi_task_action_t wifi_task_action_stop = EPAPER_IDF_WIFI_TASK_ACTION_STOP;
+
+	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, (void*)&wifi_task_action_stop, epaper_idf_wifi_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_wifi_task_name);
 
 	esp_event_handler_unregister_with(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, epaper_idf_wifi_finish_event_handler);
@@ -189,6 +190,8 @@ void http_slideshow(void)
 	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_http_event_loop_handle, EPAPER_IDF_HTTP_EVENT, EPAPER_IDF_HTTP_EVENT_FINISH, epaper_idf_http_finish_event_handler, epaper_idf_http_event_loop_handle, NULL));
 
 	// Initialize wifi and connect.
-	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, (void*)EPAPER_IDF_WIFI_TASK_ACTION_CONNECT, epaper_idf_wifi_task_priority, NULL);
+	static const epaper_idf_wifi_task_action_t wifi_task_action_connect = EPAPER_IDF_WIFI_TASK_ACTION_CONNECT;
+
+	xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, (void*)&wifi_task_action_connect, epaper_idf_wifi_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_wifi_task_name);
 }
