@@ -10,10 +10,11 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/event_groups.h"
+#include <string.h>
+#include <stdlib.h>
+// #include "freertos/FreeRTOS.h"
+// #include "freertos/task.h"
+// #include "freertos/queue.h"
 #include "esp_system.h"
 
 #ifndef EPAPER_IDF_MAIN_TASK_HEADER

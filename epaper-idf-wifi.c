@@ -29,10 +29,13 @@
 #if CONFIG_EXAMPLE_CONNECT_WIFI
 #include "esp_wifi.h"
 #endif
+#include "protocol_examples_common.h"
 
 esp_event_loop_handle_t epaper_idf_wifi_event_loop_handle;
 
 ESP_EVENT_DEFINE_BASE(EPAPER_IDF_WIFI_EVENT);
+
+const char *epaper_idf_wifi_tag = "epaper-idf-wifi";
 
 static void epaper_idf_wifi_init(void) {
 	// Initialize NVS.
@@ -51,9 +54,79 @@ static void epaper_idf_wifi_init(void) {
 	ESP_ERROR_CHECK(esp_netif_init());
 }
 
-void epaper_idf_wifi_task(void* pvParameter) {
+static void epaper_idf_wifi_connect(void) {
+	/*	This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
+			Read "Establishing Wi-Fi or Ethernet Connection" section in
+			$IDF_PATH/examples/protocols/README.md for more information about this function.
+	*/
+	ESP_ERROR_CHECK(example_connect());
+
+#if CONFIG_PROJECT_CONNECT_WIFI
+	/* Ensure to disable any WiFi power save mode, this allows best throughput
+		 and hence timings for overall OTA operation.
+	*/
+	esp_wifi_set_ps(WIFI_PS_NONE);
+#endif // CONFIG_PROJECT_CONNECT_WIFI
+}
+
+static void epaper_idf_wifi_disconnect(void) {
+	ESP_ERROR_CHECK(example_disconnect());
+}
+
+// Attempt to connect to wifi each time this task runs.
+void epaper_idf_wifi_task(void* pvParameter) {	
+	bool wifi_is_init = false;
+
+	enum epaper_idf_wifi_task_action_t action = *(enum epaper_idf_wifi_task_action_t*)pvParameter;
+
 	while (1) {
-		epaper_idf_wifi_init();
+		switch (action) {
+			/** Initialize (if necessary), and connect to a wifi network. */
+			case EPAPER_IDF_WIFI_TASK_ACTION_CONNECT: {
+				ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_CONNECT");
+
+				// Init only once.
+				if (!wifi_is_init) {
+					ESP_LOGI(epaper_idf_wifi_tag, "wifi initializing...");
+					epaper_idf_wifi_init();
+					wifi_is_init = true;
+				}
+
+				ESP_LOGI(epaper_idf_wifi_tag, "attempting to connect to wifi network...");
+
+				// Connect to wifi.
+				epaper_idf_wifi_connect();
+
+				break;
+			}
+
+			/** Disconnect wifi interface. */
+			case EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT: {
+				ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT");
+
+				// Disconnect wifi.
+				epaper_idf_wifi_disconnect();
+
+				break;
+			}
+
+			/** Disconnect and stop wifi interface. */
+			case EPAPER_IDF_WIFI_TASK_ACTION_STOP: {
+				ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT");
+
+				// Disconnect wifi.
+				epaper_idf_wifi_disconnect();
+
+				// Stop wifi interface.
+				esp_wifi_stop();
+
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
 
 		// Send an event which says "this task is finished".
 		ESP_ERROR_CHECK(esp_event_post_to(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, NULL, 0, portMAX_DELAY));

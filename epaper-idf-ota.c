@@ -22,20 +22,20 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "esp_system.h"
 #include "esp_log.h"
+#include "esp_system.h"
 #include "esp_ota_ops.h"
 #include "esp_http_client.h"
 #include "esp_https_ota.h"
 #include "nvs.h"
-#include "esp_event.h"
-#include "esp_event_base.h"
-#include "epaper-idf-task.h"
-#include "epaper-idf-ota.h"
-
 #if CONFIG_PROJECT_CONNECT_WIFI
 #include "esp_wifi.h"
 #endif
+#include "esp_event.h"
+#include "esp_event_base.h"
+// #include "epaper-idf-task.h"
+#include "epaper-idf-ota.h"
+
 
 #define OTA_URL_SIZE 256
 

@@ -13,7 +13,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
-// #include "esp_system.h"
 #include "esp_event_base.h"
 
 // An event base type for "epaper-idf-wifi".
@@ -25,6 +24,15 @@ enum	// The events.
 
 // The event loop handle.
 extern esp_event_loop_handle_t epaper_idf_wifi_event_loop_handle;
+
+// #define epaper_idf_wifi_task_action_t uint32_t
+
+/** Actions this task can perform. */
+enum epaper_idf_wifi_task_action_t {
+	EPAPER_IDF_WIFI_TASK_ACTION_CONNECT = 1U,	/**< Initialize (if necessary), and connect to a wifi network. */
+	EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT,		/**< Disconnect wifi interface. */
+	EPAPER_IDF_WIFI_TASK_ACTION_STOP,					/**< Disconnect and stop wifi interface. */
+};
 
 #ifdef __cplusplus
 extern "C"

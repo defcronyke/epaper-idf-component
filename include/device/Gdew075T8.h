@@ -12,9 +12,17 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "epaper-idf-device.h"
-#include "epaper-idf-gfx.h"
+#include "freertos/FreeRTOS.h"
+// #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
+#include "epaper-idf-device.h"
+/** Include the header file for the e-paper display device
+  that you selected in the Kconfig menu settings. It defines 
+  a "EpaperIDFDevice" class which can be used to interact 
+  with your e-paper display device. Choose your e-paper device
+  from the Kconfig menu, and make sure to set the correct pin
+  mappings while you're at it. */
+#include EPAPER_IDF_DEVICE_HEADER
 
 #define EPAPER_IDF_GDEW075T8_WIDTH 640
 #define EPAPER_IDF_GDEW075T8_HEIGHT 384

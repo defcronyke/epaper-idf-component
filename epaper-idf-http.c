@@ -57,7 +57,7 @@
 #include "mbedtls/certs.h"
 #include "esp_crt_bundle.h"
 #include "protocol_examples_common.h"
-#include "epaper-idf-task.h"
+// #include "epaper-idf-task.h"
 
 
 static const char *TAG = "epaper-idf-http";

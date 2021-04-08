@@ -10,6 +10,9 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
+#include <string.h>
+#include <stdlib.h>
+#include "freertos/FreeRTOS.h"
 #include "esp_event_base.h"
 
 // An event base type for "epaper-idf-ota".
