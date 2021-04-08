@@ -15,23 +15,22 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_event_base.h"
 
-// An event base type for "epaper-idf-wifi".
+/** An event base type for "epaper-idf-wifi". */
 ESP_EVENT_DECLARE_BASE(EPAPER_IDF_WIFI_EVENT);
 enum	// The events.
 {
-	EPAPER_IDF_WIFI_EVENT_FINISH,	// An event for "this task is finished".
+	EPAPER_IDF_WIFI_EVENT_FINISH,		/**< An event for "this task is finished". */
+	EPAPER_IDF_WIFI_EVENT_STOPPED,	/**< Do something after the wifi interface has stopped. */
 };
 
 // The event loop handle.
 extern esp_event_loop_handle_t epaper_idf_wifi_event_loop_handle;
 
-// #define epaper_idf_wifi_task_action_t uint32_t
-
 /** Actions this task can perform. */
 enum epaper_idf_wifi_task_action_t {
 	EPAPER_IDF_WIFI_TASK_ACTION_CONNECT = 1U,	/**< Initialize (if necessary), and connect to a wifi network. */
-	EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT,		/**< Disconnect wifi interface. */
-	EPAPER_IDF_WIFI_TASK_ACTION_STOP,					/**< Disconnect and stop wifi interface. */
+	EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT,		/**< Disconnect the wifi interface. */
+	EPAPER_IDF_WIFI_TASK_ACTION_STOP,					/**< Disconnect and stop the wifi interface. */
 };
 
 #ifdef __cplusplus

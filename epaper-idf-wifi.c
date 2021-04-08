@@ -112,13 +112,16 @@ void epaper_idf_wifi_task(void* pvParameter) {
 
 			/** Disconnect and stop wifi interface. */
 			case EPAPER_IDF_WIFI_TASK_ACTION_STOP: {
-				ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT");
+				ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_STOP");
 
 				// Disconnect wifi.
 				epaper_idf_wifi_disconnect();
 
 				// Stop wifi interface.
 				esp_wifi_stop();
+
+				// Send an event which says "this task is finished".
+				ESP_ERROR_CHECK(esp_event_post_to(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_STOPPED, NULL, 0, portMAX_DELAY));
 
 				break;
 			}

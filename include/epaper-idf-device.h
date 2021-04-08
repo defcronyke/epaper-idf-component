@@ -16,8 +16,6 @@
 #include "esp_system.h"
 #include "epaper-idf-util.h"
 #include "epaper-idf-io.h"
-// #include "epaper-idf-gfx.h"
-// #include "epaper-idf-spi.h"
 
 #ifndef EPAPER_IDF_DEVICE_HEADER
 #ifdef CONFIG_EPAPER_IDF_DEVICE_MODEL_GDEW075T8_OPT
@@ -40,8 +38,8 @@
  * 				files, and in your epaper-idf-component
  * 				task header.
  * 
-  					#include "epaper-idf-device.h"
-  					#include EPAPER_IDF_DEVICE_HEADER
+					#include "epaper-idf-device.h"
+					#include EPAPER_IDF_DEVICE_HEADER
  */
 #define EPAPER_IDF_DEVICE_HEADER CONFIG_EPAPER_IDF_DEVICE_MODEL_USER
 

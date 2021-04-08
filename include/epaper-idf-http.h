@@ -30,8 +30,8 @@ extern "C"
 {
 #endif
 
-	// The esp-idf task function.
-	void epaper_idf_http_task(void *pvParameter);
+// The esp-idf task function.
+void epaper_idf_http_task(void *pvParameter);
 
 #ifdef __cplusplus
 }

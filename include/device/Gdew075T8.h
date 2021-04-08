@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
-// #include "epaper-idf-gfx.h"
 #include "epaper-idf-spi.h"
 #include "epaper-idf-device.h"
 /** Include the header file for the e-paper display device

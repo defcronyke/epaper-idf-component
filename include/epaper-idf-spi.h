@@ -12,9 +12,7 @@
 */
 #include "driver/spi_master.h"
 #include "driver/gpio.h"
-// #include "epaper-idf-util.h"
 #include "epaper-idf-gfx.h"
-// #include "Adafruit_GFX.h"
 
 #define EPAPER_IDF_IO_SPI_FREQ_DEFAULT 4
 

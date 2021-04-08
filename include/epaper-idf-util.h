@@ -12,7 +12,7 @@
 */
 #include <string.h>
 #include <stdlib.h>
-// #include "freertos/FreeRTOS.h"
+#include "freertos/FreeRTOS.h"
 
 #define EPAPER_IDF_LOG_VERB_DEFAULT 0
 #ifndef EPAPER_IDF_LOG_VERB
@@ -33,6 +33,21 @@
 
 // Depends on the above pre-processor directives.
 #include "epaper-idf-version.h"
+
+#define EPAPER_IDF_VERSION_PRE v
+#define EPAPER_IDF_VERSION_SEP .
+#define EPAPER_IDF_VERSION_CLASS_PRE EpaperIDF
+#define EPAPER_IDF_VERSION_CLASS_SEP _
+
+#define EPAPER_IDF_VER_HIDDEN(pre, ver) #pre "" #ver
+#define EPAPER_IDF_VER(pre, ver) EPAPER_IDF_VER_HIDDEN(pre, ver)
+
+#define EPAPER_IDF_VER_CL_HIDDEN(pre, sep, ver, a, b, c) pre##sep##ver##a##sep##b##sep##c
+#define EPAPER_IDF_VER_CL(pre, sep, ver, a, b, c) EPAPER_IDF_VER_CL_HIDDEN(pre, sep, ver, a, b, c)
+
+#define EPAPER_IDF_VERSION_SHORT EPAPER_IDF_NAME2(EPAPER_IDF_VERSION_MAJOR, EPAPER_IDF_VERSION_MINOR, EPAPER_IDF_VERSION_SEP)
+#define EPAPER_IDF_VERSION EPAPER_IDF_VER(EPAPER_IDF_VERSION_PRE, EPAPER_IDF_NAME2(EPAPER_IDF_VERSION_SHORT, EPAPER_IDF_VERSION_MICRO, EPAPER_IDF_VERSION_SEP))
+#define EPAPER_IDF_VERSION_CLASS EPAPER_IDF_VER_CL(EPAPER_IDF_VERSION_CLASS_PRE, EPAPER_IDF_VERSION_CLASS_SEP, EPAPER_IDF_VERSION_PRE, EPAPER_IDF_VERSION_MAJOR, EPAPER_IDF_VERSION_MINOR, EPAPER_IDF_VERSION_MICRO)
 
 // Clamp a number into a fixed range.
 inline float epaper_idf_clamp(float x, float min, float max)

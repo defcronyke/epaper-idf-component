@@ -33,7 +33,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-// #include "freertos/event_groups.h"
 #include "esp_log.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
@@ -57,8 +56,6 @@
 #include "mbedtls/certs.h"
 #include "esp_crt_bundle.h"
 #include "protocol_examples_common.h"
-// #include "epaper-idf-task.h"
-
 
 static const char *TAG = "epaper-idf-http";
 

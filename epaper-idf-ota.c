@@ -33,9 +33,7 @@
 #endif
 #include "esp_event.h"
 #include "esp_event_base.h"
-// #include "epaper-idf-task.h"
 #include "epaper-idf-ota.h"
-
 
 #define OTA_URL_SIZE 256
 
@@ -46,13 +44,6 @@ extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 esp_event_loop_handle_t epaper_idf_ota_event_loop_handle;
 
 ESP_EVENT_DEFINE_BASE(EPAPER_IDF_OTA_EVENT);
-
-// static void epaper_idf_ota_finish_event_handler(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
-//   ESP_LOGI(TAG, "event received: EPAPER_IDF_OTA_EVENT_FINISH");
-
-//   xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, 4096 * 8, NULL, 5, NULL);
-//   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
-// }
 
 static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_desc_t *running_app_info)
 {

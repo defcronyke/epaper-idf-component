@@ -17,8 +17,6 @@
 #include "esp_system.h"
 #include "Adafruit_GFX.h"
 #include "epaper-idf-device.h"
-// #include "epaper-idf-util.h"
-// #include "epaper-idf-io.h"
 
 #define EpaperIDFGFX EPAPER_IDF_VERSION_CLASS
 

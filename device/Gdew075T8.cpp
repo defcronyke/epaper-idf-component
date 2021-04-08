@@ -16,9 +16,6 @@
   from the Kconfig menu, and make sure to set the correct pin
   mappings while you're at it. */
 #include EPAPER_IDF_DEVICE_HEADER
-// #include "device/Gdew075T8.h"
-// #include "epaper-idf-spi.h"
-// #include "Adafruit_GFX.h"
 
 EpaperIDFDevice::EpaperIDFDevice(EpaperIDFSPI &io)
 		: Adafruit_GFX(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),

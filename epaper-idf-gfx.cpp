@@ -8,6 +8,4 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-// #include "epaper-idf-util.h"
 #include "epaper-idf-gfx.h"
-// #include "epaper-idf-spi.h"
