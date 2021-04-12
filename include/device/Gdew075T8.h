@@ -1,6 +1,6 @@
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_DEVICE_GDEW075T8_H_INCLUDED__
 #define __EPAPER_IDF_COMPONENT_EPAPER_IDF_DEVICE_GDEW075T8_H_INCLUDED__
-/*  epaper-idf-component
+/**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "epaper-idf-spi.h"
-#include "epaper-idf-device.h"
+#include "epaper-idf.h"
 /** Include the header file for the e-paper display device
   that you selected in the Kconfig menu settings. It defines 
   a "EpaperIDFDevice" class which can be used to interact 
@@ -31,7 +31,7 @@
 
 #define EPAPER_IDF_GDEW075T8_BUFFER_SIZE ((uint32_t(EPAPER_IDF_GDEW075T8_WIDTH) * uint32_t(EPAPER_IDF_GDEW075T8_HEIGHT) * uint32_t(EPAPER_IDF_GDEW075T8_NUM_COLOURS)) / EPAPER_IDF_GDEW075T8_NUM_BITS)
 
-class EpaperIDFDevice : public virtual EpaperIDFGFX
+class EpaperIDFDevice : public virtual EpaperIDF
 {
 public:
 	EpaperIDFDevice(EpaperIDFSPI &io);

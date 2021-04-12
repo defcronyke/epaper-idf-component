@@ -1,4 +1,4 @@
-/*  epaper-idf-component
+/**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -19,7 +19,7 @@
 
 EpaperIDFDevice::EpaperIDFDevice(EpaperIDFSPI &io)
 		: Adafruit_GFX(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),
-			EpaperIDFGFX(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),
+			EpaperIDF(EPAPER_IDF_GDEW075T8_WIDTH, EPAPER_IDF_GDEW075T8_HEIGHT),
 			io(io),
 			tag("epaper-idf-device"),
 			verbose(0),

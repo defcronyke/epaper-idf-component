@@ -1,6 +1,6 @@
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_TASK_H_INCLUDED__
 #define __EPAPER_IDF_COMPONENT_EPAPER_IDF_TASK_H_INCLUDED__
-/*  epaper-idf-component
+/**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -24,8 +24,8 @@
 
 /** NOTE: Add some #elif cases here for your own custom tasks if you want. */
 
-// #elif CONFIG_EPAPER_IDF_MAIN_TASK_TASKNAME_OPT
-// #define EPAPER_IDF_MAIN_TASK_HEADER CONIG_EPAPER_IDF_MAIN_TASK_TASKNAME
+/** #elif CONFIG_EPAPER_IDF_MAIN_TASK_TASKNAME_OPT */
+/** #define EPAPER_IDF_MAIN_TASK_HEADER CONIG_EPAPER_IDF_MAIN_TASK_TASKNAME */
 
 #else
 #define EPAPER_IDF_MAIN_TASK_HEADER CONFIG_EPAPER_IDF_MAIN_TASK_NONE

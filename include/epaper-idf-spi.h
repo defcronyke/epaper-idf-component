@@ -1,6 +1,6 @@
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_SPI_H_INCLUDED__
 #define __EPAPER_IDF_COMPONENT_EPAPER_IDF_SPI_H_INCLUDED__
-/*  epaper-idf-component
+/**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -12,7 +12,7 @@
 */
 #include "driver/spi_master.h"
 #include "driver/gpio.h"
-#include "epaper-idf-gfx.h"
+#include "epaper-idf-device.h"
 
 #define EPAPER_IDF_IO_SPI_FREQ_DEFAULT 4
 
@@ -27,6 +27,10 @@ public:
 
 	void _is_derived();
 	void init(uint8_t freq = EPAPER_IDF_IO_SPI_FREQ, uint32_t verbose = 0) override;
+
+	virtual ~EpaperIDFSPI() {
+
+	};
 
 private:
 	uint32_t verbose = EPAPER_IDF_LOG_VERB;

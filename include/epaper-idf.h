@@ -1,6 +1,6 @@
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_GFX_H_INCLUDED__
 #define __EPAPER_IDF_COMPONENT_EPAPER_IDF_GFX_H_INCLUDED__
-/*  epaper-idf-component
+/**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -18,25 +18,19 @@
 #include "Adafruit_GFX.h"
 #include "epaper-idf-device.h"
 
-#define EpaperIDFGFX EPAPER_IDF_VERSION_CLASS
-
-#ifndef EPAPER_IDF_DEVICE_CLASS
-#define EPAPER_IDF_DEVICE_CLASS EPAPER_IDF_QUOTE(EPAPER_IDF_DEVICE_MODEL)
-#endif
-
-class EpaperIDFGFX : public virtual Adafruit_GFX
+class EpaperIDF : public virtual Adafruit_GFX
 {
 public:
-	EpaperIDFGFX(int16_t w, int16_t h)
+	EpaperIDF(int16_t w, int16_t h)
 			: Adafruit_GFX(w, h),
 				tag("epaper-idf")
 	{
-		ESP_LOGI(tag, "%s constructed", EPAPER_IDF_QUOTE(EPAPER_IDF_VERSION_CLASS));
+		ESP_LOGI(tag, "%s constructed", EPAPER_IDF_QUOTE(EpaperIDF));
 	};
 
-	virtual ~EpaperIDFGFX()
+	virtual ~EpaperIDF()
 	{
-		ESP_LOGI(tag, "%s deconstructed", EPAPER_IDF_QUOTE(EPAPER_IDF_VERSION_CLASS));
+		ESP_LOGI(tag, "%s deconstructed", EPAPER_IDF_QUOTE(EpaperIDF));
 	};
 
 	virtual void drawPixel(int16_t x, int16_t y, uint16_t colour) = 0;

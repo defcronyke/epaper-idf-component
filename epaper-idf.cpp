@@ -1,4 +1,4 @@
-/*  epaper-idf-component
+/**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -8,4 +8,4 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-#include "epaper-idf-gfx.h"
+#include "epaper-idf.h"

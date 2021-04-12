@@ -1,5 +1,5 @@
-#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_IO_H_INCLUDED__
-#define __EPAPER_IDF_COMPONENT_EPAPER_IDF_IO_H_INCLUDED__
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_LOG_H_INCLUDED__
+#define __EPAPER_IDF_COMPONENT_EPAPER_IDF_LOG_H_INCLUDED__
 /**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
@@ -10,24 +10,17 @@
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
 */
-#include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
-#include "esp_system.h"
-#include "epaper-idf-log.h"
+#include "epaper-idf-util.h"
 
-class EpaperIDFIO
-{
-public:
-	virtual void _is_derived() = 0;
-	virtual void init(uint8_t freq, uint32_t verbose);
+#define EPAPER_IDF_LOG_VERB_DEFAULT 0
+#ifndef EPAPER_IDF_LOG_VERB
 
-	virtual ~EpaperIDFIO() {
+/** TODO: Set this in the Kconfig menu. */
+#define EPAPER_IDF_LOG_VERB EPAPER_IDF_LOG_VERB_DEFAULT
 
-	};
-
-private:
-	uint32_t verbose;
-};
+#endif
 
 #endif

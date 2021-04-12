@@ -619,19 +619,19 @@ menu "[<>] Project task config"
             for example: -200
     
     config EPAPER_IDF_IMAGES_INDEX_JSON_URL
-        string "URL to a JSON object of images (8-bit max .bmp)"
+        string "URL to a JSON object of paths to images (8-bit max .bmp)"
         depends on EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT
-        default "https://defcronyke.gitlab.io/epaper-idf/images/index.json"
+        default "https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json"
         help
             A URL to an HTTP GET route hosting a JSON file containing an object specifying relative paths or 
             URLs to Bitmap images to display on the screen (1, 4, or 8 bits per pixel).
 
             See these example files:
             
-                ./public/images/index.json  (used by default)
-                ./public/images/index-path.json
-                ./public/images/index-url.json
-                ./public/images/index-url-inline.json
+                ../../public/http-slideshow/index.json          (used by default)
+                ../../public/http-slideshow/index-path.json
+                ../../public/http-slideshow/index-url.json
+                ../../public/http-slideshow/index-url-inline.json
 
     config EPAPER_IDF_IMAGES_INDEX_JSON_URL_HOST
         string "HTTP Host header value for above URL"

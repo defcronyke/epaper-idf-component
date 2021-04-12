@@ -1,6 +1,6 @@
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_NONE_H_INCLUDED__
 #define __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_NONE_H_INCLUDED__
-/*  epaper-idf-component - example - http-slideshow
+/**	epaper-idf-component - example - http-slideshow
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 

@@ -10,7 +10,7 @@
 
 idf_component_register(
   SRCS
-    "epaper-idf-gfx.cpp"
+    "epaper-idf.cpp"
     "epaper-idf-http.c"
     "epaper-idf-io.cpp"
     "epaper-idf-ota.c"
@@ -55,9 +55,20 @@ idf_component_register(
 )
 
 # (Not part of the boilerplate)
-# This example uses an extra component for common functions such as Wi-Fi and Ethernet connection.
+# This example uses an extra component for common functions such as Wi-Fi 
+# and Ethernet connection.
 set(EXTRA_COMPONENT_DIRS $ENV{IDF_PATH}/examples/common_components/protocol_examples_common)
 
 add_compile_definitions(
+  # Set the EpaperIDF class version by setting these environment variables.
+  # Increase the major or minor version numbers when the class is no longer 
+  # backwards-compatible. It breaks backwards-compatibility by changing the
+  # name of the EpaperIDF class.
+  # Default version if unspecified: v0.1.0
+  EPAPER_IDF_VERSION_MAJOR=$ENV{EPAPER_IDF_VERSION_MAJOR}
+  EPAPER_IDF_VERSION_MINOR=$ENV{EPAPER_IDF_VERSION_MINOR}
+  EPAPER_IDF_VERSION_MICRO=$ENV{EPAPER_IDF_VERSION_MICRO}
+
+  # This is an ESP32 IDF project.
   ESP32_IDF
 )

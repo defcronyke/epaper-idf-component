@@ -1,6 +1,6 @@
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_DEVICE_H_INCLUDED__
 #define __EPAPER_IDF_COMPONENT_EPAPER_IDF_DEVICE_H_INCLUDED__
-/*  epaper-idf-component
+/**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -13,8 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
-#include "esp_system.h"
-#include "epaper-idf-util.h"
+#include "epaper-idf-version.h"
 #include "epaper-idf-io.h"
 
 #ifndef EPAPER_IDF_DEVICE_HEADER
@@ -25,6 +24,7 @@
 
 /** Class name for the device. */
 #define EPAPER_IDF_DEVICE_MODEL	Gdew075T8
+
 
 /** Type of device. */
 #include "epaper-idf-spi.h"
@@ -45,6 +45,8 @@
 
 /** Class name for the device. */
 #define EPAPER_IDF_DEVICE_MODEL none
+
+#include "epaper-idf-version.h"
 
 /** Type of device. */
 #include "epaper-idf-spi.h"
@@ -67,9 +69,11 @@
 #define EPAPER_IDF_DEVICE_HEADER CONFIG_EPAPER_IDF_DEVICE_MODEL_NONE
 
 #define EPAPER_IDF_DEVICE_MODEL none
+
+#include "epaper-idf-version.h"
+
 #error "ERROR: No device model selected from the Kconfig menu."
 
-#endif
 #endif
 
 // #ifndef EPAPER_IDF_DEVICE_MODEL
@@ -86,7 +90,11 @@
 //   devices if you want. */
 
 // #endif
-// #endif
+#endif
+
+#ifndef EPAPER_IDF_DEVICE_CLASS
+#define EPAPER_IDF_DEVICE_CLASS EPAPER_IDF_QUOTE(EPAPER_IDF_DEVICE_MODEL)
+#endif
 
 #ifndef EpaperIDFDevice
 /** Class name alias for the device. */

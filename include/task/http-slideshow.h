@@ -1,6 +1,6 @@
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_HTTP_SLIDESHOW_H_INCLUDED__
 #define __EPAPER_IDF_COMPONENT_EPAPER_IDF_EXAMPLE_HTTP_SLIDESHOW_H_INCLUDED__
-/*  epaper-idf-component - example - http-slideshow
+/**	epaper-idf-component - example - http-slideshow
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
@@ -13,12 +13,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-// #include <time.h>
-// #include <sys/time.h>
 #include <math.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-// #include "freertos/queue.h"
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_event.h"
