@@ -248,7 +248,7 @@ _Some things listed in this section may not be fully implemented, tested, or wor
   ./serve.sh [v0.1[.0]]
   ```
 
-- [`E-paper display device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device), [`its connections`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L414), and [`the desired program to run'](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task) on it are selected in the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
+- [`E-paper display device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device), [`its connections`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L414), and [`the desired program to run`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task) on it are selected in the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
 
   ```text
   Select e-paper device (Gdew075T8) --->
