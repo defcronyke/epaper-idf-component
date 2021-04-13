@@ -220,12 +220,12 @@ Whenever you want to load new firmware, run the server script and wait for the f
 
 _Some things listed in this section may not be fully implemented, tested, or working at all yet, but many of them are._
 
-1. [`CI/CD Pipeline`](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) added to [`the GitLab project`](https://gitlab.com/defcronyke/epaper-idf), with an easy to use [`pre-built firmware flashing method`](https://gitlab.com/defcronyke/epaper-idf#quickstart-install-the-pre-built-firmware):
+- [`CI/CD Pipeline`](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) added to [`the GitLab project`](https://gitlab.com/defcronyke/epaper-idf), with an easy to use [`pre-built firmware flashing method`](https://gitlab.com/defcronyke/epaper-idf#quickstart-install-the-pre-built-firmware):
 
-   ```shell
-   pip install esptool
-   bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
-   ```
+  ```shell
+  pip install esptool
+  bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
+  ```
 
 - Lots of project-specific settings in the [`esp-idf Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild), so barely anything needs to be hard-coded in [`the C and C++ source code files`](https://gitlab.com/defcronyke/epaper-idf-component):
 
