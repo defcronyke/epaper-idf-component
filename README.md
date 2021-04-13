@@ -1,7 +1,5 @@
 # epaper-idf - epaper-idf-component
 
-[Copyright © 2021](https://defcronyke.gitlab.io/epaper-idf/jeremy-profile-paint-bw.png) [Jeremy Carter](https://eternalvoid.net) `<`[jeremy@jeremycarter.ca](mailto:Jeremy%20Carter%20<jeremy@jeremycarter.ca>?subject=epaper-idf)`>`
-
 ## An ESP-IDF component and project for e-paper displays
 
 [![world soup remastered](https://defcronyke.gitlab.io/epaper-idf/world-soup-remastered-bw.png)](https://defcronyke.gitlab.io/epaper-idf/world-soup-remastered-bw.png)
@@ -10,7 +8,9 @@
 
 ---
 
-## [ ¡This is a work in progress! Check back later for progress... ]
+## [ This is a work in progress! Check back later for progress... ]
+
+_You can test this project at your own risk if you want, but it's not ready for release yet, so please don't expect all the listed features to be available or working properly yet. Some things may not even be implemented at all yet. Check back later for new developments and updates..._
 
 ---
 
@@ -24,12 +24,12 @@
   - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
 - Adafruit-GFX-Component
   - [https://github.com/defcronyke/Adafruit-GFX-Component](https://github.com/defcronyke/Adafruit-GFX-Component)
-  - Forked and modified for ESP-IDF, from a 3rd-party Adafruit arduino library:
-    - [https://github.com/adafruit/Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library)
-
-_You can test this project at your own risk if you want, but it's not ready for release yet, so please don't expect all the listed features to be available or working properly yet. Some things may not even be implemented at all yet. Check back later for new developments and updates..._
+  - Forked and modified for ESP-IDF, from a 3rd-party Adafruit arduino library:  
+    [https://github.com/adafruit/Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library)
 
 ## License
+
+[Copyright © 2021](https://defcronyke.gitlab.io/epaper-idf/jeremy-profile-paint-bw.png) [Jeremy Carter](https://eternalvoid.net) `<`[jeremy@jeremycarter.ca](mailto:Jeremy%20Carter%20<jeremy@jeremycarter.ca>?subject=epaper-idf)`>`
 
 This project is primarily released under the terms of the license contained in the file named [`LICENSE`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/LICENSE), which can be found [`in the top-level folder of this project`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/LICENSE). It also uses a bit of 3rd-party code, which is in turn primarily licensed under whichever licenses are referenced in each header (.h) or source (.c, .cpp, etc.) file, as per the original authors' preferences. A possibly non-exhaustive set of these [`other licenses`](https://gitlab.com/defcronyke/epaper-idf) is included in [`the top-level folder of this project`](https://gitlab.com/defcronyke/epaper-idf) in the files with names beginning with "`LICENSE-`".
 
@@ -268,7 +268,7 @@ _Some things listed in this section may not be fully implemented, tested, or wor
   (task/http-slideshow.h) Project main task override
   ```
 
-- Easy to add your own new programs (a.k.a. ["`main tasks`"](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task)) as options in [`the Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
+- Easy to add your own new programs (a.k.a. "[`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task)") as options in [`the Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
 
   ```text
   Select project main task (user) --->
@@ -292,7 +292,7 @@ _Some things listed in this section may not be fully implemented, tested, or wor
     (-15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
     ```
 
-- The first example program ["`http-slideshow`"](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp) (work in progress) connects to [`an HTTPS web server`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) to fetch [`bitmap (.bmp) images`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/1.bmp), which will be displayed on the e-paper screen in sequence, as [`a slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp):
+- The first example program "[`http-slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp)" (work in progress) connects to [`an HTTPS web server`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) to fetch [`bitmap (.bmp) images`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/1.bmp), which will be displayed on the e-paper screen in sequence, as [`a slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp):
 
   ```text
   Select project main task (http-slideshow)  --->
@@ -304,6 +304,6 @@ _Some things listed in this section may not be fully implemented, tested, or wor
   **_ ----- End Task Settings ----- _**
   ```
 
-- Adding a new e-paper [`device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/device) is made easier with the help of some [`C preprocessor macros`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/epaper-idf-device.h). You can look at [`components/epaper-idf-component/include/device/Gdew075T8.h`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h) for [`an example of a real device`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h), and notice that you can refer to every device as ["`class EpaperIDFDevice`"](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h#L34), which will be properly expanded to its full name under-the-hood.
+- Adding a new e-paper [`device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/device) is made easier with the help of some [`C preprocessor macros`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/epaper-idf-device.h). You can look at [`components/epaper-idf-component/include/device/Gdew075T8.h`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h) for [`an example of a real device`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h), and notice that you can refer to every device as "[`class EpaperIDFDevice`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h#L34)", which will be properly expanded to its full name under-the-hood.
 
 - The idea is that you'll add more [`devices`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device) and [`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/task) as per the included examples, and then they'll be selected and configured through the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild).
