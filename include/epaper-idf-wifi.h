@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
 #include "esp_event_base.h"
 
 /** An event base type for "epaper-idf-wifi". */

@@ -41,11 +41,53 @@ static struct epaper_idf_wifi_task_action_t wifi_task_action;
 
 ESP_EVENT_DEFINE_BASE(EPAPER_IDF_WIFI_EVENT);
 
+#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
+static const int retries = CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES;
+#else
+static const int retries = CONFIG_EXAMPLE_WIFI_CONNECTION_RETRIES;
+#endif
+
+#ifdef CONFIG_EXAMPLE_CONNECT_WIFI
+
+#define WIFI_CONNECTED_BIT BIT0
+#define WIFI_FAIL_BIT      BIT1
+
+static EventGroupHandle_t wifi_event_group;
+static int retry_num = 0;
+
+#endif
+
+
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 															 int32_t event_id, void *event_data)
 {
-	if (event_id == WIFI_EVENT_AP_STACONNECTED)
+	if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
+	{
+		esp_wifi_connect();
+	}
+	else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
+	{
+		if (retry_num < retries)
+		{
+			esp_wifi_connect();
+			retry_num++;
+			ESP_LOGI(epaper_idf_wifi_tag, "retry to connect to the AP");
+		}
+		else
+		{
+			xEventGroupSetBits(wifi_event_group, WIFI_FAIL_BIT);
+		}
+		ESP_LOGI(epaper_idf_wifi_tag, "connect to the AP fail");
+	}
+	else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
+	{
+		ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+		ESP_LOGI(epaper_idf_wifi_tag, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
+		retry_num = 0;
+		xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_BIT);
+	}
+	else if (event_id == WIFI_EVENT_AP_STACONNECTED)
 	{
 		wifi_event_ap_staconnected_t *event = (wifi_event_ap_staconnected_t *)event_data;
 		ESP_LOGI(epaper_idf_wifi_tag, "station " MACSTR " join, AID=%d",
@@ -65,19 +107,19 @@ static void epaper_idf_wifi_ap_init(void)
 {
 	ESP_ERROR_CHECK(esp_wifi_stop());
 
-	ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-		WIFI_EVENT_AP_STACONNECTED,
-		// ESP_EVENT_ANY_ID,
-		&wifi_event_handler,
-		NULL,
-		NULL));
+	// ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+	// 																										WIFI_EVENT_AP_STACONNECTED,
+	// 																										// ESP_EVENT_ANY_ID,
+	// 																										&wifi_event_handler,
+	// 																										NULL,
+	// 																										NULL));
 
-	ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-		WIFI_EVENT_AP_STADISCONNECTED,
-		// ESP_EVENT_ANY_ID,
-		&wifi_event_handler,
-		NULL,
-		NULL));
+	// ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+	// 																										WIFI_EVENT_AP_STADISCONNECTED,
+	// 																										// ESP_EVENT_ANY_ID,
+	// 																										&wifi_event_handler,
+	// 																										NULL,
+	// 																										NULL));
 
 	esp_netif_t *ap_netif = esp_netif_create_default_wifi_ap();
 	assert(ap_netif);
@@ -97,7 +139,7 @@ static void epaper_idf_wifi_ap_init(void)
 	}
 
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-	
+
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config_ap));
 
 	ESP_ERROR_CHECK(esp_wifi_start());
@@ -105,7 +147,7 @@ static void epaper_idf_wifi_ap_init(void)
 	ESP_LOGI(epaper_idf_wifi_tag, "started WiFi access point: SSID:%s password:%s channel:%d",
 					 CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
 }
-#endif	/**< End CONFIG_EXAMPLE_WIFI_AP_ENABLED */
+#endif /**< End CONFIG_EXAMPLE_WIFI_AP_ENABLED */
 
 static void epaper_idf_wifi_init(void)
 {
@@ -124,7 +166,9 @@ static void epaper_idf_wifi_init(void)
 
 	ESP_ERROR_CHECK(esp_netif_init());
 
-#ifdef CONFIG_EXAMPLE_CONNECT_WIFI
+#ifdef CONFIG_EXAMPLE_CONNECT_WIFI	
+	wifi_event_group = xEventGroupCreate();
+
 	esp_netif_t *sta_netif = esp_netif_create_default_wifi_sta();
 	assert(sta_netif);
 
@@ -139,16 +183,52 @@ static void epaper_idf_wifi_init(void)
 					.password = CONFIG_EXAMPLE_WIFI_PASSWORD},
 	};
 
-// #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
-// 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
-// 	epaper_idf_wifi_ap_init();
-// #else
+	// #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
+	// 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+	// 	epaper_idf_wifi_ap_init();
+	// #else
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-// #endif
+	// #endif
 
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_sta));
 
+	esp_event_handler_instance_t instance_any_id;
+	// esp_event_handler_instance_t instance_got_ip;
+
+	ESP_ERROR_CHECK(
+			esp_event_handler_instance_register(
+					WIFI_EVENT,
+					ESP_EVENT_ANY_ID,
+					&wifi_event_handler,
+					NULL,
+					&instance_any_id));
+
 	ESP_ERROR_CHECK(esp_wifi_start());
+
+	/* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
+     number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
+    EventBits_t bits = xEventGroupWaitBits(wifi_event_group,
+            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+            pdFALSE,
+            pdFALSE,
+            portMAX_DELAY);
+
+		/* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
+     * happened. */
+    if (bits & WIFI_CONNECTED_BIT) {
+        ESP_LOGI(epaper_idf_wifi_tag, "connected to ap SSID:%s password:%s",
+                 CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
+    } else if (bits & WIFI_FAIL_BIT) {
+        ESP_LOGI(epaper_idf_wifi_tag, "Failed to connect to SSID:%s, password:%s",
+                 CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
+    } else {
+        ESP_LOGE(epaper_idf_wifi_tag, "UNEXPECTED EVENT");
+    }
+
+    /* The event will not be processed after unregister */
+    // ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, instance_got_ip));
+    ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
+    vEventGroupDelete(wifi_event_group);
 
 	// // Scan for other WIFI networks.
 	// char *wifi_scan_res = NULL;
@@ -167,12 +247,6 @@ static void epaper_idf_wifi_init(void)
 static void epaper_idf_wifi_connect(void)
 {
 	esp_err_t res = ESP_FAIL;
-
-#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
-	int retries = CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES;
-#else
-	int retries = CONFIG_EXAMPLE_WIFI_CONNECTION_RETRIES;
-#endif
 
 	/** Connect to WIFI. */
 	for (int retry = 0; (retries == -1 || retry <= retries) && (res != ESP_OK); retry++)
@@ -209,11 +283,13 @@ static void epaper_idf_wifi_connect(void)
 				// }
 #endif
 			}
-		} else {
+		}
+		else
+		{
 			/** Disable any WiFi power save mode. This allows best throughput
 				and timings for OTA firmware updating. */
 			ESP_LOGI(epaper_idf_wifi_tag, "connected to WiFi access point after %d attempts", retry);
-			
+
 			esp_wifi_set_ps(WIFI_PS_NONE);
 		}
 	}
