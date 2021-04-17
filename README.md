@@ -1,4 +1,4 @@
-## epaper-idf - epaper-idf-component
+# epaper-idf - epaper-idf-component
 
 ## An ESP-IDF component and project for e-paper displays
 
