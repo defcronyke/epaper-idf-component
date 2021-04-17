@@ -147,9 +147,7 @@ extern "C" void http_slideshow_task(void *pvParameter)
 
 	http_task_action_value.no_deep_sleep = true;
 	if (delay_secs < 0)
-	{		
-		http_task_action_value.no_deep_sleep = false;
-		
+	{	
 		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
 	}
 	else
