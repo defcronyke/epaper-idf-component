@@ -64,12 +64,14 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 {
 	if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
 	{
+		ESP_LOGI(epaper_idf_wifi_tag, "attempting to connect to wifi network...");
 		esp_wifi_connect();
 	}
 	else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
 	{
 		if (retry_num < retries)
 		{
+			ESP_LOGI(epaper_idf_wifi_tag, "attempting to connect to wifi network...");
 			esp_wifi_connect();
 			retry_num++;
 			ESP_LOGI(epaper_idf_wifi_tag, "retry to connect to the AP");
@@ -278,7 +280,7 @@ void epaper_idf_wifi_task(void *pvParameter)
 				}
 
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
-				ESP_LOGI(epaper_idf_wifi_tag, "attempting to connect to wifi network...");
+				// ESP_LOGI(epaper_idf_wifi_tag, "attempting to connect to wifi network...");
 
 				// /** Connect to wifi. */
 				// epaper_idf_wifi_connect();
