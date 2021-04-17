@@ -166,8 +166,8 @@ static void epaper_idf_wifi_init(void)
 static void epaper_idf_wifi_connect(void)
 {
 	esp_err_t res = ESP_FAIL;
-	unsigned long long retry = 0UL;
-	unsigned long long retries = CONFIG_EXAMPLE_WIFI_CONNECTION_RETRIES;
+	long long retry = 0LL;
+	long long retries = CONFIG_EXAMPLE_WIFI_CONNECTION_RETRIES;
 
 #ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
 	retries = CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES;
@@ -204,13 +204,11 @@ static void epaper_idf_wifi_connect(void)
 				}
 #endif
 			}
-
-			break;
+		} else {
+			/** Disable any WiFi power save mode. This allows best throughput
+				and timings for OTA firmware updating. */
+			esp_wifi_set_ps(WIFI_PS_NONE);
 		}
-
-		/** Disable any WiFi power save mode. This allows best throughput
-			and timings for OTA firmware updating. */
-		esp_wifi_set_ps(WIFI_PS_NONE);
 	}
 }
 #endif
