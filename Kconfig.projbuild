@@ -23,13 +23,13 @@ menu "[<>] Project connection config"
 
         config EXAMPLE_WIFI_SSID
             string "WiFi SSID"
-            default "myssid"
+            default "mynetwork1213402"
             help
                 SSID (network name) for the example to connect to.
 
         config EXAMPLE_WIFI_PASSWORD
             string "WiFi Password"
-            default "mypassword"
+            default "mypassword657414545"
             help
                 WiFi password (WPA or WPA2) for the example to use.
                 Can be left blank if the network has no security set.
@@ -87,7 +87,7 @@ menu "[<>] Project connection config"
         comment " ----- WiFi Access Point Settings ----- "
 
         choice EXAMPLE_WIFI_AP_STARTUP_CONDITION
-            prompt "WiFi Access Point Startup"
+            prompt "WiFi Access Point (AP) Startup"
             default EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT if EXAMPLE_CONNECT_WIFI
             default EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT if !EXAMPLE_CONNECT_WIFI
             help
@@ -127,7 +127,7 @@ menu "[<>] Project connection config"
         endchoice
 
         config EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES
-            int "WiFi Max Connection Retries Before Starting AP"
+            int "WiFi AP Connection Retries Before Starting"
             depends on EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
             default 1
             range 0 10000
@@ -138,7 +138,7 @@ menu "[<>] Project connection config"
                 failing.
 
         config EXAMPLE_WIFI_AP_SSID
-            string "WiFi Access Point SSID"
+            string "WiFi AP SSID"
             default "wifi-net-15455"
             help
                 If a WiFi connection can't be established after the maximum number 
@@ -147,7 +147,7 @@ menu "[<>] Project connection config"
                 device's WiFi settings.
 
         config EXAMPLE_WIFI_AP_PASSWORD
-            string "WiFi Access Point Password"
+            string "WiFi AP Password"
             default "T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s"
             help
                 If a WiFi connection can't be established after the maximum number 
@@ -156,7 +156,7 @@ menu "[<>] Project connection config"
                 device's WiFi settings.
 
         config EXAMPLE_WIFI_AP_IP
-            string "WiFi Access Point IP Address"
+            string "WiFi AP IP Address"
             default "192.168.4.1"
             help
                 If a WiFi connection can't be established after the maximum number 
@@ -165,7 +165,7 @@ menu "[<>] Project connection config"
                 device's WiFi settings.
 
         config EXAMPLE_WIFI_AP_CHANNEL
-            int "WiFi Channel AP"
+            int "WiFi AP Channel"
             range 1 13
             default 1
             help
@@ -639,16 +639,16 @@ menu "[<>] Project task config"
         depends on EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT || EPAPER_IDF_MAIN_TASK_USER_OPT
 
     config EPAPER_IDF_DEEP_SLEEP_SECONDS
-        int "Deep sleep seconds between screen refreshes [min - -15 || 15 - max]"
+        int "Deep sleep after refresh [delay_secs: ilong_min - -15 || deep_sleep_secs: 15 - ilong_max]"
         depends on EPAPER_IDF_MAIN_TASK_HTTP_SLIDESHOW_OPT || EPAPER_IDF_MAIN_TASK_USER_OPT
         default 200
         help
-            Seconds that the ESP32 device will go into deep sleep mode between screen refreshes.
+            Seconds that the ESP32 device will deep sleep or delay between screen refreshes.
 
-            Range: min_ilong - -15 || 15 - max_ilong
+            Range: [delay_secs: ilong_min - -15 || deep_sleep_secs: 15 - ilong_max]
             
-            Use a negative number if you'd like it to just wait instead of sleeping, 
-            for example: -200
+            Use a negative number if you'd like to keep everything powered on instead of deep 
+            sleeping, for example: -200
     
     config EPAPER_IDF_IMAGES_INDEX_JSON_URL
         string "URL to a JSON object of paths to images (8-bit max .bmp)"
