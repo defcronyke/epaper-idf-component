@@ -160,13 +160,17 @@ idf.py menuconfig
 ### To build the firmware
 
 ```shell
-# Specify the firmware short version. If the major or minor version
-# changes, it breaks backwards-compatibility by changing the name of
-# the EpaperIDF class:
-./build.sh v0.1
+# Build the firmware. The version will be set as "v0.1.0" by default:
+./build.sh
 
-# (Optional) Specify the full firmware version instead and it will use this exact version number for the built firmware:
-./build.sh v0.1.0
+# (Optional) Specify the firmware short version when building. If
+# the major or minor version changes, it breaks backwards-compatibility
+# on purpose by changing the name of the EpaperIDF class:
+./build.sh v0.2
+
+# (Optional) Specify the full firmware version number instead and it
+# will use this exact version number for the built firmware:
+./build.sh v0.2.0
 ```
 
 ### To install the firmware onto the ESP32 device
@@ -174,17 +178,25 @@ idf.py menuconfig
 ```shell
 # Install the firmware you just built onto the device, and begin
 # monitoring with a serial console. The firmware will be built first
-# if necessary:
-./flash.sh v0.1
+# if necessary The version will be set as "v0.1.0" by default::
+./flash.sh
 
-# (Optional) Specify the full firmware version number instead and it will use this exact version number for the built firmware:
-./flash.sh v0.1.0
+# (Optional) Specify the firmware short version when building and
+# installing. If the major or minor version changes, it breaks
+# backwards-compatibility on purpose by changing the name of the
+# EpaperIDF clas:
+./flash.sh v0.2
+
+# (Optional) Specify the full firmware version number instead and it
+# will use this exact version number for the built firmware:
+./flash.sh v0.2.0
 ```
 
 ### To view the ESP32 device's serial console
 
 ```shell
-# View the serial console output to see what the device is doing for debugging purposes:
+# View the serial console output to see what the device is doing for
+# debugging purposes:
 idf.py monitor
 ```
 
@@ -195,17 +207,32 @@ idf.py monitor
 1. Run the following script on your dev computer to build the new version of your firmware, and then begin hosting it for the device to do an OTA update:
 
    ```shell
-   # Specify the firmware short version. If the major or minor version
-   # changes, it breaks backwards-compatibility by changing the name of
-   # the EpaperIDF class. To trigger the OTA update, the micro version
+   # Build the firmware if necessary, and begin serving it on an OTA
+   # firmware updates HTTPS server. By default the version number will
+   # start as "v0.1.0". To trigger the OTA update, the micro version
    # will be auto-incremented by +1 to the value in the file
-   # version-micro.txt:
+   # version-micro.txt, for example "v0.1.0" -> "v0.1.1":
+   # -----
+   # KNOWN BUG: This always uses "v0.1" as the short version, so if you
+   # don't want that, for now you'll have to include your desired short
+   # version as an argument to this command, as in the first "(Optional)"
+   # example below:
+   ./serve.sh
+
+   # (Optional) Specify the firmware short version number when building
+   # and serving. If the major or minor version changes, it purposely
+   # breaks backwards-compatibility by changing the name of the EpaperIDF
+   # class. To trigger the OTA update, the micro version will be
+   # auto-incremented by +1 to the value in the file version-micro.txt,
+   # for example "v0.2.0" -> "v0.2.1":
    ./serve.sh v0.1
 
-   # (Optional) Specify the full firmware version number. If the device
-   # is already running this version, it won't do an OTA update during
-   # startup:
-   ./serve.sh v0.1.0
+   # (Optional) Specify the full firmware version number when building
+   # and serving. If the device is already running this version, it
+   # won't do an OTA update during startup. Note that with this type
+   # of invocation the micro version won't be auto-incremented, to
+   # prevent an unnecessary OTA firmware update from happening:
+   ./serve.sh v0.2.0
    ```
 
 1. After the above script is finished building the firmware, it will start waiting for OTA update requests from the device. Reboot your ESP32 device to get it to connect and update itself with the new firmware version (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
