@@ -167,17 +167,17 @@ static void epaper_idf_wifi_init(void)
 static void epaper_idf_wifi_connect(void)
 {
 	esp_err_t res = ESP_FAIL;
-	long long retry = 0LL;
-	long long retries = CONFIG_EXAMPLE_WIFI_CONNECTION_RETRIES;
 
 #ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
-	retries = CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES;
+	int retries = CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES;
+#else
+	int retries = CONFIG_EXAMPLE_WIFI_CONNECTION_RETRIES;
 #endif
 
 	/** Connect to WIFI. */
-	for (; (retries == -1 || retry <= retries) && (res != ESP_OK); retry++)
+	for (int retry = 0; (retries == -1 || retry <= retries) && (res != ESP_OK); retry++)
 	{
-		ESP_LOGI(epaper_idf_wifi_tag, "connecting to WiFi network (attempt %llu/%llu)...", retry, retries);
+		ESP_LOGI(epaper_idf_wifi_tag, "connecting to WiFi network (attempt %d/%d)...", retry, retries);
 
 		res = esp_wifi_connect();
 		if (res != ESP_OK)
@@ -195,7 +195,7 @@ static void epaper_idf_wifi_connect(void)
 					start after a certain number of connection retries. The 
 					access point can be used to configure which WiFi network 
 					to connect to. */
-				ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point after %llu attempts", retry);
+				ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point after %d attempts", retry);
 
 				epaper_idf_wifi_ap_init();
 
@@ -204,7 +204,7 @@ static void epaper_idf_wifi_connect(void)
 #else
 				if (res != ESP_OK)
 				{
-					ESP_LOGW(epaper_idf_wifi_tag, "gave up connecting to WiFi network after %llu attempts", retry);
+					ESP_LOGW(epaper_idf_wifi_tag, "gave up connecting to WiFi network after %d attempts", retry);
 				}
 #endif
 			}
