@@ -148,7 +148,7 @@ extern "C" void http_slideshow_task(void *pvParameter)
 	}
 	else
 	{
-#ifndef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
 		ESP_LOGI(TAG, "Deep sleep is disabled because \"WiFi Access Point Startup\" is set as \"Always On\".");
 		http_task_action_value.no_deep_sleep = false;
 #endif
