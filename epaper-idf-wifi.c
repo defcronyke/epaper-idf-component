@@ -248,10 +248,10 @@ static void epaper_idf_wifi_init(void)
         ESP_LOGE(epaper_idf_wifi_tag, "UNEXPECTED EVENT");
     }
 
-    /* The event will not be processed after unregister */
-    // ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, instance_got_ip));
-    ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
-    vEventGroupDelete(wifi_event_group);
+    // /* The event will not be processed after unregister */
+    // // ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, instance_got_ip));
+    // ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
+    // vEventGroupDelete(wifi_event_group);
 
 	// // Scan for other WIFI networks.
 	// char *wifi_scan_res = NULL;

@@ -37,6 +37,8 @@ UBaseType_t epaper_idf_http_task_priority = 5;
 
 const char *http_slideshow_task_name = "http_slideshow_task";
 
+static bool no_deep_sleep_first = true;
+
 /** Initialize the task. */
 static void http_slideshow_task_init(void) {
 	/** Use the appropriate epaper device. */
@@ -144,15 +146,21 @@ extern "C" void http_slideshow_task(void *pvParameter)
 	http_task_action_value.no_deep_sleep = true;
 	if (delay_secs < 0)
 	{		
-#ifndef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
-		ESP_LOGI(TAG, "Disabling deep sleep because \"WiFi Access Point Startup\" is set to \"Always On\".");
 		http_task_action_value.no_deep_sleep = false;
-#endif
 		
 		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
 	}
 	else
 	{
+#ifndef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+		http_task_action_value.no_deep_sleep = false;
+#else
+		if (no_deep_sleep_first) {
+			ESP_LOGI(TAG, "disabling deep sleep because \"WiFi Access Point Startup\" is set \"Always On\"");
+			no_deep_sleep_first = false;
+		}
+#endif
+
 		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
 	}
 
