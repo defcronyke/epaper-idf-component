@@ -64,6 +64,8 @@ This is how to remotely build the firmware and install it.
 
    - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component/-/forks/new)
 
+   - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-component/-/forks/new)
+
 2. Clone the first repo you forked in the previous step onto your machine:
 
    ```shell
@@ -72,23 +74,26 @@ This is how to remotely build the firmware and install it.
    GITLAB_BRANCH="master"
 
    # Clone your GitLab repo fork:
-   git clone git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
+   git clone -b $GITLAB_BRANCH --recursive git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
    cd epaper-idf; \
-   git checkout $GITLAB_BRANCH; \
    git remote add upstream https://gitlab.com/defcronyke/epaper-idf.git; \
    sed -i "s#https://github.com/defcronyke#git@gitlab.com:$GITLAB_USER#g" .gitmodules; \
    sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GITLAB_BRANCH@g" README.md; \
    sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
-   git submodule update --init --recursive; \
    cd components/epaper-idf-component; \
-   git checkout $GITLAB_BRANCH; \
+   git remote set-url origin git@gitlab.com:$GITLAB_USER/epaper-idf-component.git; \
    git remote add upstream https://gitlab.com/defcronyke/epaper-idf-component.git; \
+   git checkout $GITLAB_BRANCH; \
    sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GITLAB_BRANCH@g" README.md; \
    sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
+   cd ../Adafruit-GFX-Component; \
+   git remote set-url origin git@gitlab.com:$GITLAB_USER/Adafruit-GFX-Component.git; \
+   git remote add upstream https://gitlab.com/defcronyke/Adafruit-GFX-Component.git; \
+   git checkout $GITLAB_BRANCH; \
    cd ../..
    ```
 
-3. Modify something and push the changes to your forked repo, or force-push if you want to build without any modifications:
+3. Modify something, then commit and push the changes to your forked repo to trigger the remote building of the firmware:
 
    ```shell
    # Set the git commit message and branch:
@@ -96,7 +101,11 @@ This is how to remotely build the firmware and install it.
    GITLAB_BRANCH="master"
 
    # Commit the changes and build:
-   cd components/epaper-idf-component; \
+   cd components/Adafruit-GFX-Component; \
+   git add . && \
+   git commit -m "$GITLAB_COMMIT_MSG" && \
+   git push -u origin $GITLAB_BRANCH; \
+   cd ../epaper-idf-component; \
    git add . && \
    git commit -m "$GITLAB_COMMIT_MSG" && \
    git push -u origin $GITLAB_BRANCH; \
@@ -104,9 +113,6 @@ This is how to remotely build the firmware and install it.
    git add . && \
    git commit -m "$GITLAB_COMMIT_MSG" && \
    git push -u origin $GITLAB_BRANCH
-
-   # (Optional) Or you can build with no changes instead:
-   git push -fu origin $GITLAB_BRANCH
    ```
 
 4. Install espressif's official `esptool.py` firmware flashing utility:
@@ -357,12 +363,12 @@ _Some things listed in this section may not be fully implemented, tested, or wor
    ```text
    Select e-paper device (Gdew075T8) --->
    (device/Gdew075T8.h) e-paper device override
-   **_ ----- Display Settings ----- _**
+   *** ----- Display Settings ----- ***
    (0) Display rotation: 0 = 0°, 1 = 90° cw, 2 = 180° 3 = 270°
    (23) SPI GPIO for MOSI (MOSI or DIN)
    (18) SPI GPIO for Clock (CLK)
    ...
-   **_ ----- End Display Settings ----- _**
+   *** ----- End Display Settings ----- ***
    ```
 
 1. The minimal required set of [`header (.h) files`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include) for the selected [`e-paper device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device) and [`main task`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/task) are included automatically based on [`your Kconfig selections`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild), and [`the header paths/filenames can be overridden`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L388) in the [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild) if you want to do something custom or weird:
@@ -375,11 +381,11 @@ _Some things listed in this section may not be fully implemented, tested, or wor
 1. Easy to add your own new programs (a.k.a. "[`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task)") as options in [`the Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
 
    ```text
-   Select project main task (user) --->
-   (task/none.h) Project main task override
-   **_ ----- Task Settings ----- _**
-   (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
-   **_ ----- End Task Settings ----- _**
+   Select project main task (user)  --->
+   (task/none.h) Project main task override (NEW)
+   ***  ----- Task Settings -----  ***
+   (-10) Deep sleep after refresh [delay_secs: ilong_min - -15 || deep_sleep_secs: 15 - ilong_max]
+   ***  ----- End Task Settings -----  ***
    ```
 
 1. You can [`choose to deep sleep`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L609) between screen refreshes to save power if you want, or you can keep everything running and use a regular task delay instead:
@@ -402,10 +408,10 @@ _Some things listed in this section may not be fully implemented, tested, or wor
    Select project main task (http-slideshow)  --->
    (task/http-slideshow.h) Project main task override
    ***  ----- Task Settings -----  ***
-   (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
+   (-10) Deep sleep after refresh [delay_secs: ilong_min - -15 || deep_sleep_secs: 15 - ilong_max]
    (https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) URL to a JSON object of paths to images (8-bit max .bmp)
    (defcronyke.gitlab.io) HTTP Host header value for above URL
-   **_ ----- End Task Settings ----- _**
+   ***  ----- End Task Settings -----  ***
    ```
 
 1. Adding a new e-paper [`device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/device) is made easier with the help of some [`C preprocessor macros`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/epaper-idf-device.h). You can look at [`components/epaper-idf-component/include/device/Gdew075T8.h`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h) for [`an example of a real device`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h), and notice that you can refer to every device as "[`class EpaperIDFDevice`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h#L34)", which will be properly expanded to its full name under-the-hood.
