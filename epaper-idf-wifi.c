@@ -134,10 +134,10 @@ static void epaper_idf_wifi_ap_init(void)
 
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config_ap));
 
-	ESP_ERROR_CHECK(esp_wifi_start());
+	// ESP_ERROR_CHECK(esp_wifi_start());
 
-	ESP_LOGI(epaper_idf_wifi_tag, "started WiFi access point: SSID:%s password:%s channel:%d",
-					 CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
+	// ESP_LOGI(epaper_idf_wifi_tag, "started WiFi access point: SSID:%s password:%s channel:%d",
+	// 				 CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
 }
 #endif /**< End CONFIG_EXAMPLE_WIFI_AP_ENABLED */
 
@@ -169,7 +169,7 @@ static void epaper_idf_wifi_init(void)
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
 #ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
-				epaper_idf_wifi_ap_init();
+	epaper_idf_wifi_ap_init();
 #else
 	wifi_config_t wifi_config_sta = {
 			.sta = {
@@ -200,6 +200,11 @@ static void epaper_idf_wifi_init(void)
 
 	ESP_ERROR_CHECK(esp_wifi_start());
 
+#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+	ESP_LOGI(epaper_idf_wifi_tag, "started WiFi access point: SSID: %s password:%s channel: %d",
+		CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
+#endif
+
 	/* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
      number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
     EventBits_t bits = xEventGroupWaitBits(wifi_event_group,
@@ -226,7 +231,7 @@ static void epaper_idf_wifi_init(void)
 
 #ifndef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
 				ESP_ERROR_CHECK(esp_wifi_stop());
-				
+
 				epaper_idf_wifi_ap_init();
 #endif
     } else {
