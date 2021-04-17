@@ -87,7 +87,7 @@ menu "[<>] Project connection config"
         comment " ----- WiFi Access Point Settings ----- "
 
         choice EXAMPLE_WIFI_AP_STARTUP_CONDITION
-            prompt "WiFi Access Point (AP) Startup"
+            prompt "WiFi AP Startup"
             default EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT if EXAMPLE_CONNECT_WIFI
             default EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT if !EXAMPLE_CONNECT_WIFI
             help
