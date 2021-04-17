@@ -144,15 +144,15 @@ extern "C" void http_slideshow_task(void *pvParameter)
 	http_task_action_value.no_deep_sleep = true;
 	if (delay_secs < 0)
 	{		
+#ifndef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+		ESP_LOGI(TAG, "Disabling deep sleep because \"WiFi Access Point Startup\" is set to \"Always On\".");
+		http_task_action_value.no_deep_sleep = false;
+#endif
+		
 		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
 	}
 	else
 	{
-#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
-		ESP_LOGI(TAG, "Deep sleep is disabled because \"WiFi Access Point Startup\" is set as \"Always On\".");
-		http_task_action_value.no_deep_sleep = false;
-#endif
-
 		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
 	}
 
