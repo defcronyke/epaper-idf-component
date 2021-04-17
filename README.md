@@ -261,7 +261,7 @@ _Some things listed in this section may not be fully implemented, tested, or wor
    ***  ----- End WiFi Access Point Settings -----  ***
    ```
 
-   By default the access point only comes on if the device is unable to connect to its configured WiFi network after the configured number of connection retries. You can have the access point running all the time by changing the "`WiFi Access Point Startup`" option to "`Always On`", but note that _this option will disable deep sleep_ if it was enabled.
+   By default the access point only comes on if the device is unable to connect to its configured WiFi network after the configured number of connection retries. You can have the access point running all the time by changing the "`WiFi Access Point Startup`" option to "`Always On`", but note that this option will disable deep sleep if it was enabled.
 
 1. [`CI/CD Pipeline`](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) added to [`the GitLab project`](https://gitlab.com/defcronyke/epaper-idf), with an easy to use [`pre-built firmware flashing method`](https://gitlab.com/defcronyke/epaper-idf#quickstart-install-the-pre-built-firmware):
 
