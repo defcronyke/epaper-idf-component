@@ -37,7 +37,9 @@ UBaseType_t epaper_idf_http_task_priority = 5;
 
 const char *http_slideshow_task_name = "http_slideshow_task";
 
+#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
 static bool no_deep_sleep_first = true;
+#endif
 
 /** Initialize the task. */
 static void http_slideshow_task_init(void) {
