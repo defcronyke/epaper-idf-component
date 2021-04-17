@@ -167,6 +167,7 @@ static void epaper_idf_wifi_init(void)
 #ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
 	epaper_idf_wifi_ap_init();
 #endif
+
 	wifi_config_t wifi_config_sta = {
 			.sta = {
 					.ssid = CONFIG_EXAMPLE_WIFI_SSID,
@@ -210,6 +211,7 @@ static void epaper_idf_wifi_init(void)
         ESP_LOGI(epaper_idf_wifi_tag, "Failed to connect to SSID: %s, password: %s",
                  CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
 
+#ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
 				/** Start the WiFi access point (AP) if it's configured to 
 					start after a certain number of connection retries. The 
 					access point can be used to configure which WiFi network 
@@ -222,6 +224,7 @@ static void epaper_idf_wifi_init(void)
 				epaper_idf_wifi_ap_init();
 
 				ESP_ERROR_CHECK(esp_wifi_start());
+#endif
 #endif
     } else {
         ESP_LOGE(epaper_idf_wifi_tag, "UNEXPECTED EVENT");

@@ -54,11 +54,11 @@ A big thanks to the authors of the above projects for releasing theirs with perm
 
 ---
 
-## Quickstart - Install the pre-built firmware
+## Basic usage - Install pre-built firmware
 
 This is how to install an already compiled version of the firmware if you don't intend to modify it. Otherwise, skip this section and follow the instructions in the other sections below if you're going to be modifying the firmware:
 
-1. Install espressif's official esptool.py firmware flashing utility:
+1. Install espressif's official `esptool.py` firmware flashing utility:
 
    ```shell
    # Install the python-based firmware flashing tool:
@@ -68,21 +68,26 @@ This is how to install an already compiled version of the firmware if you don't 
    python -m pip install esptool
    ```
 
-2. Flash the latest release version of the epaper-idf firmware:
+2. Install the latest version of the epaper-idf firmware onto the ESP32 device:
 
    ```shell
+   # Install the current release version:
    bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
-   ```
 
-3. (Optional) Flash the latest development version of the epaper-idf firmware instead (the git master branch version):
-
-   ```shell
+   # (Optional) Or install the current development version instead:
    bash <(curl -sL https://tinyurl.com/epaper-idf-flash) master
    ```
 
+3. Once the firmware is installed, the device will begin hosting a WiFi access point (AP) which you can connect to and access a configuration web page to set the WiFi `SSID` and `password` that the device will use to connect to your LAN WiFi. By default the access point will only allow one connection at a time for added safety, and it will shut down once the device is able to successfully connect to a WiFi network:
+
+   - Default WiFi Access Point Details:
+     - SSID: `wifi-net-15455`
+     - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
+     - Config URL (work in progress...): `https://192.168.4.1`
+
 ---
 
-## Full Instructions
+## Full usage - Build and install customized firmware
 
 ### Prerequisites
 
@@ -160,9 +165,7 @@ idf.py menuconfig
 # the EpaperIDF class:
 ./build.sh v0.1
 
-# (Optional) Specify the firmware version. If the major or minor
-# version changes, it breaks backwards-compatibility by changing the
-# name of the EpaperIDF class:
+# (Optional) Specify the full firmware version instead and it will use this exact version number for the built firmware:
 ./build.sh v0.1.0
 ```
 
@@ -171,21 +174,17 @@ idf.py menuconfig
 ```shell
 # Install the firmware you just built onto the device, and begin
 # monitoring with a serial console. The firmware will be built first
-# if necessary.
-# Specify the firmware short version. If the major or minor version
-# changes, it breaks backwards-compatibility by changing the name of
-# the EpaperIDF class:
+# if necessary:
 ./flash.sh v0.1
 
-# (Optional) Specify the firmware version. If the major or minor
-# version changes, it breaks backwards-compatibility by changing the
-# name of the EpaperIDF class:
+# (Optional) Specify the full firmware version number instead and it will use this exact version number for the built firmware:
 ./flash.sh v0.1.0
 ```
 
 ### To view the ESP32 device's serial console
 
 ```shell
+# View the serial console output to see what the device is doing for debugging purposes:
 idf.py monitor
 ```
 
@@ -203,22 +202,38 @@ idf.py monitor
    # version-micro.txt:
    ./serve.sh v0.1
 
-   # (Optional) Specify the firmware version. If the major or minor
-   # version changes, it breaks backwards-compatibility by changing the
-   # name of the EpaperIDF class. If the device is already running this
-   # version, it won't do an OTA update during startup:
+   # (Optional) Specify the full firmware version number. If the device
+   # is already running this version, it won't do an OTA update during
+   # startup:
    ./serve.sh v0.1.0
    ```
 
 1. After the above script is finished building the firmware, it will start waiting for OTA update requests from the device. Reboot your ESP32 device to get it to connect and update itself with the new firmware version (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
 
-Whenever you want to load new firmware, run the server script and wait for the firmware to finish building, then reboot the ESP32 device to load the new firmware onto it (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
+Whenever you want to load new firmware, run the "`./serve.sh`" script and wait for the firmware to finish building, then reboot the ESP32 device to load the new firmware onto it (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
 
 ---
 
 ## Latest Highlights
 
 _Some things listed in this section may not be fully implemented, tested, or working at all yet, but many of them are._
+
+- WiFi access point for hosting a WiFi connection settings web page:
+
+  ```text
+  [*] Enable WiFi Access Point (AP)
+  ***  ----- WiFi Access Point Settings -----  ***
+  WiFi Access Point Startup (After Connection Retries)  --->
+  (1)     WiFi Max Connection Retries Before Starting AP
+  (wifi-net-15455) WiFi Access Point SSID
+  (T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s) WiFi Access Point Password
+  (192.168.4.1) WiFi Access Point IP Address
+  (1)     WiFi Channel AP
+  (1)     WiFi Maximum connections AP
+  ***  ----- End WiFi Access Point Settings -----  ***
+  ```
+
+  By default the access point only comes on if the device is unable to connect to its configured WiFi network after the configured number of connection retries. You can have the access point running all the time by changing the \"WiFi Access Point Startup\" option to \"Always On\", but note that this option will disable deep sleep if it was enabled.
 
 - [`CI/CD Pipeline`](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) added to [`the GitLab project`](https://gitlab.com/defcronyke/epaper-idf), with an easy to use [`pre-built firmware flashing method`](https://gitlab.com/defcronyke/epaper-idf#quickstart-install-the-pre-built-firmware):
 

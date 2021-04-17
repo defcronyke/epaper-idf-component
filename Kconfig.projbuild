@@ -97,6 +97,9 @@ menu "[<>] Project connection config"
                 device and access a web page where you can change
                 the device's WiFi connection settings.
 
+                NOTE: The "Always On" option will disable deep 
+                sleep if it was enabled.
+
             config EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
                 bool "After Connection Retries"
                 depends on EXAMPLE_CONNECT_WIFI
@@ -113,6 +116,8 @@ menu "[<>] Project connection config"
                 bool "Always On"
                 help
                     Keep the device's built-in WiFi Access Point turned on all the time.
+
+                    NOTE: This will disable deep sleep if it was enabled.
 
                     It's not very secure to use this option, because it means the device
                     can be directly connected to at any time if someone knows the password, 
