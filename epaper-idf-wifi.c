@@ -177,7 +177,7 @@ static void epaper_idf_wifi_connect(void)
 	/** Connect to WIFI. */
 	for (int retry = 0; (retries == -1 || retry <= retries) && (res != ESP_OK); retry++)
 	{
-		ESP_LOGI(epaper_idf_wifi_tag, "TESTING connecting to WiFi network (attempt %d/%d)...", retry, retries);
+		// ESP_LOGI(epaper_idf_wifi_tag, "TESTING connecting to WiFi network (attempt %d/%d)...", retry, retries);
 		ESP_LOGI(epaper_idf_wifi_tag, "connecting to WiFi network (attempt %d/%d)...", retry, retries);
 
 		res = esp_wifi_connect();
@@ -185,7 +185,7 @@ static void epaper_idf_wifi_connect(void)
 		{
 			ESP_LOGW(epaper_idf_wifi_tag, "failed connecting to WiFi network");
 
-			if (retry < retries)
+			if (retries == -1 || retry < retries)
 			{
 				ESP_LOGI(epaper_idf_wifi_tag, "retrying connecting to WiFi network");
 			}
@@ -203,15 +203,17 @@ static void epaper_idf_wifi_connect(void)
 				// epaper_idf_wifi_ap_start();
 				// epaper_idf_wifi_ap_init();
 #else
-				if (res != ESP_OK)
-				{
-					ESP_LOGW(epaper_idf_wifi_tag, "gave up connecting to WiFi network after %d attempts", retry);
-				}
+				// if (res != ESP_OK)
+				// {
+				ESP_LOGW(epaper_idf_wifi_tag, "gave up connecting to WiFi network after %d attempts", retry);
+				// }
 #endif
 			}
 		} else {
 			/** Disable any WiFi power save mode. This allows best throughput
 				and timings for OTA firmware updating. */
+			ESP_LOGI(epaper_idf_wifi_tag, "connected to WiFi access point after %d attempts", retry);
+			
 			esp_wifi_set_ps(WIFI_PS_NONE);
 		}
 	}
