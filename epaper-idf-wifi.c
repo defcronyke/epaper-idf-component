@@ -198,7 +198,7 @@ static void epaper_idf_wifi_connect(void)
 
 				epaper_idf_wifi_ap_init();
 #else
-				if (res == ESP_FAIL)
+				if (res != ESP_OK)
 				{
 					ESP_LOGW(epaper_idf_wifi_tag, "gave up connecting to WiFi network after %llu attempts", retry);
 				}
