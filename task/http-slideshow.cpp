@@ -141,14 +141,18 @@ extern "C" void http_slideshow_task(void *pvParameter)
 
 	http_task_action_value = EPAPER_IDF_HTTP_TASK_ACTION_VALUE_COPY(pvParameter);
 
-	http_task_action_value.no_deep_sleep = false;
+	http_task_action_value.no_deep_sleep = true;
 	if (delay_secs < 0)
-	{
-		http_task_action_value.no_deep_sleep = true;
+	{		
 		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)INT32_MIN, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_NEG_MAX) * -1;
 	}
 	else
 	{
+#ifndef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+		ESP_LOGI(TAG, "Deep sleep is disabled because \"WiFi Access Point Startup\" is set as \"Always On\".");
+		http_task_action_value.no_deep_sleep = false;
+#endif
+
 		delay_secs = (int32_t)epaper_idf_clamp((float)CONFIG_EPAPER_IDF_DEEP_SLEEP_SECONDS, (float)EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN, (float)INT32_MAX);
 	}
 
@@ -169,6 +173,7 @@ extern "C" void http_slideshow_task(void *pvParameter)
 	/** Delete the io and dev variables. */
 	http_slideshow_task_cleanup();
 	
+	/** No deep sleep. */
 	if (http_task_action_value.no_deep_sleep)
 	{
 		ESP_LOGI(TAG, "waiting for %d secs\n", delay_secs);
@@ -176,8 +181,7 @@ extern "C" void http_slideshow_task(void *pvParameter)
 
 		epaper_idf_http_get(http_task_action_value);
 		
-	} else {
-		// Enter deep sleep.
+	} else {	/**< Deep sleep. */
 		ESP_LOGI(TAG, "stopping the wifi interface");
 
 		wifi_task_action_value.no_deep_sleep = http_task_action_value.no_deep_sleep;
