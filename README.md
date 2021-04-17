@@ -1,4 +1,4 @@
-# epaper-idf - epaper-idf-component
+## epaper-idf - epaper-idf-component
 
 ## An ESP-IDF component and project for e-paper displays
 
@@ -245,107 +245,107 @@ Whenever you want to load new firmware, run the "`./serve.sh`" script and wait f
 
 _Some things listed in this section may not be fully implemented, tested, or working at all yet, but many of them are._
 
-- WiFi access point for hosting a WiFi connection settings web page:
+1. WiFi access point for hosting a WiFi connection settings web page:
 
-  ```text
-  [*] Enable WiFi Access Point (AP)
-  ***  ----- WiFi Access Point Settings -----  ***
-  WiFi Access Point Startup (After Connection Retries)  --->
-  (1)     WiFi Max Connection Retries Before Starting AP
-  (wifi-net-15455) WiFi Access Point SSID
-  (T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s) WiFi Access Point Password
-  (192.168.4.1) WiFi Access Point IP Address
-  (1)     WiFi Channel AP
-  (1)     WiFi Maximum connections AP
-  ***  ----- End WiFi Access Point Settings -----  ***
-  ```
+   ```text
+   [*] Enable WiFi Access Point (AP)
+   ***  ----- WiFi Access Point Settings -----  ***
+   WiFi Access Point Startup (After Connection Retries)  --->
+   (1)     WiFi Max Connection Retries Before Starting AP
+   (wifi-net-15455) WiFi Access Point SSID
+   (T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s) WiFi Access Point Password
+   (192.168.4.1) WiFi Access Point IP Address
+   (1)     WiFi Channel AP
+   (1)     WiFi Maximum connections AP
+   ***  ----- End WiFi Access Point Settings -----  ***
+   ```
 
-  By default the access point only comes on if the device is unable to connect to its configured WiFi network after the configured number of connection retries. You can have the access point running all the time by changing the \"WiFi Access Point Startup\" option to \"Always On\", but note that this option will disable deep sleep if it was enabled.
+   By default the access point only comes on if the device is unable to connect to its configured WiFi network after the configured number of connection retries. You can have the access point running all the time by changing the \"WiFi Access Point Startup\" option to \"Always On\", but note that this option will disable deep sleep if it was enabled.
 
-- [`CI/CD Pipeline`](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) added to [`the GitLab project`](https://gitlab.com/defcronyke/epaper-idf), with an easy to use [`pre-built firmware flashing method`](https://gitlab.com/defcronyke/epaper-idf#quickstart-install-the-pre-built-firmware):
+1. [`CI/CD Pipeline`](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) added to [`the GitLab project`](https://gitlab.com/defcronyke/epaper-idf), with an easy to use [`pre-built firmware flashing method`](https://gitlab.com/defcronyke/epaper-idf#quickstart-install-the-pre-built-firmware):
 
-  ```shell
-  pip install esptool
-  bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
-  ```
+   ```shell
+   pip install esptool
+   bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
+   ```
 
-- Lots of project-specific settings in the [`esp-idf Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild), so barely anything needs to be hard-coded in [`the C and C++ source code files`](https://gitlab.com/defcronyke/epaper-idf-component):
+1. Lots of project-specific settings in the [`esp-idf Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild), so barely anything needs to be hard-coded in [`the C and C++ source code files`](https://gitlab.com/defcronyke/epaper-idf-component):
 
-  ```text
-  [<>] Project connection config --->
-  [<>] Project display config --->
-  [<>] Project OTA firmware config --->
-  [<>] Project task config --->
-  ```
+   ```text
+   [<>] Project connection config --->
+   [<>] Project display config --->
+   [<>] Project OTA firmware config --->
+   [<>] Project task config --->
+   ```
 
-- [`Over The Air (OTA) HTTPS updates`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/epaper-idf-ota.c) feature has been [`streamlined with auto-incrementing firmware micro version ( v0.1[.0] )`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/serve.sh), so it's really easy and painless to [`deploy new versions to the device`](https://gitlab.com/defcronyke/epaper-idf#ota-firmware-updating-instructions) over the air, [`using a few helper scripts`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/serve.sh):
+1. [`Over The Air (OTA) HTTPS updates`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/epaper-idf-ota.c) feature has been [`streamlined with auto-incrementing firmware micro version ( v0.1[.0] )`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/serve.sh), so it's really easy and painless to [`deploy new versions to the device`](https://gitlab.com/defcronyke/epaper-idf#ota-firmware-updating-instructions) over the air, [`using a few helper scripts`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/serve.sh):
 
-  ```shell
-  # Initial setup:
-  ./gen-dhparam.sh
-  ./gen-certs.sh [ota-server-hostname]
-  ./copy-certs.sh [$USER@ota-server-hostname:]~/epaper-idf
+   ```shell
+   # Initial setup:
+   ./gen-dhparam.sh
+   ./gen-certs.sh [ota-server-hostname]
+   ./copy-certs.sh [$USER@ota-server-hostname:]~/epaper-idf
 
-  # Auto-increment micro version, build, then serve OTA:
-  ./serve.sh [v0.1[.0]]
-  ```
+   # Auto-increment micro version, build, then serve OTA:
+   ./serve.sh [v0.1[.0]]
+   ```
 
-- [`E-paper display device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device), [`its connections`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L414), and [`the desired program to run`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task) on it are selected in the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
+1. [`E-paper display device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device), [`its connections`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L414), and [`the desired program to run`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task) on it are selected in the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
 
-  ```text
-  Select e-paper device (Gdew075T8) --->
-  (device/Gdew075T8.h) e-paper device override
-  **_ ----- Display Settings ----- _**
-  (0) Display rotation: 0 = 0°, 1 = 90° cw, 2 = 180° 3 = 270°
-  (23) SPI GPIO for MOSI (MOSI or DIN)
-  (18) SPI GPIO for Clock (CLK)
-  ...
-  **_ ----- End Display Settings ----- _**
-  ```
+   ```text
+   Select e-paper device (Gdew075T8) --->
+   (device/Gdew075T8.h) e-paper device override
+   **_ ----- Display Settings ----- _**
+   (0) Display rotation: 0 = 0°, 1 = 90° cw, 2 = 180° 3 = 270°
+   (23) SPI GPIO for MOSI (MOSI or DIN)
+   (18) SPI GPIO for Clock (CLK)
+   ...
+   **_ ----- End Display Settings ----- _**
+   ```
 
-- The minimal required set of [`header (.h) files`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include) for the selected [`e-paper device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device) and [`main task`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/task) are included automatically based on [`your Kconfig selections`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild), and [`the header paths/filenames can be overridden`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L388) in the [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild) if you want to do something custom or weird:
+1. The minimal required set of [`header (.h) files`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include) for the selected [`e-paper device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device) and [`main task`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/task) are included automatically based on [`your Kconfig selections`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild), and [`the header paths/filenames can be overridden`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L388) in the [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild) if you want to do something custom or weird:
 
-  ```text
-  Select project main task (http-slideshow) --->
-  (task/http-slideshow.h) Project main task override
-  ```
+   ```text
+   Select project main task (http-slideshow) --->
+   (task/http-slideshow.h) Project main task override
+   ```
 
-- Easy to add your own new programs (a.k.a. "[`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task)") as options in [`the Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
+1. Easy to add your own new programs (a.k.a. "[`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/task)") as options in [`the Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild):
 
-  ```text
-  Select project main task (user) --->
-  (task/none.h) Project main task override
-  **_ ----- Task Settings ----- _**
-  (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
-  **_ ----- End Task Settings ----- _**
-  ```
+   ```text
+   Select project main task (user) --->
+   (task/none.h) Project main task override
+   **_ ----- Task Settings ----- _**
+   (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
+   **_ ----- End Task Settings ----- _**
+   ```
 
-- You can [`choose to deep sleep`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L609) between screen refreshes to save power if you want, or you can keep everything running and use a regular task delay instead:
+1. You can [`choose to deep sleep`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L609) between screen refreshes to save power if you want, or you can keep everything running and use a regular task delay instead:
 
-  - 15 second deep sleep:
+   - 15 second deep sleep:
 
-    ```text
-    (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
-    ```
+     ```text
+     (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
+     ```
 
-  - 15 second delay (specify the number as negative):
+   - 15 second delay (specify the number as negative):
 
-    ```text
-    (-15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
-    ```
+     ```text
+     (-15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
+     ```
 
-- The first example program "[`http-slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp)" (work in progress) connects to [`an HTTPS web server`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) to fetch [`bitmap (.bmp) images`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/1.bmp), which will be displayed on the e-paper screen in sequence, as [`a slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp):
+1. The first example program "[`http-slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp)" (work in progress) connects to [`an HTTPS web server`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) to fetch [`bitmap (.bmp) images`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/1.bmp), which will be displayed on the e-paper screen in sequence, as [`a slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp):
 
-  ```text
-  Select project main task (http-slideshow)  --->
-  (task/http-slideshow.h) Project main task override
-  ***  ----- Task Settings -----  ***
-  (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
-  (https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) URL to a JSON object of paths to images (8-bit max .bmp)
-  (defcronyke.gitlab.io) HTTP Host header value for above URL
-  **_ ----- End Task Settings ----- _**
-  ```
+   ```text
+   Select project main task (http-slideshow)  --->
+   (task/http-slideshow.h) Project main task override
+   ***  ----- Task Settings -----  ***
+   (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
+   (https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) URL to a JSON object of paths to images (8-bit max .bmp)
+   (defcronyke.gitlab.io) HTTP Host header value for above URL
+   **_ ----- End Task Settings ----- _**
+   ```
 
-- Adding a new e-paper [`device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/device) is made easier with the help of some [`C preprocessor macros`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/epaper-idf-device.h). You can look at [`components/epaper-idf-component/include/device/Gdew075T8.h`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h) for [`an example of a real device`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h), and notice that you can refer to every device as "[`class EpaperIDFDevice`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h#L34)", which will be properly expanded to its full name under-the-hood.
+1. Adding a new e-paper [`device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/device) is made easier with the help of some [`C preprocessor macros`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/epaper-idf-device.h). You can look at [`components/epaper-idf-component/include/device/Gdew075T8.h`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h) for [`an example of a real device`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h), and notice that you can refer to every device as "[`class EpaperIDFDevice`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h#L34)", which will be properly expanded to its full name under-the-hood.
 
-- The idea is that you'll add more [`devices`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device) and [`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/task) as per the included examples, and then they'll be selected and configured through the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild).
+1. The idea is that you'll add more [`devices`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device) and [`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/task) as per the included examples, and then they'll be selected and configured through the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild).
