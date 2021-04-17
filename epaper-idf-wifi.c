@@ -107,20 +107,6 @@ static void epaper_idf_wifi_ap_init(void)
 {
 	ESP_ERROR_CHECK(esp_wifi_stop());
 
-	// ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-	// 																										WIFI_EVENT_AP_STACONNECTED,
-	// 																										// ESP_EVENT_ANY_ID,
-	// 																										&wifi_event_handler,
-	// 																										NULL,
-	// 																										NULL));
-
-	// ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-	// 																										WIFI_EVENT_AP_STADISCONNECTED,
-	// 																										// ESP_EVENT_ANY_ID,
-	// 																										&wifi_event_handler,
-	// 																										NULL,
-	// 																										NULL));
-
 	esp_netif_t *ap_netif = esp_netif_create_default_wifi_ap();
 	assert(ap_netif);
 
@@ -193,7 +179,6 @@ static void epaper_idf_wifi_init(void)
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_sta));
 
 	esp_event_handler_instance_t instance_any_id;
-	// esp_event_handler_instance_t instance_got_ip;
 
 	ESP_ERROR_CHECK(
 			esp_event_handler_instance_register(
@@ -216,11 +201,19 @@ static void epaper_idf_wifi_init(void)
 		/* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
      * happened. */
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(epaper_idf_wifi_tag, "connected to ap SSID:%s password:%s",
+        ESP_LOGI(epaper_idf_wifi_tag, "connected to ap SSID: %s password: %s",
                  CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
     } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(epaper_idf_wifi_tag, "Failed to connect to SSID:%s, password:%s",
+        ESP_LOGI(epaper_idf_wifi_tag, "Failed to connect to SSID: %s, password: %s",
                  CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
+
+				/** Start the WiFi access point (AP) if it's configured to 
+					start after a certain number of connection retries. The 
+					access point can be used to configure which WiFi network 
+					to connect to. */
+				ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point after %d attempts", retry_num);
+
+				epaper_idf_wifi_ap_init();
     } else {
         ESP_LOGE(epaper_idf_wifi_tag, "UNEXPECTED EVENT");
     }
@@ -242,59 +235,6 @@ static void epaper_idf_wifi_init(void)
 
 #endif /**< End CONFIG_EXAMPLE_CONNECT_WIFI */
 }
-
-#ifdef CONFIG_EXAMPLE_CONNECT_WIFI
-static void epaper_idf_wifi_connect(void)
-{
-	esp_err_t res = ESP_FAIL;
-
-	/** Connect to WIFI. */
-	for (int retry = 0; (retries == -1 || retry <= retries) && (res != ESP_OK); retry++)
-	{
-		// ESP_LOGI(epaper_idf_wifi_tag, "TESTING connecting to WiFi network (attempt %d/%d)...", retry, retries);
-		ESP_LOGI(epaper_idf_wifi_tag, "connecting to WiFi network (attempt %d/%d)...", retry, retries);
-
-		res = esp_wifi_connect();
-		if (res != ESP_OK)
-		{
-			ESP_LOGW(epaper_idf_wifi_tag, "failed connecting to WiFi network");
-
-			if (retries == -1 || retry < retries)
-			{
-				ESP_LOGI(epaper_idf_wifi_tag, "retrying connecting to WiFi network");
-			}
-			else
-			{
-#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
-				/** Start the WiFi access point (AP) if it's configured to 
-					start after a certain number of connection retries. The 
-					access point can be used to configure which WiFi network 
-					to connect to. */
-				ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point after %d attempts", retry);
-
-				epaper_idf_wifi_ap_init();
-
-				// epaper_idf_wifi_ap_start();
-				// epaper_idf_wifi_ap_init();
-#else
-				// if (res != ESP_OK)
-				// {
-				ESP_LOGW(epaper_idf_wifi_tag, "gave up connecting to WiFi network after %d attempts", retry);
-				// }
-#endif
-			}
-		}
-		else
-		{
-			/** Disable any WiFi power save mode. This allows best throughput
-				and timings for OTA firmware updating. */
-			ESP_LOGI(epaper_idf_wifi_tag, "connected to WiFi access point after %d attempts", retry);
-
-			esp_wifi_set_ps(WIFI_PS_NONE);
-		}
-	}
-}
-#endif
 
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
 static void epaper_idf_wifi_disconnect(void)
@@ -340,8 +280,8 @@ void epaper_idf_wifi_task(void *pvParameter)
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
 				ESP_LOGI(epaper_idf_wifi_tag, "attempting to connect to wifi network...");
 
-				/** Connect to wifi. */
-				epaper_idf_wifi_connect();
+				// /** Connect to wifi. */
+				// epaper_idf_wifi_connect();
 #endif
 
 				break;
