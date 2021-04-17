@@ -233,6 +233,8 @@ static void epaper_idf_wifi_init(void)
 				ESP_ERROR_CHECK(esp_wifi_stop());
 
 				epaper_idf_wifi_ap_init();
+
+				ESP_ERROR_CHECK(esp_wifi_start());
 #endif
     } else {
         ESP_LOGE(epaper_idf_wifi_tag, "UNEXPECTED EVENT");
