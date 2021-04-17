@@ -64,6 +64,20 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
 static void epaper_idf_wifi_ap_init(void)
 {
+	ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+		WIFI_EVENT_AP_STACONNECTED,
+		// ESP_EVENT_ANY_ID,
+		&wifi_event_handler,
+		NULL,
+		NULL));
+
+	ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+		WIFI_EVENT_AP_STADISCONNECTED,
+		// ESP_EVENT_ANY_ID,
+		&wifi_event_handler,
+		NULL,
+		NULL));
+
 	esp_netif_t *ap_netif = esp_netif_create_default_wifi_ap();
 	assert(ap_netif);
 
@@ -111,13 +125,8 @@ static void epaper_idf_wifi_init(void)
 	assert(sta_netif);
 
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
-	ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-																											ESP_EVENT_ANY_ID,
-																											&wifi_event_handler,
-																											NULL,
-																											NULL));
+	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
 	wifi_config_t wifi_config_sta = {
 			.sta = {
@@ -128,7 +137,6 @@ static void epaper_idf_wifi_init(void)
 
 #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
-
 #ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
 	epaper_idf_wifi_ap_init();
 #endif
