@@ -177,6 +177,7 @@ static void epaper_idf_wifi_connect(void)
 	/** Connect to WIFI. */
 	for (int retry = 0; (retries == -1 || retry <= retries) && (res != ESP_OK); retry++)
 	{
+		ESP_LOGI(epaper_idf_wifi_tag, "TESTING connecting to WiFi network (attempt %d/%d)...", retry, retries);
 		ESP_LOGI(epaper_idf_wifi_tag, "connecting to WiFi network (attempt %d/%d)...", retry, retries);
 
 		res = esp_wifi_connect();
