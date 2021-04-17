@@ -41,7 +41,7 @@ This project is primarily released under the terms of the license contained in t
 - I currently only have one model of e-paper screen to test with: [`WaveShare 7.5" 640x384 b/w Gdew075T8`](https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT)
 - Only ESP32 ESP-IDF (Espressif's official FreeRTOS SDK) support is planned. This will not work for Arduino framework-based projects.
 
-I am making this as an attempt to eventually replace some existing solutions which are floating around online currently (at least replace them for my own usage), since everything I could find had too many outstanding issues, and I didn't like the way their code was organized personally. I'll be happy if anyone else finds this useful, otherwise I'll just use it myself if no-one notices it.
+I am making this as an attempt to eventually replace some existing solutions which are floating around online currently (at least replace them for my own usage), since everything I could find had too many outstanding issues, and I didn't like the way their code was organized personally.
 
 ---
 
@@ -50,7 +50,7 @@ I am making this as an attempt to eventually replace some existing solutions whi
 - Some of the code in this project is borrowed (and heavily modified/improved) from the OG e-paper library known as: [`ZinggJM/GxEPD`](https://github.com/ZinggJM/GxEPD)
 - Some of the code is loosely inspired by this other ESP IDF component project for e-paper displays: [`martinberlin/cale-idf`](https://github.com/martinberlin/cale-idf)
 
-A big thanks to the authors of the above projects for releasing theirs with permissive licensing, so I could derive some ideas from their existing work. Both of those projects have too many bugs though, and I wanted to make my own thing instead of trying to convince them to let me patch up their projects (well the first guy flat-out refused my bugfixes actually). Maybe at some point this will be a worthwhile alternative to the above, but until then, check out those projects because they are much more mature than mine.
+A big thanks to the authors of the above projects for releasing their code with permissive licensing, so I could derive some ideas from their existing work. Both of those projects have too many bugs though, and I wanted to make my own thing instead of trying to convince them to let me patch up their projects. Maybe at some point this will be a worthwhile alternative to the above, but until then, check out those projects because they are much more mature than mine.
 
 ---
 
@@ -80,10 +80,11 @@ This is how to install an already compiled version of the firmware if you don't 
 
 3. Once the firmware is installed, the device will begin hosting a WiFi access point (AP) which you can connect to and access a configuration web page to set the WiFi `SSID` and `password` that the device will use to connect to your LAN WiFi. By default the access point will only allow one connection at a time for added safety, and it will shut down once the device is able to successfully connect to a WiFi network:
 
-   - Default WiFi Access Point Details:
-     - SSID: `wifi-net-15455`
-     - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
-     - Config URL (work in progress...): `https://192.168.4.1`
+   Default WiFi Access Point Details:
+
+   - SSID: `wifi-net-15455`
+   - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
+   - Config URL (work in progress...): `https://192.168.4.1`
 
 ---
 
@@ -178,13 +179,13 @@ idf.py menuconfig
 ```shell
 # Install the firmware you just built onto the device, and begin
 # monitoring with a serial console. The firmware will be built first
-# if necessary The version will be set as "v0.1.0" by default::
+# if necessary The version will be set as "v0.1.0" by default:
 ./flash.sh
 
 # (Optional) Specify the firmware short version when building and
 # installing. If the major or minor version changes, it breaks
 # backwards-compatibility on purpose by changing the name of the
-# EpaperIDF clas:
+# EpaperIDF class:
 ./flash.sh v0.2
 
 # (Optional) Specify the full firmware version number instead and it
@@ -195,8 +196,8 @@ idf.py menuconfig
 ### To view the ESP32 device's serial console
 
 ```shell
-# View the serial console output to see what the device is doing for
-# debugging purposes:
+# View the serial console output to see what the device is doing, for
+# monitoring and debugging:
 idf.py monitor
 ```
 
@@ -225,7 +226,7 @@ idf.py monitor
    # class. To trigger the OTA update, the micro version will be
    # auto-incremented by +1 to the value in the file version-micro.txt,
    # for example "v0.2.0" -> "v0.2.1":
-   ./serve.sh v0.1
+   ./serve.sh v0.2
 
    # (Optional) Specify the full firmware version number when building
    # and serving. If the device is already running this version, it
@@ -250,12 +251,11 @@ _Some things listed in this section may not be fully implemented, tested, or wor
    ```text
    [*] Enable WiFi Access Point (AP)
    ***  ----- WiFi Access Point Settings -----  ***
-   WiFi Access Point Startup (After Connection Retries)  --->
-   (1)     WiFi Max Connection Retries Before Starting AP
-   (wifi-net-15455) WiFi Access Point SSID
-   (T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s) WiFi Access Point Password
-   (192.168.4.1) WiFi Access Point IP Address
-   (1)     WiFi Channel AP
+   WiFi AP Startup (After Connection Retries)  --->
+   (1)     WiFi AP Connection Retries Before Starting (wifi-net-15455) WiFi AP SSID
+   (T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s) WiFi AP Password
+   (192.168.4.1) WiFi AP IP Address
+   (1)     WiFi AP Channel
    (1)     WiFi Maximum connections AP
    ***  ----- End WiFi Access Point Settings -----  ***
    ```
