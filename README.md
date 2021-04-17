@@ -54,11 +54,62 @@ A big thanks to the authors of the above projects for releasing their code with 
 
 ---
 
-## Basic usage - Install pre-built firmware
+## Basic usage - Remote build and install firmware
 
-This is how to install an already compiled version of the firmware if you don't intend to modify it. Otherwise, skip this section and follow the instructions in the other sections below if you're going to be modifying the firmware:
+This is how to remotely build the firmware and install it.
 
-1. Install espressif's official `esptool.py` firmware flashing utility:
+1. Fork these git repositories into your own [`GitLab`](https://gitlab.com) account:
+
+   - [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf/-/forks/new)
+
+   - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component/-/forks/new)
+
+2. Clone the first repo you forked in the previous step onto your machine:
+
+   ```shell
+   # Set you GitLab username and branch here:
+   GITLAB_USER="defcronyke-fork"
+   GITLAB_BRANCH="master"
+
+   # Clone your GitLab repo fork:
+   git clone git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
+   cd epaper-idf; \
+   git checkout $GITLAB_BRANCH; \
+   git remote add upstream https://gitlab.com/defcronyke/epaper-idf.git; \
+   sed -i "s#https://github.com/defcronyke#git@gitlab.com:$GITLAB_USER#g" .gitmodules; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GITLAB_BRANCH@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
+   git submodule update --init --recursive; \
+   cd components/epaper-idf-component; \
+   git checkout $GITLAB_BRANCH; \
+   git remote add upstream https://gitlab.com/defcronyke/epaper-idf-component.git; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GITLAB_BRANCH@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
+   cd ../..
+   ```
+
+3. Modify something and push the changes to your forked repo, or force-push if you want to build without any modifications:
+
+   ```shell
+   # Set the git commit message and branch:
+   GITLAB_COMMIT_MSG="Some changes."
+   GITLAB_BRANCH="master"
+
+   # Commit the changes and build:
+   cd components/epaper-idf-component; \
+   git add . && \
+   git commit -m "$GITLAB_COMMIT_MSG" && \
+   git push -u origin $GITLAB_BRANCH; \
+   cd ../..; \
+   git add . && \
+   git commit -m "$GITLAB_COMMIT_MSG" && \
+   git push -u origin $GITLAB_BRANCH
+
+   # (Optional) Or you can build with no changes instead:
+   git push -fu origin $GITLAB_BRANCH
+   ```
+
+4. Install espressif's official `esptool.py` firmware flashing utility:
 
    ```shell
    # Install the python-based firmware flashing tool:
@@ -68,17 +119,27 @@ This is how to install an already compiled version of the firmware if you don't 
    python -m pip install esptool
    ```
 
-2. Install the latest version of the epaper-idf firmware onto the ESP32 device:
+5. Install the epaper-idf firmware onto the ESP32 device:
 
    ```shell
-   # Install the current release version:
+   # Set your GitLab username, repo, and branch here:
+   GITLAB_USER="defcronyke-fork"
+   GITLAB_REPO="epaper-idf"
+   GITLAB_BRANCH="master"
+
+   # Install your forked version of the firmware that you just
+   # built. You may need to wait a few minutes for the build to
+   # finish first.
+   bash <(curl -sL https://gitlab.com/$GITLAB_USER/$GITLAB_REPO/-/raw/$GITLAB_BRANCH/flash-firmware-online.sh) $GITLAB_BRANCH
+
+   # (Optional) Or install the official release version:
    bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
 
-   # (Optional) Or install the current development version instead:
+   # (Optional) Or install the official development version:
    bash <(curl -sL https://tinyurl.com/epaper-idf-flash) master
    ```
 
-3. Once the firmware is installed, the device will begin hosting a WiFi access point (AP) which you can connect to and access a configuration web page to set the WiFi `SSID` and `password` that the device will use to connect to your LAN WiFi. By default the access point will only allow one connection at a time for added safety, and it will shut down once the device is able to successfully connect to a WiFi network:
+6. Once the firmware is installed, the device will begin hosting a WiFi access point (AP) which you can connect to and access a configuration web page to set the WiFi `SSID` and `password` that the device will use to connect to your LAN WiFi. By default the access point will only allow one connection at a time for added safety, and it will shut down once the device is able to successfully connect to a WiFi network:
 
    Default WiFi Access Point Details:
 
