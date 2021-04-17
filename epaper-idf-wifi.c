@@ -107,7 +107,7 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
 static void epaper_idf_wifi_ap_init(void)
 {
-	ESP_ERROR_CHECK(esp_wifi_stop());
+	// ESP_ERROR_CHECK(esp_wifi_stop());
 
 	esp_netif_t *ap_netif = esp_netif_create_default_wifi_ap();
 	assert(ap_netif);
@@ -126,7 +126,11 @@ static void epaper_idf_wifi_ap_init(void)
 		wifi_config_ap.ap.authmode = WIFI_AUTH_OPEN;
 	}
 
+#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+#else
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+#endif
 
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config_ap));
 
@@ -164,6 +168,9 @@ static void epaper_idf_wifi_init(void)
 
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
+#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+				epaper_idf_wifi_ap_init();
+#else
 	wifi_config_t wifi_config_sta = {
 			.sta = {
 					.ssid = CONFIG_EXAMPLE_WIFI_SSID,
@@ -179,6 +186,7 @@ static void epaper_idf_wifi_init(void)
 	// #endif
 
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_sta));
+#endif
 
 	esp_event_handler_instance_t instance_any_id;
 
@@ -205,6 +213,7 @@ static void epaper_idf_wifi_init(void)
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(epaper_idf_wifi_tag, "connected to ap SSID: %s password: %s",
                  CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
+
     } else if (bits & WIFI_FAIL_BIT) {
         ESP_LOGI(epaper_idf_wifi_tag, "Failed to connect to SSID: %s, password: %s",
                  CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
@@ -215,7 +224,11 @@ static void epaper_idf_wifi_init(void)
 					to connect to. */
 				ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point after %d attempts", retry_num);
 
+#ifndef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+				ESP_ERROR_CHECK(esp_wifi_stop());
+				
 				epaper_idf_wifi_ap_init();
+#endif
     } else {
         ESP_LOGE(epaper_idf_wifi_tag, "UNEXPECTED EVENT");
     }
