@@ -60,10 +60,11 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 }
 #endif
 
-#ifdef CONFIG_EXAMPLE_CONNECT_WIFI
 #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
 static void epaper_idf_wifi_ap_init(void)
 {
+	ESP_ERROR_CHECK(esp_wifi_stop());
+
 	ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
 		WIFI_EVENT_AP_STACONNECTED,
 		// ESP_EVENT_ANY_ID,
@@ -95,13 +96,16 @@ static void epaper_idf_wifi_ap_init(void)
 		wifi_config_ap.ap.authmode = WIFI_AUTH_OPEN;
 	}
 
+	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+	
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config_ap));
+
+	ESP_ERROR_CHECK(esp_wifi_start());
 
 	ESP_LOGI(epaper_idf_wifi_tag, "started WiFi access point: SSID:%s password:%s channel:%d",
 					 CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
 }
 #endif	/**< End CONFIG_EXAMPLE_WIFI_AP_ENABLED */
-#endif /**< End CONFIG_EXAMPLE_CONNECT_WIFI */
 
 static void epaper_idf_wifi_init(void)
 {
@@ -135,15 +139,12 @@ static void epaper_idf_wifi_init(void)
 					.password = CONFIG_EXAMPLE_WIFI_PASSWORD},
 	};
 
-#ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
-	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
-#ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
-	epaper_idf_wifi_ap_init();
-#endif
-
-#else
+// #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
+// 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+// 	epaper_idf_wifi_ap_init();
+// #else
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-#endif
+// #endif
 
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_sta));
 
@@ -197,6 +198,9 @@ static void epaper_idf_wifi_connect(void)
 				ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point after %llu attempts", retry);
 
 				epaper_idf_wifi_ap_init();
+
+				// epaper_idf_wifi_ap_start();
+				// epaper_idf_wifi_ap_init();
 #else
 				if (res != ESP_OK)
 				{
