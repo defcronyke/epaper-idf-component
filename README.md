@@ -322,16 +322,16 @@ _Some things listed in this section may not be fully implemented, tested, or wor
 
 1. You can [`choose to deep sleep`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild#L609) between screen refreshes to save power if you want, or you can keep everything running and use a regular task delay instead:
 
-   - 15 second deep sleep:
+   - deep sleep for 15 seconds:
 
      ```text
-     (15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
+     (15) Deep sleep seconds between screen refreshes [deep_sleep_secs: 15 - ilong_max]
      ```
 
-   - 15 second delay (specify the number as negative):
+   - (Optional) delay for 15 seconds instead, specify the number as negative:
 
      ```text
-     (-15) Deep sleep seconds between screen refreshes [min - -15 || 15 - max]
+     (-15) Deep sleep seconds between screen refreshes [delay_secs: ilong_min - -15]
      ```
 
 1. The first example program "[`http-slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp)" (work in progress) connects to [`an HTTPS web server`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/index.json) to fetch [`bitmap (.bmp) images`](https://defcronyke.gitlab.io/epaper-idf/http-slideshow/1.bmp), which will be displayed on the e-paper screen in sequence, as [`a slideshow`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/task/http-slideshow.cpp):
