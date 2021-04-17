@@ -84,7 +84,7 @@ This is how to install an already compiled version of the firmware if you don't 
 
    - SSID: `wifi-net-15455`
    - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
-   - Config URL (work in progress...): `https://192.168.4.1`
+   - Config URL (work in progress...): [`https://192.168.4.1`](https://192.168.4.1)
 
 ---
 
