@@ -252,7 +252,8 @@ _Some things listed in this section may not be fully implemented, tested, or wor
    [*] Enable WiFi Access Point (AP)
    ***  ----- WiFi Access Point Settings -----  ***
    WiFi AP Startup (After Connection Retries)  --->
-   (1)     WiFi AP Connection Retries Before Starting (wifi-net-15455) WiFi AP SSID
+   (1)     WiFi AP Connection Retries Before Starting
+   (wifi-net-15455) WiFi AP SSID
    (T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s) WiFi AP Password
    (192.168.4.1) WiFi AP IP Address
    (1)     WiFi AP Channel
