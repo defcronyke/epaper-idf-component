@@ -80,15 +80,6 @@ I am making this as an attempt to eventually replace some existing solutions whi
 
 ---
 
-## Acknowledgements
-
-- Some of the code in this project is borrowed (and heavily modified/improved) from the OG e-paper library known as: [`ZinggJM/GxEPD`](https://github.com/ZinggJM/GxEPD)
-- Some of the code is loosely inspired by this other ESP IDF component project for e-paper displays: [`martinberlin/cale-idf`](https://github.com/martinberlin/cale-idf)
-
-A big thanks to the authors of the above projects for releasing their code with permissive licensing, so I could derive some ideas from their existing work. Both of those projects have too many bugs though, and I wanted to make my own thing instead of trying to convince them to let me patch up their projects. Maybe at some point this will be a worthwhile alternative to the above, but until then, check out those projects because they are much more mature than mine.
-
----
-
 ## Basic Method - Install the official pre-built version of the firmware
 
 ### How to install unmodified firmware that's already built. This method is fastest and easiest
@@ -468,3 +459,12 @@ _Some things listed in this section may not be fully implemented, tested, or wor
 1. Adding a new e-paper [`device`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/device) is made easier with the help of some [`C preprocessor macros`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/epaper-idf-device.h). You can look at [`components/epaper-idf-component/include/device/Gdew075T8.h`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h) for [`an example of a real device`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h), and notice that you can refer to every device as "[`class EpaperIDFDevice`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/include/device/Gdew075T8.h#L34)", which will be properly expanded to its full name under-the-hood.
 
 1. The idea is that you'll add more [`devices`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/device) and [`main tasks`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/include/task) as per the included examples, and then they'll be selected and configured through the esp-idf [`Kconfig menu`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/Kconfig.projbuild).
+
+---
+
+## Acknowledgements
+
+- Some of the code in this project is borrowed (and heavily modified/improved) from the OG e-paper library known as: [`ZinggJM/GxEPD`](https://github.com/ZinggJM/GxEPD)
+- Some of the code is loosely inspired by this other ESP IDF component project for e-paper displays: [`martinberlin/cale-idf`](https://github.com/martinberlin/cale-idf)
+
+A big thanks to the authors of the above projects for releasing their code with permissive licensing, so I could derive some ideas from their existing work. Both of those projects have too many bugs though, and I wanted to make my own thing instead of trying to convince them to let me patch up their projects. Maybe at some point this will be a worthwhile alternative to the above, but until then, check out those projects because they are much more mature than mine.
