@@ -14,18 +14,49 @@ _You can test this project at your own risk if you want, but it's not ready for 
 
 ---
 
-## Links
+## How to clone this project's git repository and submodules
+
+```shell
+# Clone the current stable version (well it's not really stable yet though):
+git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
+
+# (Optional) Or clone the current development version instead:
+#git clone --recursive https://gitlab.com/defcronyke/epaper-idf.git
+```
+
+## How to update this project if you've already cloned it before
+
+```shell
+# You can use this bash script for convenience:
+./update-git-repos.sh
+
+# (Optional) Or use the git commands instead:
+#git pull; \
+#git submodule update --init --recursive
+```
+
+---
+
+## Project Links
+
+### Git Repository
 
 - epaper-idf
   - [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf)
   - [https://github.com/defcronyke/epaper-idf](https://github.com/defcronyke/epaper-idf)
-- epaper-idf-component
-  - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component)
-  - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
-- Adafruit-GFX-Component
-  - [https://github.com/defcronyke/Adafruit-GFX-Component](https://github.com/defcronyke/Adafruit-GFX-Component)
-  - Forked and modified for ESP-IDF, from a 3rd-party Adafruit arduino library:  
-    [https://github.com/adafruit/Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library)
+
+### Dependencies (git submodules)
+
+1. epaper-idf-component
+
+   - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component)
+   - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
+
+2. Adafruit-GFX-Component (3rd-party)
+   - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-Component)
+   - [https://github.com/defcronyke/Adafruit-GFX-Component](https://github.com/defcronyke/Adafruit-GFX-Component)
+   - Forked from this original 3rd-party Arduino-based library to add ESP-IDF support:
+     - [https://github.com/adafruit/Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library)
 
 ## License
 
@@ -54,113 +85,42 @@ A big thanks to the authors of the above projects for releasing their code with 
 
 ---
 
-## Basic usage - Remote build and install firmware
+## Basic Method - Install the official pre-built version of the firmware
 
-This is how to remotely build the firmware and install it.
+### How to install unmodified firmware that's already built. This method is fastest and easiest
 
-1. Fork these git repositories into your own [`GitLab`](https://gitlab.com) account, by clicking each of the following links:
+### Prerequisites (Basic)
 
-   - [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf/-/forks/new)
-
-   - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component/-/forks/new)
-
-   - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-component/-/forks/new)
-
-2. Clone the first repo you forked in the previous step onto your machine:
-
-   ```shell
-   # Set you GitLab username and branches here:
-   GITLAB_USER="defcronyke-fork"
-   GIT_REPO_VERSION_BRANCH="v0.1"
-   GIT_REPO_BRANCH="master"
-
-   # Clone your GitLab repo fork:
-   git clone -b $GIT_REPO_BRANCH --recursive git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
-   cd epaper-idf; \
-   git remote add upstream https://gitlab.com/defcronyke/epaper-idf.git; \
-   sed -i "s#https://github.com/defcronyke#git@gitlab.com:$GITLAB_USER#g" .gitmodules; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_BRANCH@g" README.md; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_VERSION_BRANCH@g" README.md; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/commits/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/-/commits/$GIT_REPO_VERSION_BRANCH@g" README.md; \
-   cd components/epaper-idf-component; \
-   git remote set-url origin git@gitlab.com:$GITLAB_USER/epaper-idf-component.git; \
-   git remote add upstream https://gitlab.com/defcronyke/epaper-idf-component.git; \
-   git checkout $GIT_REPO_BRANCH; \
-   cp ../../README.md .; \
-   cd ../Adafruit-GFX-Component; \
-   git remote set-url origin git@gitlab.com:$GITLAB_USER/Adafruit-GFX-Component.git; \
-   git remote add upstream https://gitlab.com/defcronyke/Adafruit-GFX-Component.git; \
-   git checkout $GIT_REPO_BRANCH; \
-   cd ../..
-   ```
-
-3. Modify something, then commit and push the changes to your forked repo to trigger the remote building of the firmware:
-
-   ```shell
-   # (Optional) Uncomment the following lines to override
-   # the default git main and version branches:
-   #GIT_REPO_BRANCH="master"
-   #GIT_REPO_VERSION_BRANCH="v0.1"
-   #GIT_REPO_VERSION_BRANCH_ADAFRUIT="1.10"
-
-   # (Optional) Uncomment the following lines to create
-   # a tagged release version:
-   #GIT_REPO_VERSION_TAG="v0.1.0"
-   #GIT_REPO_VERSION_TAG_ADAFRUIT="1.10.0"
-
-   # Commit the changes and push them, triggering a
-   # CI/CD build:
-   ./commit-git-repos.sh Some changes.
-   ```
-
-4. Install espressif's official `esptool.py` firmware flashing utility:
+1. You need to have [`python`](https://www.python.org/downloads/) and the [`pip`](https://pypi.org/project/pip/) utility installed. Install those however they're meant to be installed on your OS first.
+1. Run the following command to install Espressif's `esptool.py` firmware flashing utility:
 
    ```shell
    # Install the python-based firmware flashing tool:
    pip install esptool
 
    # (Optional) If the above command doesn't work, try this one:
-   python -m pip install esptool
+   #python -m pip install esptool
    ```
 
-5. Install the epaper-idf firmware onto the ESP32 device:
+### Instructions (Basic)
+
+1. Plug your ESP32 device into your computer's USB port, then run one of the following commands to flash the pre-built firmware onto the device
 
    ```shell
-   # Set your GitLab username, repo, and branch here:
-   GITLAB_USER="defcronyke-fork"
-   GITLAB_REPO="epaper-idf"
-   GIT_REPO_BRANCH="v0.1"       # release version
-   #GIT_REPO_BRANCH="master"    # (Optional) or development version
-   #SERIAL_PORT="/dev/ttyUSB0"  # (Optional) port to flash
-   #BAUD_RATE="115200"          # (Optional) speed to flash
-   #FLASH_SIZE="4MB"            # (Optional) size to flash
+   # install the release version:
+   bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
 
-   # Install your forked version of the firmware that you just
-   # built. You may need to wait a few minutes for the build to
-   # finish first.
-   bash <(curl -sL https://gitlab.com/$GITLAB_USER/$GITLAB_REPO/-/raw/$GIT_REPO_BRANCH/flash-firmware-online.sh)
-
-   # (Optional) Or install the official release version:
-   GIT_REPO_BRANCH="" bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
-
-   # (Optional) Or install the official development version:
-   bash <(curl -sL https://tinyurl.com/epaper-idf-flash) master
+   # (Optional) Or install the development version:
+   #bash <(curl -sL https://tinyurl.com/epaper-idf-flash) master
    ```
-
-6. Once the firmware is installed, the device will begin hosting a WiFi access point (AP) which you can connect to and access a configuration web page to set the WiFi `SSID` and `password` that the device will use to connect to your LAN WiFi. By default the access point will only allow one connection at a time for added safety, and it will shut down once the device is able to successfully connect to a WiFi network:
-
-   Default WiFi Access Point Details:
-
-   - SSID: `wifi-net-15455`
-   - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
-   - Config URL (work in progress...): [`https://192.168.4.1`](https://192.168.4.1)
 
 ---
 
-## Full usage - Build and install customized firmware
+## ESP-IDF-based Method (recommended, OTA update supported) - Build custom firmware locally and install with ESP-IDF
 
-### Prerequisites
+### The usual ESP-IDF way of building and installing your own custom version of the firmware. This method is recommended because it's well-tested, but you might prefer a different method listed in another section
+
+### Prerequisites (ESP-IDF-based)
 
 1. Install the current stable version of Espressif's ESP32 IDF:  
    [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html)
@@ -172,27 +132,6 @@ This is how to remotely build the firmware and install it.
    git submodule update --init --recursive && \
    ./install.sh
    ```
-
-### To clone this project with git
-
-```shell
-# Clone the current stable version (well it's not really stable yet though):
-git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
-
-# (Optional) Or clone the current development version instead:
-git clone --recursive https://gitlab.com/defcronyke/epaper-idf.git
-```
-
-### To update this project if you already have a copy cloned with git
-
-```shell
-# Git commands:
-git pull; \
-git submodule update --init --recursive
-
-# (Optional) Use the helper bash script instead:
-./update-git-repos.sh
-```
 
 ### To set up the project for OTA firmware updating ability, do this once
 
@@ -237,11 +176,11 @@ idf.py menuconfig
 # (Optional) Specify the firmware short version when building. If
 # the major or minor version changes, it breaks backwards-compatibility
 # on purpose by changing the name of the EpaperIDF class:
-./build.sh v0.2
+#./build.sh v0.2
 
 # (Optional) Specify the full firmware version number instead and it
 # will use this exact version number for the built firmware:
-./build.sh v0.2.0
+#./build.sh v0.2.0
 ```
 
 ### To install the firmware onto the ESP32 device
@@ -256,11 +195,11 @@ idf.py menuconfig
 # installing. If the major or minor version changes, it breaks
 # backwards-compatibility on purpose by changing the name of the
 # EpaperIDF class:
-./flash.sh v0.2
+#./flash.sh v0.2
 
 # (Optional) Specify the full firmware version number instead and it
 # will use this exact version number for the built firmware:
-./flash.sh v0.2.0
+#./flash.sh v0.2.0
 ```
 
 ### To view the ESP32 device's serial console
@@ -271,7 +210,112 @@ idf.py menuconfig
 idf.py monitor
 ```
 
-### OTA firmware updating instructions
+---
+
+## Git Fork-based CI/CD Method (beta, no OTA support yet) - Remote build and install customized firmware
+
+### How to fork this project with CI/CD support to remotely build your own custom firmware
+
+### Prerequisites (Git Fork-based CI/CD)
+
+1. You need to have [`python`](https://www.python.org/downloads/) and the [`pip`](https://pypi.org/project/pip/) utility installed. Install those however they're meant to be installed on your OS first.
+1. Run the following command to install Espressif's `esptool.py` firmware flashing utility:
+
+   ```shell
+   # Install the python-based firmware flashing tool:
+   pip install esptool
+
+   # (Optional) If the above command doesn't work, try this one:
+   #python -m pip install esptool
+   ```
+
+### Instructions (Git Fork-based CI/CD)
+
+1. Fork these git repositories into your own [`GitLab`](https://gitlab.com) account, by clicking each of the following links:
+
+   - [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf/-/forks/new)
+
+   - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component/-/forks/new)
+
+   - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-component/-/forks/new)
+
+1. Clone the first repo you forked in the previous step onto your machine:
+
+   ```shell
+   # Set you GitLab username and branches here:
+   GITLAB_USER="defcronyke-fork"
+   GIT_REPO_VERSION_BRANCH="v0.1"
+   GIT_REPO_BRANCH="master"
+
+   # Clone your GitLab repo fork:
+   git clone -b $GIT_REPO_BRANCH --recursive git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
+   cd epaper-idf; \
+   git remote add upstream https://gitlab.com/defcronyke/epaper-idf.git; \
+   sed -i "s#https://github.com/defcronyke#git@gitlab.com:$GITLAB_USER#g" .gitmodules; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_BRANCH@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_VERSION_BRANCH@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/commits/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/-/commits/$GIT_REPO_VERSION_BRANCH@g" README.md; \
+   cd components/epaper-idf-component; \
+   git remote set-url origin git@gitlab.com:$GITLAB_USER/epaper-idf-component.git; \
+   git remote add upstream https://gitlab.com/defcronyke/epaper-idf-component.git; \
+   git checkout $GIT_REPO_BRANCH; \
+   cp ../../README.md .; \
+   cd ../Adafruit-GFX-Component; \
+   git remote set-url origin git@gitlab.com:$GITLAB_USER/Adafruit-GFX-Component.git; \
+   git remote add upstream https://gitlab.com/defcronyke/Adafruit-GFX-Component.git; \
+   git checkout $GIT_REPO_BRANCH; \
+   cd ../..
+   ```
+
+1. Modify something, then commit and push the changes to your forked repo to trigger the remote building of the firmware:
+
+   ```shell
+   # (Optional) Uncomment the following lines to override
+   # the default git main and version branches:
+   #GIT_REPO_BRANCH="master"
+   #GIT_REPO_VERSION_BRANCH="v0.1"
+   #GIT_REPO_VERSION_BRANCH_ADAFRUIT="1.10"
+
+   # (Optional) Uncomment the following lines to create
+   # a tagged release version:
+   #GIT_REPO_VERSION_TAG="v0.1.0"
+   #GIT_REPO_VERSION_TAG_ADAFRUIT="1.10.0"
+
+   # Commit the changes and push them, triggering a
+   # CI/CD build:
+   ./commit-git-repos.sh Some changes.
+   ```
+
+1. Install the epaper-idf firmware onto the ESP32 device:
+
+   ```shell
+   # Set your GitLab username, repo, and branch here:
+   GITLAB_USER="defcronyke-fork"
+   GITLAB_REPO="epaper-idf"
+   GIT_REPO_BRANCH="v0.1"       # release version
+   #GIT_REPO_BRANCH="master"    # (Optional) or development version
+   #SERIAL_PORT="/dev/ttyUSB0"  # (Optional) port to flash
+   #BAUD_RATE="115200"          # (Optional) speed to flash
+   #FLASH_SIZE="4MB"            # (Optional) size to flash
+
+   # Install your forked version of the firmware that you just
+   # built. You may need to wait a few minutes for the build to
+   # finish first.
+   bash <(curl -sL https://gitlab.com/$GITLAB_USER/$GITLAB_REPO/-/raw/$GIT_REPO_BRANCH/flash-firmware-online.sh)
+   ```
+
+1. Once the firmware is installed, the device will begin hosting a WiFi access point (AP) which you can connect to and access a configuration web page to set the WiFi `SSID` and `password` that the device will use to connect to your LAN WiFi. By default the access point will only allow one connection at a time for added safety, and it will shut down once the device is able to successfully connect to a WiFi network:
+
+   Default WiFi Access Point Details:
+
+   - SSID: `wifi-net-15455`
+   - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
+   - Config URL (work in progress...): [`https://192.168.4.1`](https://192.168.4.1)
+
+---
+
+## OTA firmware updating instructions
 
 1. Configure your LAN's DNS to point the hostname "`esprog`" at the IP address of your firmware dev computer, or change the "`esprog`" argument to your hostname when running the "`./gen-certs.sh esprog`" script, as mentioned in an earlier section.
 1. Make sure you put the auth certificates in place on your dev computer first, using the "`./copy-certs.sh`" script [`as mentioned above`](https://gitlab.com/defcronyke/epaper-idf#to-set-up-the-project-for-ota-firmware-updating-ability-do-this-once). You should have copied them into a folder containing an up-to-date version of [`this project's git repository`](https://gitlab.com/defcronyke/epaper-idf). Re-read [`the earlier instructions`](https://gitlab.com/defcronyke/epaper-idf#to-set-up-the-project-for-ota-firmware-updating-ability-do-this-once) if [`the OTA updates`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/epaper-idf-ota.c) aren't working properly for you.
@@ -296,14 +340,14 @@ idf.py monitor
    # class. To trigger the OTA update, the micro version will be
    # auto-incremented by +1 to the value in the file version-micro.txt,
    # for example "v0.2.0" -> "v0.2.1":
-   ./serve.sh v0.2
+   #./serve.sh v0.2
 
    # (Optional) Specify the full firmware version number when building
    # and serving. If the device is already running this version, it
    # won't do an OTA update during startup. Note that with this type
    # of invocation the micro version won't be auto-incremented, to
    # prevent an unnecessary OTA firmware update from happening:
-   ./serve.sh v0.2.0
+   #./serve.sh v0.2.0
    ```
 
 1. After the above script is finished building the firmware, it will start waiting for OTA update requests from the device. Reboot your ESP32 device to get it to connect and update itself with the new firmware version (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
