@@ -8,6 +8,14 @@
 
 ---
 
+## License
+
+[Copyright © 2021](https://defcronyke.gitlab.io/epaper-idf/jeremy-profile-paint-bw.png) [Jeremy Carter](https://eternalvoid.net) `<`[jeremy@jeremycarter.ca](mailto:Jeremy%20Carter%20<jeremy@jeremycarter.ca>?subject=epaper-idf)`>`
+
+This project is primarily released under the terms of the license contained in the file named [`LICENSE`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/LICENSE), which can be found [`in the top-level folder of this project`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/LICENSE). It also uses a bit of 3rd-party code, which is in turn primarily licensed under whichever licenses are referenced in each header (.h) or source (.c, .cpp, etc.) file, as per the original authors' preferences. A possibly non-exhaustive set of these [`other licenses`](https://gitlab.com/defcronyke/epaper-idf) is included in [`the top-level folder of this project`](https://gitlab.com/defcronyke/epaper-idf) in the files with names beginning with "`LICENSE-`".
+
+---
+
 ## [ This is a work in progress! Check back later for updates... ]
 
 _You can test this project at your own risk if you want, but it's not ready for release yet, so please don't expect all the listed features to be available or working properly yet. Some things may not even be implemented at all yet. Check back later for new developments and updates..._
@@ -59,12 +67,6 @@ Adafruit-GFX-Component (3rd-party)
 - [https://github.com/defcronyke/Adafruit-GFX-Component](https://github.com/defcronyke/Adafruit-GFX-Component)
 - Forked from this original 3rd-party Arduino-based library to add ESP-IDF support:  
   [https://github.com/adafruit/Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library)
-
-## License
-
-[Copyright © 2021](https://defcronyke.gitlab.io/epaper-idf/jeremy-profile-paint-bw.png) [Jeremy Carter](https://eternalvoid.net) `<`[jeremy@jeremycarter.ca](mailto:Jeremy%20Carter%20<jeremy@jeremycarter.ca>?subject=epaper-idf)`>`
-
-This project is primarily released under the terms of the license contained in the file named [`LICENSE`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/LICENSE), which can be found [`in the top-level folder of this project`](https://gitlab.com/defcronyke/epaper-idf/-/blob/master/LICENSE). It also uses a bit of 3rd-party code, which is in turn primarily licensed under whichever licenses are referenced in each header (.h) or source (.c, .cpp, etc.) file, as per the original authors' preferences. A possibly non-exhaustive set of these [`other licenses`](https://gitlab.com/defcronyke/epaper-idf) is included in [`the top-level folder of this project`](https://gitlab.com/defcronyke/epaper-idf) in the files with names beginning with "`LICENSE-`".
 
 ## Details
 
