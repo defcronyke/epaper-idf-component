@@ -96,23 +96,20 @@ This is how to remotely build the firmware and install it.
 3. Modify something, then commit and push the changes to your forked repo to trigger the remote building of the firmware:
 
    ```shell
-   # Set the git commit message and branch:
-   GITLAB_COMMIT_MSG="Some changes."
-   GITLAB_BRANCH="master"
+   # (Optional) Uncomment the following lines to override
+   # the default git main and version branches:
+   #GIT_REPO_BRANCH="master"
+   #GIT_REPO_VERSION_BRANCH="v0.1"
+   #GIT_REPO_VERSION_BRANCH_ADAFRUIT="1.10"
 
-   # Commit the changes and build:
-   cd components/Adafruit-GFX-Component; \
-   git add . && \
-   git commit -m "$GITLAB_COMMIT_MSG" && \
-   git push -u origin $GITLAB_BRANCH; \
-   cd ../epaper-idf-component; \
-   git add . && \
-   git commit -m "$GITLAB_COMMIT_MSG" && \
-   git push -u origin $GITLAB_BRANCH; \
-   cd ../..; \
-   git add . && \
-   git commit -m "$GITLAB_COMMIT_MSG" && \
-   git push -u origin $GITLAB_BRANCH
+   # (Optional) Uncomment the following lines to create
+   # a tagged release version:
+   #GIT_REPO_VERSION_TAG="v0.1.0"
+   #GIT_REPO_VERSION_TAG_ADAFRUIT="1.10.0"
+
+   # Commit the changes and push them, triggering a
+   # CI/CD build:
+   ./commit-git-repos.sh Some changes.
    ```
 
 4. Install espressif's official `esptool.py` firmware flashing utility:
