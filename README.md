@@ -8,7 +8,7 @@
 
 ---
 
-## [ This is a work in progress! Check back later for progress... ]
+## [ This is a work in progress! Check back later for updates... ]
 
 _You can test this project at your own risk if you want, but it's not ready for release yet, so please don't expect all the listed features to be available or working properly yet. Some things may not even be implemented at all yet. Check back later for new developments and updates..._
 
