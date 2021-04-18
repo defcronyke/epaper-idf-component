@@ -58,7 +58,7 @@ A big thanks to the authors of the above projects for releasing their code with 
 
 This is how to remotely build the firmware and install it.
 
-1. Fork these git repositories into your own [`GitLab`](https://gitlab.com) account:
+1. Fork these git repositories into your own [`GitLab`](https://gitlab.com) account, by clicking each of the following links:
 
    - [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf/-/forks/new)
 
