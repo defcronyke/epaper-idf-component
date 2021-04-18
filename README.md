@@ -49,19 +49,19 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
 ### Git Repository
 
-epaper-idf:
+`epaper-idf`
 
 - [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf)
 - [https://github.com/defcronyke/epaper-idf](https://github.com/defcronyke/epaper-idf)
 
 ### Dependencies (git submodules, you don't need to download these first)
 
-epaper-idf-component
+`epaper-idf-component`
 
 - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component)
 - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
 
-Adafruit-GFX-Component (3rd-party)
+`Adafruit-GFX-Component` (3rd-party)
 
 - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-Component)
 - [https://github.com/defcronyke/Adafruit-GFX-Component](https://github.com/defcronyke/Adafruit-GFX-Component)
