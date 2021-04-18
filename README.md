@@ -205,6 +205,45 @@ idf.py menuconfig
 idf.py monitor
 ```
 
+### OTA firmware updating instructions
+
+1. Configure your LAN's DNS to point the hostname "`esprog`" at the IP address of your firmware dev computer, or change the "`esprog`" argument to your hostname when running the "`./gen-certs.sh esprog`" script, as mentioned in an earlier section.
+1. Make sure you put the auth certificates in place on your dev computer first, using the "`./copy-certs.sh`" script [`as mentioned above`](https://gitlab.com/defcronyke/epaper-idf#to-set-up-the-project-for-ota-firmware-updating-ability-do-this-once). You should have copied them into a folder containing an up-to-date version of [`this project's git repository`](https://gitlab.com/defcronyke/epaper-idf). Re-read [`the earlier instructions`](https://gitlab.com/defcronyke/epaper-idf#to-set-up-the-project-for-ota-firmware-updating-ability-do-this-once) if [`the OTA updates`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/epaper-idf-ota.c) aren't working properly for you.
+1. Run the following script on your dev computer to build the new version of your firmware, and then begin hosting it for the device to do an OTA update:
+
+   ```shell
+   # Build the firmware if necessary, and begin serving it on an OTA
+   # firmware updates HTTPS server. By default the version number will
+   # start as "v0.1.0". To trigger the OTA update, the micro version
+   # will be auto-incremented by +1 to the value in the file
+   # version-micro.txt, for example "v0.1.0" -> "v0.1.1":
+   # -----
+   # KNOWN BUG: This always uses "v0.1" as the short version, so if you
+   # don't want that, for now you'll have to include your desired short
+   # version as an argument to this command, as in the first "(Optional)"
+   # example below:
+   ./serve.sh
+
+   # (Optional) Specify the firmware short version number when building
+   # and serving. If the major or minor version changes, it purposely
+   # breaks backwards-compatibility by changing the name of the EpaperIDF
+   # class. To trigger the OTA update, the micro version will be
+   # auto-incremented by +1 to the value in the file version-micro.txt,
+   # for example "v0.2.0" -> "v0.2.1":
+   #./serve.sh v0.2
+
+   # (Optional) Specify the full firmware version number when building
+   # and serving. If the device is already running this version, it
+   # won't do an OTA update during startup. Note that with this type
+   # of invocation the micro version won't be auto-incremented, to
+   # prevent an unnecessary OTA firmware update from happening:
+   #./serve.sh v0.2.0
+   ```
+
+1. After the above script is finished building the firmware, it will start waiting for OTA update requests from the device. Reboot your ESP32 device to get it to connect and update itself with the new firmware version (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
+
+Whenever you want to load new firmware, run the "`./serve.sh`" script and wait for the firmware to finish building, then reboot the ESP32 device to load the new firmware onto it (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
+
 ---
 
 ## Git Fork-based CI/CD Method (beta, no OTA) - Remote build and install custom firmware
@@ -307,47 +346,6 @@ idf.py monitor
    - SSID: `wifi-net-15455`
    - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
    - Config URL (work in progress...): [`https://192.168.4.1`](https://192.168.4.1)
-
----
-
-## OTA firmware updating instructions
-
-1. Configure your LAN's DNS to point the hostname "`esprog`" at the IP address of your firmware dev computer, or change the "`esprog`" argument to your hostname when running the "`./gen-certs.sh esprog`" script, as mentioned in an earlier section.
-1. Make sure you put the auth certificates in place on your dev computer first, using the "`./copy-certs.sh`" script [`as mentioned above`](https://gitlab.com/defcronyke/epaper-idf#to-set-up-the-project-for-ota-firmware-updating-ability-do-this-once). You should have copied them into a folder containing an up-to-date version of [`this project's git repository`](https://gitlab.com/defcronyke/epaper-idf). Re-read [`the earlier instructions`](https://gitlab.com/defcronyke/epaper-idf#to-set-up-the-project-for-ota-firmware-updating-ability-do-this-once) if [`the OTA updates`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/epaper-idf-ota.c) aren't working properly for you.
-1. Run the following script on your dev computer to build the new version of your firmware, and then begin hosting it for the device to do an OTA update:
-
-   ```shell
-   # Build the firmware if necessary, and begin serving it on an OTA
-   # firmware updates HTTPS server. By default the version number will
-   # start as "v0.1.0". To trigger the OTA update, the micro version
-   # will be auto-incremented by +1 to the value in the file
-   # version-micro.txt, for example "v0.1.0" -> "v0.1.1":
-   # -----
-   # KNOWN BUG: This always uses "v0.1" as the short version, so if you
-   # don't want that, for now you'll have to include your desired short
-   # version as an argument to this command, as in the first "(Optional)"
-   # example below:
-   ./serve.sh
-
-   # (Optional) Specify the firmware short version number when building
-   # and serving. If the major or minor version changes, it purposely
-   # breaks backwards-compatibility by changing the name of the EpaperIDF
-   # class. To trigger the OTA update, the micro version will be
-   # auto-incremented by +1 to the value in the file version-micro.txt,
-   # for example "v0.2.0" -> "v0.2.1":
-   #./serve.sh v0.2
-
-   # (Optional) Specify the full firmware version number when building
-   # and serving. If the device is already running this version, it
-   # won't do an OTA update during startup. Note that with this type
-   # of invocation the micro version won't be auto-incremented, to
-   # prevent an unnecessary OTA firmware update from happening:
-   #./serve.sh v0.2.0
-   ```
-
-1. After the above script is finished building the firmware, it will start waiting for OTA update requests from the device. Reboot your ESP32 device to get it to connect and update itself with the new firmware version (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
-
-Whenever you want to load new firmware, run the "`./serve.sh`" script and wait for the firmware to finish building, then reboot the ESP32 device to load the new firmware onto it (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
 
 ---
 
