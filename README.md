@@ -80,11 +80,11 @@ I am making this as an attempt to eventually replace some existing solutions whi
 
 ---
 
-## Basic Method - Install the official pre-built version of the firmware
+## Quick Method - Install the official pre-built version of the firmware
 
 ### How to install unmodified firmware that's already built. This method is fastest and easiest
 
-### Prerequisites (Basic)
+### Prerequisites (Quick)
 
 1. You need to have [`python`](https://www.python.org/downloads/) and the [`pip`](https://pypi.org/project/pip/) utility installed. Install those however they're meant to be installed on your OS first.
 1. Run the following command to install Espressif's `esptool.py` firmware flashing utility:
@@ -97,7 +97,7 @@ I am making this as an attempt to eventually replace some existing solutions whi
    #python -m pip install esptool
    ```
 
-### Instructions (Basic)
+### Instructions (Quick)
 
 1. Plug your ESP32 device into your computer's USB port, then run one of the following commands to flash the pre-built firmware onto the device:
 
