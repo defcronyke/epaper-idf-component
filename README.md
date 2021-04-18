@@ -104,7 +104,7 @@ A big thanks to the authors of the above projects for releasing their code with 
 
 ### Instructions (Basic)
 
-1. Plug your ESP32 device into your computer's USB port, then run one of the following commands to flash the pre-built firmware onto the device
+1. Plug your ESP32 device into your computer's USB port, then run one of the following commands to flash the pre-built firmware onto the device:
 
    ```shell
    # install the release version:
@@ -116,9 +116,9 @@ A big thanks to the authors of the above projects for releasing their code with 
 
 ---
 
-## ESP-IDF-based Method (recommended, OTA update supported) - Build custom firmware locally and install with ESP-IDF
+## ESP-IDF-based Method (recommended) - Build custom firmware locally and install with ESP-IDF
 
-### The usual ESP-IDF way of building and installing your own custom version of the firmware. This method is recommended because it's well-tested, but you might prefer a different method listed in another section
+### The usual ESP-IDF way of building and installing your own custom version of the firmware. This method is recommended because OTA updates are supported and it's well-tested, but you might prefer a different method listed in another section
 
 ### Prerequisites (ESP-IDF-based)
 
@@ -212,9 +212,9 @@ idf.py monitor
 
 ---
 
-## Git Fork-based CI/CD Method (beta, no OTA support yet) - Remote build and install customized firmware
+## Git Fork-based CI/CD Method (beta, no OTA) - Remote build and install custom firmware
 
-### How to fork this project with CI/CD support to remotely build your own custom firmware
+### How to fork this project with CI/CD support to remotely build custom firmware
 
 ### Prerequisites (Git Fork-based CI/CD)
 
