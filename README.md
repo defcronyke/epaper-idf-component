@@ -111,7 +111,7 @@ I am making this as an attempt to eventually replace some existing solutions whi
 
 ---
 
-## ESP-IDF-based Method (recommended) - Build custom firmware locally and install
+## ESP-IDF-based Method (recommended) - Local build and install custom firmware
 
 ### The usual ESP-IDF way of building and installing your own custom version of the firmware. This method is recommended because OTA updates are supported and it's well-tested, but you might prefer a different method listed in another section
 
