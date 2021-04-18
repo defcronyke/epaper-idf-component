@@ -248,7 +248,7 @@ Whenever you want to load new firmware, run the "`./serve.sh`" script and wait f
 
 ## Git Fork-based CI/CD Method (beta, no OTA) - Remote build and install custom firmware
 
-### How to fork this project with CI/CD support to remotely build custom firmware
+### How to fork this project with CI/CD support to remotely build custom firmware. OTA updates aren't supported yet
 
 ### Prerequisites (Git Fork-based CI/CD)
 
