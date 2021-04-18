@@ -48,12 +48,16 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 ### Dependencies (git submodules, you don't need to download these first)
 
 1. epaper-idf-component
+
    - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component)
    - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
+
 1. Adafruit-GFX-Component (3rd-party)
+
    - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-Component)
    - [https://github.com/defcronyke/Adafruit-GFX-Component](https://github.com/defcronyke/Adafruit-GFX-Component)
    - Forked from this original 3rd-party Arduino-based library to add ESP-IDF support:
+
      - [https://github.com/adafruit/Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library)
 
 ## License
