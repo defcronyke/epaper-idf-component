@@ -4,7 +4,7 @@
 
 [![world soup remastered](https://defcronyke.gitlab.io/epaper-idf/world-soup-remastered-bw.png)](https://defcronyke.gitlab.io/epaper-idf/world-soup-remastered-bw.png)
 
-[![pipeline status master](https://gitlab.com/defcronyke/epaper-idf/badges/master/pipeline.svg)](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) [![pipeline status v0.1](https://gitlab.com/defcronyke/epaper-idf/badges/v0.1/pipeline.svg)](https://gitlab.com/defcronyke/epaper-idf/-/commits/v0.1) [![sponsor the project](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/defcronyke)](https://github.com/sponsors/defcronyke)
+[![pipeline status development branch](https://gitlab.com/defcronyke/epaper-idf/badges/master/pipeline.svg)](https://gitlab.com/defcronyke/epaper-idf/-/pipelines) [![pipeline status release branch](https://gitlab.com/defcronyke/epaper-idf/badges/v0.1/pipeline.svg)](https://gitlab.com/defcronyke/epaper-idf/-/commits/v0.1) [![sponsor the project](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/defcronyke)](https://github.com/sponsors/defcronyke)
 
 ---
 
@@ -69,27 +69,29 @@ This is how to remotely build the firmware and install it.
 2. Clone the first repo you forked in the previous step onto your machine:
 
    ```shell
-   # Set you GitLab username and branch here:
+   # Set you GitLab username and branches here:
    GITLAB_USER="defcronyke-fork"
-   GITLAB_BRANCH="master"
+   GIT_REPO_VERSION_BRANCH="v0.1"
+   GIT_REPO_BRANCH="master"
 
    # Clone your GitLab repo fork:
-   git clone -b $GITLAB_BRANCH --recursive git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
+   git clone -b $GIT_REPO_BRANCH --recursive git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
    cd epaper-idf; \
    git remote add upstream https://gitlab.com/defcronyke/epaper-idf.git; \
    sed -i "s#https://github.com/defcronyke#git@gitlab.com:$GITLAB_USER#g" .gitmodules; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GITLAB_BRANCH@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_BRANCH@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_VERSION_BRANCH@g" README.md; \
    sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
+   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/commits/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/-/commits/$GIT_REPO_VERSION_BRANCH@g" README.md; \
    cd components/epaper-idf-component; \
    git remote set-url origin git@gitlab.com:$GITLAB_USER/epaper-idf-component.git; \
    git remote add upstream https://gitlab.com/defcronyke/epaper-idf-component.git; \
-   git checkout $GITLAB_BRANCH; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GITLAB_BRANCH@g" README.md; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
+   git checkout $GIT_REPO_BRANCH; \
+   cp ../../README.md .; \
    cd ../Adafruit-GFX-Component; \
    git remote set-url origin git@gitlab.com:$GITLAB_USER/Adafruit-GFX-Component.git; \
    git remote add upstream https://gitlab.com/defcronyke/Adafruit-GFX-Component.git; \
-   git checkout $GITLAB_BRANCH; \
+   git checkout $GIT_REPO_BRANCH; \
    cd ../..
    ```
 
@@ -128,15 +130,19 @@ This is how to remotely build the firmware and install it.
    # Set your GitLab username, repo, and branch here:
    GITLAB_USER="defcronyke-fork"
    GITLAB_REPO="epaper-idf"
-   GITLAB_BRANCH="master"
+   GIT_REPO_BRANCH="v0.1"       # release version
+   #GIT_REPO_BRANCH="master"    # (Optional) or development version
+   #SERIAL_PORT="/dev/ttyUSB0"  # (Optional) port to flash
+   #BAUD_RATE="115200"          # (Optional) speed to flash
+   #FLASH_SIZE="4MB"            # (Optional) size to flash
 
    # Install your forked version of the firmware that you just
    # built. You may need to wait a few minutes for the build to
    # finish first.
-   bash <(curl -sL https://gitlab.com/$GITLAB_USER/$GITLAB_REPO/-/raw/$GITLAB_BRANCH/flash-firmware-online.sh) $GITLAB_BRANCH
+   bash <(curl -sL https://gitlab.com/$GITLAB_USER/$GITLAB_REPO/-/raw/$GIT_REPO_BRANCH/flash-firmware-online.sh)
 
    # (Optional) Or install the official release version:
-   bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
+   GIT_REPO_BRANCH="" bash <(curl -sL https://tinyurl.com/epaper-idf-flash)
 
    # (Optional) Or install the official development version:
    bash <(curl -sL https://tinyurl.com/epaper-idf-flash) master
