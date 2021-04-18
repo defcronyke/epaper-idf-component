@@ -70,13 +70,13 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
 ## Details
 
-- An [`ESP32 ESP-IDF`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/) [`component`](https://gitlab.com/defcronyke/epaper-idf-component) for [`Espressif ESP32`](https://wikipedia.org/wiki/ESP32) [`microcontroller-based e-paper display`](https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT) [`firmware projects`](https://gitlab.com/defcronyke/epaper-idf).
-- Has streamlined support for WiFi HTTPS over-the-air (OTA) firmware updates.
-- Aims to solve some of the usability problems that some of the other ESP32 e-paper display libraries have.
-- I currently only have one model of e-paper screen to test with: [`WaveShare 7.5" 640x384 b/w Gdew075T8`](https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT)
-- Only ESP32 ESP-IDF (Espressif's official FreeRTOS SDK) support is planned. This will not work for Arduino framework-based projects.
+1. An [`ESP32 ESP-IDF`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/) [`component`](https://gitlab.com/defcronyke/epaper-idf-component) for [`Espressif ESP32`](https://wikipedia.org/wiki/ESP32) [`microcontroller-based e-paper display`](https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT) [`firmware projects`](https://gitlab.com/defcronyke/epaper-idf).
+2. Has streamlined support for WiFi HTTPS over-the-air (OTA) firmware updates.
+3. Aims to solve some of the usability problems that some of the other ESP32 e-paper display libraries have.
+4. I currently only have one model of e-paper screen to test with: [`WaveShare 7.5" 640x384 b/w Gdew075T8`](https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT)
+5. Only ESP32 ESP-IDF (Espressif's official FreeRTOS SDK) support is planned. This will not work for Arduino framework-based projects.
 
-I am making this as an attempt to eventually replace some existing solutions which are floating around online currently (at least replace them for my own usage), since everything I could find had too many outstanding issues, and I didn't like the way their code was organized personally.
+- I am making this as an attempt to eventually replace some existing solutions which are floating around online currently (at least replace them for my own usage), since everything I could find had too many outstanding issues, and I didn't like the way their code was organized personally.
 
 ---
 
