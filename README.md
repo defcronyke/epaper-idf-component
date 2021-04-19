@@ -273,33 +273,16 @@ Whenever you want to load new firmware, run the "`./serve.sh`" script and wait f
 
    - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-component/-/forks/new)
 
-1. Clone the first repo you forked in the previous step onto your machine:
+1. Clone the repos you forked in the previous step onto your machine:
 
    ```shell
    # Set you GitLab username and branches here:
    GITLAB_USER="defcronyke-fork"
-   GIT_REPO_VERSION_BRANCH="v0.1"
-   GIT_REPO_BRANCH="master"
+   #GIT_REPO_VERSION_BRANCH="v0.1"  # (Optional) Set the git version branch.
+   #GIT_REPO_BRANCH="master"        # (Optional) Set the git main branch.
 
    # Clone your GitLab repo fork:
-   git clone -b $GIT_REPO_BRANCH --recursive git@gitlab.com:$GITLAB_USER/epaper-idf.git; \
-   cd epaper-idf; \
-   git remote add upstream https://gitlab.com/defcronyke/epaper-idf.git; \
-   sed -i "s#https://github.com/defcronyke#git@gitlab.com:$GITLAB_USER#g" .gitmodules; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/master@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_BRANCH@g" README.md; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/badges/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/badges/$GIT_REPO_VERSION_BRANCH@g" README.md; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/pipelines@gitlab.com/$GITLAB_USER/epaper-idf/-/pipelines@g" README.md; \
-   sed -i "s@gitlab.com/defcronyke/epaper-idf/-/commits/v0.1@gitlab.com/$GITLAB_USER/epaper-idf/-/commits/$GIT_REPO_VERSION_BRANCH@g" README.md; \
-   cd components/epaper-idf-component; \
-   git remote set-url origin git@gitlab.com:$GITLAB_USER/epaper-idf-component.git; \
-   git remote add upstream https://gitlab.com/defcronyke/epaper-idf-component.git; \
-   git checkout $GIT_REPO_BRANCH; \
-   cp ../../README.md .; \
-   cd ../Adafruit-GFX-Component; \
-   git remote set-url origin git@gitlab.com:$GITLAB_USER/Adafruit-GFX-Component.git; \
-   git remote add upstream https://gitlab.com/defcronyke/Adafruit-GFX-Component.git; \
-   git checkout $GIT_REPO_BRANCH; \
-   cd ../..
+   ./clone-git-fork.sh
    ```
 
 1. Modify something, then commit and push the changes to your forked repo to trigger the remote building of the firmware:
