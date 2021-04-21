@@ -26,6 +26,12 @@ idf_component_register(
     $ENV{IDF_PATH}/examples/common_components/protocol_examples_common/stdin_out.c
 
     $ENV{IDF_PATH}/components/esp_https_ota/src/esp_https_ota.c
+    $ENV{IDF_PATH}/components/fatfs/diskio/diskio.c
+    $ENV{IDF_PATH}/components/fatfs/src/ff.c
+    $ENV{IDF_PATH}/components/fatfs/vfs/vfs_fat.c
+    $ENV{IDF_PATH}/components/sdmmc/sdmmc_cmd.c
+    $ENV{IDF_PATH}/components/spiffs/esp_spiffs.c
+    $ENV{IDF_PATH}/components/wear_levelling/wear_levelling.cpp
 
   REQUIRES
     "Adafruit-GFX-Component"
@@ -37,13 +43,21 @@ idf_component_register(
     $ENV{IDF_PATH}/components/bootloader_support/include
     $ENV{IDF_PATH}/components/esp_http_client/include
     $ENV{IDF_PATH}/components/esp_https_ota/include
+    $ENV{IDF_PATH}/components/fatfs/diskio
+    $ENV{IDF_PATH}/components/fatfs/src
+    $ENV{IDF_PATH}/components/fatfs/vfs
     $ENV{IDF_PATH}/components/mbedtls/esp_crt_bundle/include
     $ENV{IDF_PATH}/components/mbedtls/mbedtls/include
     $ENV{IDF_PATH}/components/mbedtls/port/include
     $ENV{IDF_PATH}/components/nghttp/port/include
     $ENV{IDF_PATH}/components/nvs_flash/include
+    $ENV{IDF_PATH}/components/sdmmc/include
     $ENV{IDF_PATH}/components/spi_flash/include
+    $ENV{IDF_PATH}/components/spiffs/include
+    $ENV{IDF_PATH}/components/spiffs/spiffs/src
     $ENV{IDF_PATH}/components/ulp/include
+    $ENV{IDF_PATH}/components/wear_levelling/include
+    $ENV{IDF_PATH}/components/wear_levelling/private_include
     $ENV{IDF_PATH}/components/esp-tls
     $ENV{IDF_PATH}/components/esp_wifi/include
 

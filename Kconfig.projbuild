@@ -575,6 +575,12 @@ menu "[<>] Project OTA firmware config"
         help
             URL of the server which hosts the new firmware image.
 
+    config PROJECT_FIRMWARE_UPGRADE_URL2
+        string "Second Firmware Upgrade URL"
+        default "https://esprog:8089/www.bin"
+        help
+            URL of server which hosts the firmware image.
+
     config PROJECT_FIRMWARE_UPGRADE_URL_FROM_STDIN
         bool
         default y if PROJECT_FIRMWARE_UPGRADE_URL = "FROM_STDIN"
@@ -596,6 +602,53 @@ menu "[<>] Project OTA firmware config"
         default 5000
         help
             Maximum time for reception.
+
+    choice EXAMPLE_WEB_DEPLOY_MODE
+        prompt "Website deploy mode"
+        default EXAMPLE_WEB_DEPLOY_SF
+        help
+            Select website deploy mode.
+            You can deploy website to host, and ESP32 will retrieve them in a semihost way (JTAG is needed).
+            You can deploy website to SD card or SPI flash, and ESP32 will retrieve them via SDIO/SPI interface.
+            Detailed operation steps are listed in the example README file.
+        config EXAMPLE_WEB_DEPLOY_SEMIHOST
+            bool "Deploy website to host (JTAG is needed)"
+            help
+                Deploy website to host.
+                It is recommended to choose this mode during developing.
+        config EXAMPLE_WEB_DEPLOY_SD
+            depends on IDF_TARGET_ESP32
+            bool "Deploy website to SD card"
+            help
+                Deploy website to SD card.
+                Choose this production mode if the size of website is too large (bigger than 2MB).
+        config EXAMPLE_WEB_DEPLOY_SF
+            bool "Deploy website to SPI Nor Flash"
+            help
+                Deploy website to SPI Nor Flash.
+                Choose this production mode if the size of website is small (less than 2MB).
+    endchoice
+
+    if EXAMPLE_WEB_DEPLOY_SEMIHOST
+        config EXAMPLE_HOST_PATH_TO_MOUNT
+            string "Host path to mount (e.g. absolute path to web dist directory)"
+            default "PATH-TO-WEB-DIST_DIR"
+            help
+                When using semihost in ESP32, you should specify the host path which will be mounted to VFS.
+                Note that only absolute path is acceptable.
+    endif
+
+    config EXAMPLE_WEB_MOUNT_POINT
+        string "Website mount point in VFS"
+        default "/www"
+        help
+            Specify the mount point in VFS.
+
+    
+
+    config EXAMPLE_FIRMWARE_UPGRADE_URL_FROM_STDIN
+        bool
+        default y if EXAMPLE_FIRMWARE_UPG_URL = "FROM_STDIN"
 
 endmenu
 

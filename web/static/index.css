@@ -1,7 +1,8 @@
-@font-face {
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+/* @font-face {
     font-family: "Nanum Myeongjo";
     src: url("./NanumMyeongjo-Regular.ttf");
-}
+} */
 
 body {    
     background-color: #979633;
