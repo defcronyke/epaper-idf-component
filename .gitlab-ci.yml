@@ -16,7 +16,7 @@ build-job:
   script:
     - git checkout $CI_COMMIT_REF_NAME
     - mkdir epaper-idf-component
-    - mv * epaper-idf-component/
+    - mv * epaper-idf-component/ || true
     - git clone -b $CI_COMMIT_REF_NAME --recursive https://gitlab.com/defcronyke/epaper-idf.git
     - cd epaper-idf
     - rm -rf components/epaper-idf-component
