@@ -22,6 +22,7 @@
   "devDependencies": {
     "css-loader": "^5.2.4",
     "file-loader": "^6.2.0",
+    "http-server": "^0.12.3",
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.34.0",

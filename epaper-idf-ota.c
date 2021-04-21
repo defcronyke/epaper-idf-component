@@ -60,6 +60,116 @@ esp_event_loop_handle_t epaper_idf_ota_event_loop_handle;
 
 ESP_EVENT_DEFINE_BASE(EPAPER_IDF_OTA_EVENT);
 
+static bool diagnostic(void)
+{
+    gpio_config_t io_conf;
+    io_conf.intr_type    = GPIO_PIN_INTR_DISABLE;
+    io_conf.mode         = GPIO_MODE_INPUT;
+    io_conf.pin_bit_mask = (1ULL << CONFIG_EXAMPLE_GPIO_DIAGNOSTIC);
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    io_conf.pull_up_en   = GPIO_PULLUP_ENABLE;
+    gpio_config(&io_conf);
+
+    ESP_LOGI(TAG, "Diagnostics (5 sec)...");
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+    bool diagnostic_is_ok = gpio_get_level(CONFIG_EXAMPLE_GPIO_DIAGNOSTIC);
+
+    gpio_reset_pin(CONFIG_EXAMPLE_GPIO_DIAGNOSTIC);
+    return diagnostic_is_ok;
+}
+
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST
+esp_err_t init_fs(void)
+{
+	esp_err_t ret = esp_vfs_semihost_register(CONFIG_EXAMPLE_WEB_MOUNT_POINT, CONFIG_EXAMPLE_HOST_PATH_TO_MOUNT);
+	if (ret != ESP_OK)
+	{
+		ESP_LOGE(TAG, "Failed to register semihost driver (%s)!", esp_err_to_name(ret));
+		return ESP_FAIL;
+	}
+	return ESP_OK;
+}
+#endif
+
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SD
+esp_err_t init_fs(void)
+{
+	sdmmc_host_t host = SDMMC_HOST_DEFAULT();
+	sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
+
+	gpio_set_pull_mode(15, GPIO_PULLUP_ONLY); // CMD
+	gpio_set_pull_mode(2, GPIO_PULLUP_ONLY);  // D0
+	gpio_set_pull_mode(4, GPIO_PULLUP_ONLY);  // D1
+	gpio_set_pull_mode(12, GPIO_PULLUP_ONLY); // D2
+	gpio_set_pull_mode(13, GPIO_PULLUP_ONLY); // D3
+
+	esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+		.format_if_mount_failed = true,
+		.max_files = 4,
+		.allocation_unit_size = 16 * 1024};
+
+	sdmmc_card_t *card;
+	esp_err_t ret = esp_vfs_fat_sdmmc_mount(CONFIG_EXAMPLE_WEB_MOUNT_POINT, &host, &slot_config, &mount_config, &card);
+	if (ret != ESP_OK)
+	{
+		if (ret == ESP_FAIL)
+		{
+			ESP_LOGE(TAG, "Failed to mount filesystem.");
+		}
+		else
+		{
+			ESP_LOGE(TAG, "Failed to initialize the card (%s)", esp_err_to_name(ret));
+		}
+		return ESP_FAIL;
+	}
+	/* print card info if mount successfully */
+	sdmmc_card_print_info(stdout, card);
+	return ESP_OK;
+}
+#endif
+
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SF
+esp_err_t init_fs(void)
+{
+	esp_vfs_spiffs_conf_t conf = {
+		.base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT,
+		.partition_label = NULL,
+		.max_files = 5,
+		.format_if_mount_failed = false};
+	esp_err_t ret = esp_vfs_spiffs_register(&conf);
+
+	if (ret != ESP_OK)
+	{
+		if (ret == ESP_FAIL)
+		{
+			ESP_LOGE(TAG, "Failed to mount or format filesystem");
+		}
+		else if (ret == ESP_ERR_NOT_FOUND)
+		{
+			ESP_LOGE(TAG, "Failed to find SPIFFS partition");
+		}
+		else
+		{
+			ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
+		}
+		return ESP_FAIL;
+	}
+
+	size_t total = 0, used = 0;
+	ret = esp_spiffs_info(NULL, &total, &used);
+	if (ret != ESP_OK)
+	{
+		ESP_LOGE(TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
+	}
+	else
+	{
+		ESP_LOGI(TAG, "Partition size: total: %d, used: %d", total, used);
+	}
+	return ESP_OK;
+}
+#endif
+
 static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_desc_t *running_app_info)
 {
 	if (new_app_info == NULL || running_app_info == NULL)
@@ -76,6 +186,16 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info, esp_app_des
 #endif
 
 	return ESP_OK;
+}
+
+static void print_sha256(const uint8_t *image_hash, const char *label)
+{
+    char hash_print[HASH_LEN * 2 + 1];
+    hash_print[HASH_LEN * 2] = 0;
+    for (int i = 0; i < HASH_LEN; ++i) {
+        sprintf(&hash_print[i * 2], "%02x", image_hash[i]);
+    }
+    ESP_LOGI(TAG, "%s: %s", label, hash_print);
 }
 
 static void http_cleanup(esp_http_client_handle_t client)
@@ -336,6 +456,47 @@ void epaper_idf_ota_task(void *pvParameter)
 				}
 				ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed %d", ota_finish_err);
 			}
+
+
+			ESP_ERROR_CHECK(init_fs());
+
+			uint8_t sha_256[HASH_LEN] = { 0 };
+			esp_partition_t partition;
+
+			// get sha256 digest for the partition table
+			partition.address   = ESP_PARTITION_TABLE_OFFSET;
+			partition.size      = ESP_PARTITION_TABLE_MAX_LEN;
+			partition.type      = ESP_PARTITION_TYPE_DATA;
+			esp_partition_get_sha256(&partition, sha_256);
+			print_sha256(sha_256, "SHA-256 for the partition table: ");
+
+			// get sha256 digest for bootloader
+			partition.address   = ESP_BOOTLOADER_OFFSET;
+			partition.size      = ESP_PARTITION_TABLE_OFFSET;
+			partition.type      = ESP_PARTITION_TYPE_APP;
+			esp_partition_get_sha256(&partition, sha_256);
+			print_sha256(sha_256, "SHA-256 for bootloader: ");
+
+			// get sha256 digest for running partition
+			esp_partition_get_sha256(esp_ota_get_running_partition(), sha_256);
+			print_sha256(sha_256, "SHA-256 for current firmware: ");
+
+			const esp_partition_t *running2 = esp_ota_get_running_partition();
+			esp_ota_img_states_t ota_state;
+			if (esp_ota_get_state_partition(running2, &ota_state) == ESP_OK) {
+					if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
+							// run diagnostic function ...
+							bool diagnostic_is_ok = diagnostic();
+							if (diagnostic_is_ok) {
+									ESP_LOGI(TAG, "Diagnostics completed successfully! Continuing execution ...");
+									esp_ota_mark_app_valid_cancel_rollback();
+							} else {
+									ESP_LOGE(TAG, "Diagnostics failed! Start rollback to the previous version ...");
+									esp_ota_mark_app_invalid_rollback_and_reboot();
+							}
+					}
+			}
+
 
 			// Send an event which says "this task is finished".
 			err = esp_event_post_to(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, NULL, 0, portMAX_DELAY);

@@ -1,29 +1,20 @@
 const path = require('path');
 
 module.exports = {
-    mode: 'production',
-    
-    context: path.resolve(__dirname, './static'),
+    devServer: {
+        watchContentBase: true,
+        hot: true,
+    },
     
     entry: {
         index: {
             import: './app.js',
-            filename: 'index.js',
         },
     },
     
     output: {
+        filename: 'index.js',
         path: path.resolve(__dirname, '../public'),
-    },
-
-    optimization: {
-        splitChunks: {
-            chunks: 'all',
-            name: (entrypoint) => `${entrypoint.name}`,
-        },
-        runtimeChunk: {
-            name: (entrypoint) => `runtime-${entrypoint.name}`,
-        }
     },
 
     module: {
@@ -40,7 +31,7 @@ module.exports = {
                 loader: 'file-loader',
                 options: {
                     name: '[path][name].[ext]',
-                }, 
+                },
             }
         ],
     },

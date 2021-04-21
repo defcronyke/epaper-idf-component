@@ -12,6 +12,7 @@ idf_component_register(
   SRCS
     "epaper-idf.cpp"
     "epaper-idf-http.c"
+    "epaper-idf-httpd.c"
     "epaper-idf-io.cpp"
     "epaper-idf-ota.c"
     "epaper-idf-spi.cpp"
@@ -29,9 +30,23 @@ idf_component_register(
     $ENV{IDF_PATH}/components/fatfs/diskio/diskio.c
     $ENV{IDF_PATH}/components/fatfs/src/ff.c
     $ENV{IDF_PATH}/components/fatfs/vfs/vfs_fat.c
+    $ENV{IDF_PATH}/components/json/cJSON/cJSON.c
+    $ENV{IDF_PATH}/components/json/cJSON/cJSON_Utils.c
     $ENV{IDF_PATH}/components/sdmmc/sdmmc_cmd.c
     $ENV{IDF_PATH}/components/spiffs/esp_spiffs.c
+    $ENV{IDF_PATH}/components/spiffs/spiffs_api.c
+    $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_cache.c
+    $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_gc.c
+    $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_hydrogen.c
+    $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_nucleus.c
     $ENV{IDF_PATH}/components/wear_levelling/wear_levelling.cpp
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_main.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_parse.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_sess.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_txrx.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_uri.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_ws.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/util/ctrl_sock.c
 
   REQUIRES
     "Adafruit-GFX-Component"
@@ -42,10 +57,15 @@ idf_component_register(
     $ENV{IDF_PATH}/components/app_update/include
     $ENV{IDF_PATH}/components/bootloader_support/include
     $ENV{IDF_PATH}/components/esp_http_client/include
+    $ENV{IDF_PATH}/components/esp_http_server/include
+    $ENV{IDF_PATH}/components/esp_http_server/src
+    $ENV{IDF_PATH}/components/esp_http_server/src/port/esp32
+    $ENV{IDF_PATH}/components/esp_http_server/src/util
     $ENV{IDF_PATH}/components/esp_https_ota/include
     $ENV{IDF_PATH}/components/fatfs/diskio
     $ENV{IDF_PATH}/components/fatfs/src
     $ENV{IDF_PATH}/components/fatfs/vfs
+    $ENV{IDF_PATH}/components/json/cJSON
     $ENV{IDF_PATH}/components/mbedtls/esp_crt_bundle/include
     $ENV{IDF_PATH}/components/mbedtls/mbedtls/include
     $ENV{IDF_PATH}/components/mbedtls/port/include
@@ -53,6 +73,7 @@ idf_component_register(
     $ENV{IDF_PATH}/components/nvs_flash/include
     $ENV{IDF_PATH}/components/sdmmc/include
     $ENV{IDF_PATH}/components/spi_flash/include
+    $ENV{IDF_PATH}/components/spiffs
     $ENV{IDF_PATH}/components/spiffs/include
     $ENV{IDF_PATH}/components/spiffs/spiffs/src
     $ENV{IDF_PATH}/components/ulp/include

@@ -83,6 +83,9 @@ static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_bas
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_OTA_EVENT_FINISH");
 
+	// TODO: Start the HTTPD as a task.
+	ESP_ERROR_CHECK(start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT));
+
 	xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 }

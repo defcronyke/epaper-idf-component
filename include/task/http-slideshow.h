@@ -38,6 +38,7 @@
 #include "epaper-idf-wifi.h"
 #include "epaper-idf-ota.h"
 #include "epaper-idf-http.h"
+#include "epaper-idf-httpd.h"
 
 #ifndef EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN 15

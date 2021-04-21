@@ -7,6 +7,8 @@ require('./world-soup-remastered-bw.png');
 
 require('./index.css');
 
+// require('./index.vendor.js');
+// require('./index.webpack.js');
 require('./index.js');
 
 require('./index.html');
