@@ -1,0 +1,54 @@
+# epaper-idf
+#
+# Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
+#
+# This code is released under the license terms contained in the
+# file named LICENSE, which is found in the top-level folder in
+# this project. You must agree to follow those license terms,
+# otherwise you aren't allowed to copy, distribute, or use any 
+# part of this project in any way.
+
+image: alpine:latest
+
+build-job:
+  stage: build
+  image: espressif/idf:release-v4.2
+  script:
+    - git checkout $CI_COMMIT_REF_NAME
+    - mkdir epaper-idf-component
+    - mv * epaper-idf-component/
+    - git clone -b $CI_COMMIT_REF_NAME --recursive https://gitlab.com/defcronyke/epaper-idf.git
+    - cd epaper-idf
+    - rm -rf components/epaper-idf-component
+    - mv ../epaper-idf-components components/epaper-idf-component
+    - sed -i "s#git@gitlab.com:#https://gitlab.com/#g" .gitmodules
+    - sed -i "s#github.com/#gitlab.com/#g" .gitmodules
+    - mkdir certs && touch certs/ca_cert.pem
+    - cp sdkconfig.ci sdkconfig
+    - idf.py build
+    - cp build/partition_table/partition-table.bin ..
+    - cp build/ota_data_initial.bin ..
+    - cp build/bootloader/bootloader.bin ..
+    - cp build/epaper-idf.bin ..
+    - cd ..
+  artifacts:
+    name: "epaper-idf-bin-$CI_COMMIT_REF_NAME"
+    paths:
+      - partition-table.bin
+      - ota_data_initial.bin
+      - bootloader.bin
+      - epaper-idf.bin
+  only:
+    - master
+    - v0.1
+
+pages:
+  stage: deploy
+  script:
+    - echo 'Nothing to do...'
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  only:
+    - master

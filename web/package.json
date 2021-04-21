@@ -1,0 +1,31 @@
+{
+  "name": "epaper-idf-config",
+  "version": "0.1.0",
+  "description": "Configure the epaper-idf device.",
+  "main": "./static/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./build.sh",
+    "watch": "./watch.sh",
+    "serve": "./serve.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/defcronyke/epaper-idf-component.git"
+  },
+  "author": "Jeremy Carter <jeremy@jeremycarter.ca>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/defcronyke/epaper-idf-component/issues"
+  },
+  "homepage": "https://gitlab.com/defcronyke/epaper-idf-component#readme",
+  "devDependencies": {
+    "css-loader": "^5.2.4",
+    "file-loader": "^6.2.0",
+    "style-loader": "^2.0.0",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.34.0",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

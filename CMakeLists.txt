@@ -72,3 +72,18 @@ add_compile_definitions(
   # This is an ESP32 IDF project.
   ESP32_IDF
 )
+
+if(CONFIG_EXAMPLE_WEB_DEPLOY_SF)
+
+	set(WEB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/web")
+  set(WEB_DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/public")
+
+  # Use minified production version of the site if available.
+	if(EXISTS ${WEB_DIST_DIR})
+		spiffs_create_partition_image(www ${WEB_DIST_DIR} FLASH_IN_PROJECT)
+	
+  else()
+		message(FATAL_ERROR "${WEB_DIST_DIR} doesn't exit. Please run 'npm run build' in ${WEB_SRC_DIR}")
+	endif()
+
+endif()

@@ -1,0 +1,32 @@
+@font-face {
+    font-family: "Nanum Myeongjo";
+    src: url("./NanumMyeongjo-Regular.ttf");
+}
+
+body {    
+    background-color: #979633;
+}
+
+#main::after {
+    content: "";
+    background-image: url('./world-soup-remastered-bw.png');
+    background-size: 100vw 100vh;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+}
+
+#main {
+    font-family: 'Nanum Myeongjo', serif;
+}
+
+#main h1.title {
+    font-size: 3em;
+    background-color: rgba(200, 200, 200, 0.9);
+    padding: 0.2em;
+    padding-left: 0.6em;
+}
