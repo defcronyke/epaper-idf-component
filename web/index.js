@@ -1,11 +1,21 @@
 (function() {
 
-function reconnect(timeout) {
+function reconnect(timeout, i) {
     if (timeout != 0 && !timeout) {
         timeout = 4000;
     }
 
+    if (!i) {
+        i = 1;
+    }
+
+    var timeoutSecs = timeout / 1000.0;
+
+    console.log('Reconnect requested. Will attempt reconnect in ' + timeoutSecs + ' seconds.');
+
     window.setTimeout(function() {
+        console.log('Attempting reconnect with ' + timeoutSecs + ' second timeout.\nAttempt #: ' + i);
+
         fetch(window.location.href)
         .then(function() {
             window.location.reload();
@@ -13,7 +23,8 @@ function reconnect(timeout) {
         .catch(function(err) {
             console.log(err);
             window.setTimeout(function() {
-                reconnect(timeout);
+                i++;
+                reconnect(timeout, i);
             }, timeout);
         });
     }, timeout);
@@ -47,6 +58,10 @@ function restartButtonHandler() {
         reconnect(reconnect_timeout);
 
         var utilStatus = document.getElementById('util-status');
+
+        var utilStatusMsg = 'The device is restarting. This page will refresh when the device is ready. Please wait...';
+
+        console.log(utilStatusMsg);
 
         utilStatus.innerText = 'The device is restarting. This page will refresh when the device is ready. Please wait...';
     }
