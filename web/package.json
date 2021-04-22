@@ -2,7 +2,7 @@
   "name": "epaper-idf-config",
   "version": "0.1.0",
   "description": "Configure the epaper-idf device.",
-  "main": "./static/app.js",
+  "main": "./app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./build.sh",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "css-loader": "^5.2.4",
     "file-loader": "^6.2.0",
+    "glob": "^7.1.6",
     "http-server": "^0.12.3",
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",

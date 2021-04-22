@@ -1,7 +1,11 @@
+// const glob = require("glob");
 const path = require('path');
 
 module.exports = {
     devServer: {
+        historyApiFallback: {
+            disableDotRule: true,
+        },
         watchContentBase: true,
         hot: true,
     },
@@ -13,21 +17,21 @@ module.exports = {
     },
     
     output: {
-        filename: 'index.js',
         path: path.resolve(__dirname, '../public'),
+        filename: 'index.js',
     },
 
     module: {
         rules: [
             {
-                test: /\.css$/,
+                test: /\.(css)/,
                 use: [
                     'style-loader',
                     'css-loader',
                 ],
             },
             {
-                test: /\.(html|xml|eot|woff|ttf|svg|gif|png|jpg|bmp|ico)$/i,
+                test: /\.(html|xml|eot|woff|ttf|svg|gif|png|jpg|bmp|ico)/,
                 loader: 'file-loader',
                 options: {
                     name: '[path][name].[ext]',

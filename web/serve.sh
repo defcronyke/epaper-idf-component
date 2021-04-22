@@ -1,4 +1,16 @@
 #!/bin/bash
 
-# ./build.sh && \
-./node_modules/webpack/bin/webpack.js s --host 127.0.0.1 --port 3000 --mode development --hot --compress --progress $@
+EPAPER_IDF_WEBPACK_HOST=${EPAPER_IDF_WEBPACK_HOST:-"127.0.0.1"}
+EPAPER_IDF_WEBPACK_PORT=${EPAPER_IDF_WEBPACK_PORT:-3000}
+EPAPER_IDF_WEBPACK_MODE=${EPAPER_IDF_WEBPACK_MODE:-"development"}
+EPAPER_IDF_WEBPACK_CONTENT_BASE=${EPAPER_IDF_WEBPACK_CONTENT_BASE:-"."}
+# EPAPER_IDF_WEBPACK_CONTENT_BASE=${EPAPER_IDF_WEBPACK_CONTENT_BASE:-"../public"}
+
+./node_modules/webpack/bin/webpack.js s --host ${EPAPER_IDF_WEBPACK_HOST} --port $EPAPER_IDF_WEBPACK_PORT --mode $EPAPER_IDF_WEBPACK_MODE --content-base $EPAPER_IDF_WEBPACK_CONTENT_BASE --watch-content-base --no-watch-options-stdin --inline --hot --compress --progress --history-api-fallback &
+
+EPAPER_IDF_WEBPACK_PID=$!
+EPAPER_IDF_WEBPACK_PARENT_PID=$$
+
+./build.sh &
+
+wait $EPAPER_IDF_WEBPACK_PID
