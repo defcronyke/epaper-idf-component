@@ -25,9 +25,33 @@ body {
     font-family: 'Nanum Myeongjo', serif;
 }
 
+#main .title hr {
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+}
+
 #main h1.title {
     font-size: 3em;
     background-color: rgba(200, 200, 200, 0.9);
     padding: 0.2em;
     padding-left: 0.6em;
+}
+
+#main h3.title {
+    font-size: 1.5em;
+    background-color: rgba(200, 200, 200, 0.9);
+    padding: 0.2em;
+    padding-left: 0.6em;
+    padding-top: 0.5em;
+}
+
+#main #util {
+    background-color: rgba(200, 200, 200, 0.8);
+}
+
+#main #util .util {
+    margin: 0.4em;
+    margin-left: 1.2em;
+    margin-top: 0.1em;
+    margin-bottom: 1.8em;
 }
