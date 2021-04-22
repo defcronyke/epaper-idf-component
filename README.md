@@ -60,7 +60,6 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
 - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component)
 - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
-
 - Web config demo: [https://defcronyke.gitlab.io/epaper-idf-component](https://defcronyke.gitlab.io/epaper-idf-component)
 - Web config on your device: [http://epaper](http://epaper)
 
