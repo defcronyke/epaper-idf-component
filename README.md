@@ -61,6 +61,9 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 - [https://gitlab.com/defcronyke/epaper-idf-component](https://gitlab.com/defcronyke/epaper-idf-component)
 - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
 
+- Web config demo: [https://defcronyke.gitlab.io/epaper-idf-component](https://defcronyke.gitlab.io/epaper-idf-component)
+- Web config on your device: [http://epaper](http://epaper)
+
 `Adafruit-GFX-Component` (3rd-party)
 
 - [https://gitlab.com/defcronyke/Adafruit-GFX-Component](https://gitlab.com/defcronyke/Adafruit-GFX-Component)
