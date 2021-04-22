@@ -47,6 +47,7 @@ body {
 
 #main #util {
     background-color: rgba(200, 200, 200, 0.8);
+    padding-bottom: 0.1em;
 }
 
 #main #util .util {
@@ -56,10 +57,20 @@ body {
     margin-bottom: 1.8em;
 }
 
+#main #util button.util {
+    padding: 0.5em;
+}
+
 #main #util #util-status.status {
+    background-color: rgba(200, 200, 200, 1.0);
     margin: 0.4em;
     margin-left: 1.2em;
     margin-top: 0.1em;
     margin-bottom: 1.8em;
-    padding-bottom: 1.8em;
+    padding: 0.2em;
+    padding-left: 0.6em;
+    padding-top: 0.5em;
+    padding-bottom: 1.2em;
+    font-size: 1.1em;
+    font-weight: 800;
 }
