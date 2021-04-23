@@ -26,10 +26,12 @@ _You can test this project at your own risk if you want, but it's not ready for 
 
 ```shell
 # Clone the current stable version (well it's not really stable yet though):
-git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
+git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git && \
+cd epaper-idf
 
 # (Optional) Or clone the current development version instead:
-#git clone --recursive https://gitlab.com/defcronyke/epaper-idf.git
+#git clone --recursive https://gitlab.com/defcronyke/epaper-idf.git && \
+#cd epaper-idf
 
 # Make sure you have "nodejs" and "npm" installed first, then install
 # some 3rd-party Javascript dependencies for the web app portion:
