@@ -17,7 +17,7 @@ epaper_idf_component_serve_web_min_exit() {
 epaper_idf_component_serve_web_min() {
   pwd="$PWD"
 
-  trap "epaper_idf_component_serve_min_web_exit $pwd" INT
+  trap "epaper_idf_component_serve_web_min_exit $pwd" INT
 
   ./build-web.sh && \
   cd web && \
