@@ -19,7 +19,7 @@ function reconnect(timeout, i) {
         fetch(window.location.href)
         .then(function() {
             var newURL = window.location.href + '?restarted=' + i;
-            window.location.href = newURL;
+            window.location.replace(newURL);
         })
         .catch(function(err) {
             console.log(err);
