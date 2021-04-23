@@ -53,7 +53,8 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
 - Homepage:  
   [https://defcronyke.gitlab.io/epaper-idf](https://defcronyke.gitlab.io/epaper-idf)  
-  [https://defcronyke.github.io/epaper-idf](https://defcronyke.github.io/epaper-idf)
+  [https://defcronyke.github.io/epaper-idf](https://defcronyke.github.io/epaper-idf)  
+  [https://epaper-idf.defcronyke.com](https://epaper-idf.defcronyke.com)
 - Git Repository:  
   [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf)  
   [https://github.com/defcronyke/epaper-idf](https://github.com/defcronyke/epaper-idf)
@@ -66,7 +67,8 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 - [https://github.com/defcronyke/epaper-idf-component](https://github.com/defcronyke/epaper-idf-component)
 - Web config demo:  
   [https://defcronyke.gitlab.io/epaper-idf-component](https://defcronyke.gitlab.io/epaper-idf-component)  
-  [https://defcronyke.github.io/epaper-idf-component](https://defcronyke.github.io/epaper-idf-component)
+  [https://defcronyke.github.io/epaper-idf-component](https://defcronyke.github.io/epaper-idf-component)  
+  [https://epaper-idf-component.defcronyke.com](https://epaper-idf-component.defcronyke.com)
 - Web config on your device:  
   LAN: [http://epaper](http://epaper)  
   Access Point: [http://192.168.4.1](http://192.168.4.1)
