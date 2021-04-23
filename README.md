@@ -182,7 +182,7 @@ cd epaper-idf
 ### To configure the firmware
 
 ```shell
-# (Optional) Source the esp-idf each time you open a new terminal instance
+# (Optional) Source the ESP-IDF each time you open a new terminal instance
 # to make many of the helper scripts run a bit faster:
 #. idf.env
 
