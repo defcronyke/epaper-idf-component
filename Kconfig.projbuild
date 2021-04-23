@@ -129,7 +129,7 @@ menu "[<>] Project connection config"
         config EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES
             int "WiFi AP Connection Retries Before Starting"
             depends on EXAMPLE_WIFI_AP_STARTUP_CONNECTION_RETRIES_OPT
-            default 1
+            default 3
             range 0 10000
             help
                 The device's built-in WiFi Access Point will become available
