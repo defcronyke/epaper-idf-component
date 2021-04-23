@@ -122,6 +122,14 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
    #bash <(curl -sL https://tinyurl.com/epaper-idf-flash) master
    ```
 
+1. Once the firmware is installed, the device will begin hosting a WiFi access point (AP) which you can connect to and access a configuration web page to set the WiFi `SSID` and `password` that the device will use to connect to your LAN WiFi. By default the access point will only allow one connection at a time for added safety, and it will shut down once the device is able to successfully connect to a WiFi network:
+
+   Default WiFi Access Point Details:
+
+   - SSID: `wifi-net-15455`
+   - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
+   - Config URL (work in progress...): [`http://192.168.4.1`](http://192.168.4.1)
+
 ---
 
 ## ESP-IDF-based Method (recommended) - Local build and install custom firmware
@@ -341,7 +349,7 @@ Whenever you want to load new firmware, run the "`./serve.sh`" script and wait f
 
    - SSID: `wifi-net-15455`
    - Password: `T3oD cOneTioN! 143 2 psS@wRiDDd$i$^s`
-   - Config URL (work in progress...): [`https://192.168.4.1`](https://192.168.4.1)
+   - Config URL (work in progress...): [`http://192.168.4.1`](http://192.168.4.1)
 
 ---
 
