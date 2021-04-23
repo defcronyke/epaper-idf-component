@@ -283,44 +283,38 @@ Whenever you want to load new firmware, run the "`./serve.sh`" script and wait f
 
 The [website for configuring the firmware](https://defcronyke.gitlab.io/epaper-idf-component) can be easily customized as per your requirements. It's a `webpack`-based web app stored on a `SPIFFS partition` on the ESP32 device, and it gets compiled into the binary file `build/www.bin`. Webpack is used to ease development, package everything together nicely, and minify some of the files to save space on the ESP32 device.
 
-1. In a terminal, go to the `components/epaper-idf-component` directory.
-
-   ```shell
-   cd components/epaper-idf-component
-   ```
-
-1. The website's source files are in the [`components/epaper-idf-component/web`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/web) directory, so those are the ones to modify, and they will be built into a production version of the site by `webpack`. To start developing, you can run the development server (a nodejs `webpack-dev-server`) by running the [`./serve.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve.sh) script in the `components/epaper-idf-component` directory:
+1. The website's source files are in the [`components/epaper-idf-component/web`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/web) directory, so those are the ones to modify, and they will be built into a production version of the site by `webpack`. To start developing, you can run the development server (a nodejs `webpack-dev-server`) by running the [`./serve-web.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve-web.sh) script:
 
    ```shell
    # Serve the dev version:
-   ./serve.sh
+   ./serve-web.sh
    ```
 
    With the development server running, you can use the following URL to preview the site as you're working on it:  
    [`http://127.0.0.1:3000`](http://127.0.0.1:3000)
 
-1. (Optional) To run a development server which minifies the files first before serving them, you can use the [`./serve-min.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve-min.sh) script if you want:
+2. (Optional) To run a development server which minifies the files first before serving them, you can use the [`./serve-web-min.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve-web-min.sh) script if you want:
 
    ```shell
    # (Optional) Serve the minified dev version:
-   ./serve-min.sh
+   ./serve-web-min.sh
    ```
 
-1. (Optional) To run a production server (a nodejs `http-server`) which serves the final files that are output by webpack, you can use the [`./serve-prod.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve-prod.sh) script if you want:
+3. (Optional) To run a production server (a nodejs `http-server`) which serves the final files that are output by webpack, you can use the [`./serve-web-prod.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve-web-prod.sh) script if you want:
 
    ```shell
    # (Optional) Serve the production version:
-   ./serve-prod.sh
+   ./serve-web-prod.sh
    ```
 
    Note that the production server's URL is different than the one for the development server. The port is different. You can use the following URL to view the production version of the site while you're running the production server:  
    [`http://127.0.0.1:8080`](http://127.0.0.1:8080)
 
-1. (Optional) If you just want to build the website's source files with webpack, to make the production version of the site, you can use the [`./build.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/build.sh) script, but you don't need to do it really, since most of the other helper scripts will do it automatically anyway:
+4. (Optional) If you just want to build the website's source files with webpack, to make the production version of the site, you can use the [`./build-web.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/build-web.sh) script, but you don't need to do it really, since most of the other helper scripts will do it automatically anyway:
 
    ```shell
    # (Optional) Build the website:
-   ./build.sh
+   ./build-web.sh
    ```
 
 The production version of the site gets built in the [`components/epaper-idf-component/public`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/public) directory, which is where it gets deployed to the ESP32 device from, and it also gets copied into the [`components/epaper-idf-component/docs`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/docs) directory so [`a demo of it can be displayed on GitHub Pages`](https://defcronyke.github.io/epaper-idf-component). There is also [`a GitLab Pages demo of it`](https://defcronyke.gitlab.io/epaper-idf-component) available as well if you prefer.

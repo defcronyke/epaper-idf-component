@@ -10,16 +10,16 @@
 # otherwise you aren't allowed to copy, distribute, or use any 
 # part of this project in any way.
 
-epaper_idf_component_serve_prod_exit() {
+epaper_idf_component_serve_web_prod_exit() {
   cd "$1"
 }
 
-epaper_idf_component_serve_prod() {
+epaper_idf_component_serve_web_prod() {
   pwd="$PWD"
 
-  trap "epaper_idf_component_serve_prod_exit $pwd" INT
+  trap "epaper_idf_component_serve_web_prod_exit $pwd" INT
 
-  ./build.sh && \
+  ./build-web.sh && \
   cd web && \
   ./node_modules/http-server/bin/http-server ../public -p 8080 -g -b --log-ip -r --no-dotfiles
 
@@ -29,4 +29,4 @@ epaper_idf_component_serve_prod() {
   cd "$pwd"
 }
 
-epaper_idf_component_serve_prod $@
+epaper_idf_component_serve_web_prod $@

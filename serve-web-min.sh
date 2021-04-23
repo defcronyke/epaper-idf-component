@@ -10,20 +10,20 @@
 # otherwise you aren't allowed to copy, distribute, or use any 
 # part of this project in any way.
 
-epaper_idf_component_serve_min_exit() {
+epaper_idf_component_serve_web_min_exit() {
   cd "$1"
 }
 
-epaper_idf_component_serve_min() {
+epaper_idf_component_serve_web_min() {
   pwd="$PWD"
 
-  trap "epaper_idf_component_serve_min_exit $pwd" INT
+  trap "epaper_idf_component_serve_min_web_exit $pwd" INT
 
-  ./build.sh && \
+  ./build-web.sh && \
   cd web && \
   ./node_modules/webpack/bin/webpack.js s --host 127.0.0.1 --port 3000 --mode production --hot --compress --progress $@
 
   cd "$pwd"
 }
 
-epaper_idf_component_serve_min $@
+epaper_idf_component_serve_web_min $@

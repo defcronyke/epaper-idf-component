@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# epaper-idf-component
+# epaper-idf
 #
 # Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 #
@@ -10,20 +10,7 @@
 # otherwise you aren't allowed to copy, distribute, or use any 
 # part of this project in any way.
 
-epaper_idf_component_build_exit() {
-  cd "$1"
-}
-
-epaper_idf_component_build() {
-  pwd="$PWD"
-
-  trap "epaper_idf_component_build_exit $pwd" INT
-
-  cd web
-
-  ./node_modules/webpack/bin/webpack.js --mode production --progress $@
-
-  cd "$pwd"
-}
-
-epaper_idf_component_build $@
+# Update 3rd-party Javascript dependencies for the web app portion:
+cd web && \
+npm i && \
+cd ..

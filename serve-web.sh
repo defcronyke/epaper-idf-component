@@ -10,14 +10,14 @@
 # otherwise you aren't allowed to copy, distribute, or use any 
 # part of this project in any way.
 
-epaper_idf_component_serve_exit() {
+epaper_idf_component_serve_web_exit() {
   cd "$1"
 }
 
-epaper_idf_component_serve() {
+epaper_idf_component_serve_web() {
   pwd="$PWD"
 
-  trap "epaper_idf_component_serve_exit $pwd" INT
+  trap "epaper_idf_component_serve_web_exit $pwd" INT
 
   cd web
 
@@ -33,11 +33,11 @@ epaper_idf_component_serve() {
 
   cd "$pwd"
 
-  ./build.sh &
+  ./build-web.sh &
 
   wait $EPAPER_IDF_WEBPACK_PID
 
   cd "$pwd"
 }
 
-epaper_idf_component_serve $@
+epaper_idf_component_serve_web $@
