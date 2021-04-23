@@ -28,7 +28,8 @@ _You can test this project at your own risk if you want, but it's not ready for 
 # Clone the current stable version (well it's not really stable yet though):
 git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
-# Install 3rd-party Javascript dependencies for the web app portion:
+# Make sure you have "nodejs" and "npm" installed first, then install
+# some 3rd-party Javascript dependencies for the web app portion:
 cd components/epaper-idf-component/web && \
 npm i && \
 cd ../../..
