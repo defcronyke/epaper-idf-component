@@ -281,7 +281,7 @@ The [website for configuring the firmware](https://defcronyke.gitlab.io/epaper-i
    cd components/epaper-idf-component
    ```
 
-1. The website's source files are in the [`components/epaper-idf-component/web`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/web) directory, so those are the ones to modify, and they will be built into a production version of the site by `webpack`. To start developing, you can run the development server (a nodejs `webpack-dev-server`) by running the `./serve.sh` script in the `components/epaper-idf-component` directory:
+1. The website's source files are in the [`components/epaper-idf-component/web`](https://gitlab.com/defcronyke/epaper-idf-component/-/tree/master/web) directory, so those are the ones to modify, and they will be built into a production version of the site by `webpack`. To start developing, you can run the development server (a nodejs `webpack-dev-server`) by running the [`./serve.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve.sh) script in the `components/epaper-idf-component` directory:
 
    ```shell
    # Serve the dev version:
@@ -291,14 +291,14 @@ The [website for configuring the firmware](https://defcronyke.gitlab.io/epaper-i
    With the development server running, you can use the following URL to preview the site as you're working on it:  
    [`http://127.0.0.1:3000`](http://127.0.0.1:3000)
 
-1. (Optional) To run a development server which minifies the files first before serving them, you can use the `./serve-min.sh` script if you want:
+1. (Optional) To run a development server which minifies the files first before serving them, you can use the [`./serve-min.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve-min.sh) script if you want:
 
    ```shell
    # (Optional) Serve the minified dev version:
    ./serve-min.sh
    ```
 
-1. (Optional) To run a production server (a nodejs `http-server`) which serves the final files that are output by webpack, you can use the `./serve-prod.sh` script if you want:
+1. (Optional) To run a production server (a nodejs `http-server`) which serves the final files that are output by webpack, you can use the [`./serve-prod.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/serve-prod.sh) script if you want:
 
    ```shell
    # (Optional) Serve the production version:
@@ -308,7 +308,7 @@ The [website for configuring the firmware](https://defcronyke.gitlab.io/epaper-i
    Note that the production server's URL is different than the one for the development server. The port is different. You can use the following URL to view the production version of the site while you're running the production server:  
    [`http://127.0.0.1:8080`](http://127.0.0.1:8080)
 
-1. (Optional) If you just want to build the website's source files with webpack, to make the production version of the site, you can use the `./build.sh` script, but you don't need to do it really, since most of the other helper scripts will do it automatically anyway:
+1. (Optional) If you just want to build the website's source files with webpack, to make the production version of the site, you can use the [`./build.sh`](https://gitlab.com/defcronyke/epaper-idf-component/-/blob/master/build.sh) script, but you don't need to do it really, since most of the other helper scripts will do it automatically anyway:
 
    ```shell
    # (Optional) Build the website:
