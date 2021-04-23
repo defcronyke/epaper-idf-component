@@ -228,6 +228,8 @@ idf.py menuconfig
 idf.py monitor
 ```
 
+---
+
 ### OTA firmware updating instructions
 
 1. Configure your LAN's DNS to point the hostname "`esprog`" at the IP address of your firmware dev computer, or change the "`esprog`" argument to your hostname when running the "`./gen-certs.sh esprog`" script, as mentioned in an earlier section.
@@ -267,7 +269,9 @@ idf.py monitor
 
 Whenever you want to load new firmware, run the "`./serve.sh`" script and wait for the firmware to finish building, then reboot the ESP32 device to load the new firmware onto it (or just wait for the deep sleep wakeup timer to fire if you're using deep sleep).
 
-### Customizing the firmware config website instructions
+---
+
+### How to Customize the firmware configuration website
 
 The [website for configuring the firmware](https://defcronyke.gitlab.io/epaper-idf-component) can be easily customized as per your requirements. It's a `webpack`-based web app stored on a `SPIFFS partition` on the ESP32 device, and it gets compiled into the binary file `build/www.bin`. Webpack is used to ease development, package everything together nicely, and minify some of the files to save space on the ESP32 device.
 
