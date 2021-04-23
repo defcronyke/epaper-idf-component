@@ -47,12 +47,14 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
 ## Project Links
 
-### Git Repository
+### Epaper IDF Firmware Project
 
-`epaper-idf`
-
-- [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf)
-- [https://github.com/defcronyke/epaper-idf](https://github.com/defcronyke/epaper-idf)
+- Homepage:  
+  [https://defcronyke.gitlab.io/epaper-idf](https://defcronyke.gitlab.io/epaper-idf)  
+  [https://defcronyke.github.io/epaper-idf](https://defcronyke.github.io/epaper-idf)
+- Git Repository:  
+  [https://gitlab.com/defcronyke/epaper-idf](https://gitlab.com/defcronyke/epaper-idf)  
+  [https://github.com/defcronyke/epaper-idf](https://github.com/defcronyke/epaper-idf)
 
 ### Dependencies (git submodules, you don't need to download these first)
 
