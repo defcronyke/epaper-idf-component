@@ -186,7 +186,7 @@ cd epaper-idf
 . idf.env
 
 # Open the firmware configuration (Kconfig) menu:
-idf.py menuconfig
+./menuconfig.sh
 ```
 
 1. Make sure you configure the settings inside the menus named "`[<>] Project ...`".
@@ -233,7 +233,7 @@ idf.py menuconfig
 ```shell
 # View the serial console output to see what the device is doing, for
 # monitoring and debugging:
-idf.py monitor
+./monitor.sh
 ```
 
 ---
