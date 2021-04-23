@@ -74,7 +74,7 @@ function initStatus() {
     if (window.location.href.match(/([\?\&](restarted))+/)) {
         var i = window.location.href.replace(/(.+[\?\&](restarted\=))/, '');
 
-        const newPath = window.location.pathname.replace(/([\?\&](restarted))+/, '');
+        const newPath = window.location.pathname.replace(/([\?\&](restarted))+/, '') + window.location.search;
         window.history.replaceState({}, document.title, newPath);
 
         const utilStatus = document.getElementById('util-status');
