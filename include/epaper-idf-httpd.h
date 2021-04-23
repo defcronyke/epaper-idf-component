@@ -29,6 +29,8 @@ extern "C"
 {
 #endif
 
+esp_err_t init_fs(void);
+
 esp_err_t start_httpd(const char *base_path);
 
 // /** The esp-idf task function. */

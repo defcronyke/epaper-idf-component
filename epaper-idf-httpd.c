@@ -9,15 +9,31 @@
 #include <string.h>
 #include <fcntl.h>
 #include "esp_http_server.h"
-#include "esp_system.h"
 #include "esp_log.h"
+#include "esp_system.h"
+#include "esp_vfs_semihost.h"
+#include "esp_spiffs.h"
+#include "sdmmc_cmd.h"
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SD
+#include "driver/sdmmc_host.h"
+#endif
+#include "esp_vfs_fat.h"
 #include "esp_vfs.h"
+#include "esp_flash_partitions.h"
+#include "esp_partition.h"
+#include "nvs.h"
+#include "nvs_flash.h"
+#if CONFIG_PROJECT_CONNECT_WIFI
+#include "esp_wifi.h"
+#endif
 #include "cJSON.h"
 #include "epaper-idf-httpd.h"
 // #include "plant_sntp.h"
 // #include "plant_moist.h"
 
 static const char *HTTPD_TAG = "epaper-idf-httpd";
+
+static bool fs_initialized = false;
 
 #define REST_CHECK(a, str, goto_tag, ...)	\
 	do                                      \
@@ -39,6 +55,121 @@ typedef struct rest_server_context
 } rest_server_context_t;
 
 #define CHECK_FILE_EXTENSION(filename, ext) (strcasecmp(&filename[strlen(filename) - strlen(ext)], ext) == 0)
+
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST
+esp_err_t init_fs(void)
+{
+	if (fs_initialized) {
+		ESP_LOGI(HTTPD_TAG, "fs is already initialized: no-op");
+		return ESP_OK;
+	}
+
+	esp_err_t ret = esp_vfs_semihost_register(CONFIG_EXAMPLE_WEB_MOUNT_POINT, CONFIG_EXAMPLE_HOST_PATH_TO_MOUNT);
+	if (ret != ESP_OK)
+	{
+		ESP_LOGE(HTTPD_TAG, "Failed to register semihost driver (%s)!", esp_err_to_name(ret));
+		return ESP_FAIL;
+	}
+
+	fs_initialized = true;
+
+	return ESP_OK;
+}
+#endif
+
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SD
+esp_err_t init_fs(void)
+{
+	if (fs_initialized) {
+		ESP_LOGI(HTTPD_TAG, "fs is already initialized: no-op");
+		return ESP_OK;
+	}
+
+	sdmmc_host_t host = SDMMC_HOST_DEFAULT();
+	sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
+
+	gpio_set_pull_mode(15, GPIO_PULLUP_ONLY); // CMD
+	gpio_set_pull_mode(2, GPIO_PULLUP_ONLY);  // D0
+	gpio_set_pull_mode(4, GPIO_PULLUP_ONLY);  // D1
+	gpio_set_pull_mode(12, GPIO_PULLUP_ONLY); // D2
+	gpio_set_pull_mode(13, GPIO_PULLUP_ONLY); // D3
+
+	esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+		.format_if_mount_failed = true,
+		.max_files = 4,
+		.allocation_unit_size = 16 * 1024};
+
+	sdmmc_card_t *card;
+	esp_err_t ret = esp_vfs_fat_sdmmc_mount(CONFIG_EXAMPLE_WEB_MOUNT_POINT, &host, &slot_config, &mount_config, &card);
+	if (ret != ESP_OK)
+	{
+		if (ret == ESP_FAIL)
+		{
+			ESP_LOGE(HTTPD_TAG, "Failed to mount filesystem.");
+		}
+		else
+		{
+			ESP_LOGE(HTTPD_TAG, "Failed to initialize the card (%s)", esp_err_to_name(ret));
+		}
+		return ESP_FAIL;
+	}
+	/* print card info if mount successfully */
+	sdmmc_card_print_info(stdout, card);
+
+	fs_initialized = true;
+
+	return ESP_OK;
+}
+#endif
+
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SF
+esp_err_t init_fs(void)
+{
+	if (fs_initialized) {
+		ESP_LOGI(HTTPD_TAG, "fs is already initialized: no-op");
+		return ESP_OK;
+	}
+
+	esp_vfs_spiffs_conf_t conf = {
+		.base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT,
+		.partition_label = NULL,
+		.max_files = 5,
+		.format_if_mount_failed = false};
+	esp_err_t ret = esp_vfs_spiffs_register(&conf);
+
+	if (ret != ESP_OK)
+	{
+		if (ret == ESP_FAIL)
+		{
+			ESP_LOGE(HTTPD_TAG, "Failed to mount or format filesystem");
+		}
+		else if (ret == ESP_ERR_NOT_FOUND)
+		{
+			ESP_LOGE(HTTPD_TAG, "Failed to find SPIFFS partition");
+		}
+		else
+		{
+			ESP_LOGE(HTTPD_TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
+		}
+		return ESP_FAIL;
+	}
+
+	size_t total = 0, used = 0;
+	ret = esp_spiffs_info(NULL, &total, &used);
+	if (ret != ESP_OK)
+	{
+		ESP_LOGE(HTTPD_TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
+	}
+	else
+	{
+		ESP_LOGI(HTTPD_TAG, "Partition size: total: %d, used: %d", total, used);
+	}
+
+	fs_initialized = true;
+
+	return ESP_OK;
+}
+#endif
 
 /* Set HTTP response content type according to file extension */
 static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath)
@@ -195,6 +326,8 @@ static esp_err_t util_restart_post_handler(httpd_req_t *req) {
 
 esp_err_t start_httpd(const char *base_path)
 {
+	ESP_ERROR_CHECK(init_fs());
+
 	REST_CHECK(base_path, "wrong base path", err);
 	rest_server_context_t *rest_context = calloc(1, sizeof(rest_server_context_t));
 	REST_CHECK(rest_context, "No memory for rest context", err);
