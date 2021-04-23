@@ -271,7 +271,7 @@ Whenever you want to load new firmware, run the "`./serve.sh`" script and wait f
 
 ---
 
-### How to Customize the firmware configuration website
+### How to customize the firmware configuration website
 
 The [website for configuring the firmware](https://defcronyke.gitlab.io/epaper-idf-component) can be easily customized as per your requirements. It's a `webpack`-based web app stored on a `SPIFFS partition` on the ESP32 device, and it gets compiled into the binary file `build/www.bin`. Webpack is used to ease development, package everything together nicely, and minify some of the files to save space on the ESP32 device.
 
