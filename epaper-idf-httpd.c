@@ -100,13 +100,27 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
 	{
 		strlcat(filepath, req_uri, sizeof(filepath));
 	}
+
 	int fd = open(filepath, O_RDONLY, 0);
 	if (fd == -1)
 	{
 		ESP_LOGE(HTTPD_TAG, "Failed to open file : %s", filepath);
-		/* Respond with 500 Internal Server Error */
-		httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to read existing file");
-		return ESP_FAIL;
+
+		memset((void *)filepath, 0, sizeof(filepath));
+
+		strlcpy(filepath, rest_context->base_path, sizeof(filepath));
+
+		strlcat(filepath, "/index.html", sizeof(filepath));
+
+		fd = open(filepath, O_RDONLY, 0);
+		if (fd == -1)
+		{
+			ESP_LOGE(HTTPD_TAG, "Failed to open file : %s", filepath);
+
+			/* Respond with 500 Internal Server Error */
+			httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to read existing file");
+			return ESP_FAIL;
+		}
 	}
 
 	set_content_type_from_file(req, filepath);
