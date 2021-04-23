@@ -49,6 +49,8 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
 ### Epaper IDF Firmware Project
 
+`epaper-idf`
+
 - Homepage:  
   [https://defcronyke.gitlab.io/epaper-idf](https://defcronyke.gitlab.io/epaper-idf)  
   [https://defcronyke.github.io/epaper-idf](https://defcronyke.github.io/epaper-idf)
