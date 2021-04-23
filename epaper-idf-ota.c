@@ -209,7 +209,7 @@ static void ota_partition2() {
     
     const esp_partition_t *update_partition = NULL;
 
-    ESP_LOGI(TAG, "Starting OTA example2");
+    ESP_LOGI(TAG, "Starting OTA www");
 
     const esp_partition_t *running = esp_ota_get_running_partition();
 
