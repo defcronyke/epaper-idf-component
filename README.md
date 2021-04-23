@@ -182,8 +182,9 @@ cd epaper-idf
 ### To configure the firmware
 
 ```shell
-# Source the esp-idf each time you open a new terminal instance:
-. idf.env
+# (Optional) Source the esp-idf each time you open a new terminal instance
+# to make many of the helper scripts run a bit faster:
+#. idf.env
 
 # Open the firmware configuration (Kconfig) menu:
 ./menuconfig.sh
