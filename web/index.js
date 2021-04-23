@@ -75,11 +75,11 @@ function initStatus() {
         var i = window.location.href.replace(/(.+[\?\&](restarted\=))/, '');
 
         const newPath = window.location.pathname.replace(/([\?\&](restarted))+/, '');
-        
+
         window.history.replaceState({}, document.title, newPath);
 
         const utilStatus = document.getElementById('util-status');
-        var restartedMsg = 'The device has restarted and is ready to use again after ' + i + ' ready check';
+        var restartedMsg = 'The device has restarted and is ready to use after ' + i + ' ready check';
         if (i > 1) {
             restartedMsg += 's';
         }
