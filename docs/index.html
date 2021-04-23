@@ -40,9 +40,9 @@
     if (window.location.pathname !== '/') {
       if (window.location.pathname.match(/^(\/epaper-idf-component(\/)?.*)/) && 
         window.location.hostname.match(/^(.+\.git(la|hu)b.io)/)) {  // match *.gitlab.io && *.github.io
-        window.history.replaceState({}, document.title, '/epaper-idf-component/');
+        window.history.replaceState({}, document.title, '/epaper-idf-component/' + window.location.search);
       } else {
-        window.history.replaceState({}, document.title, '/');
+        window.history.replaceState({}, document.title, '/' + window.location.search);
       }
     }
   })();
