@@ -31,9 +31,22 @@
 #include "esp_wifi.h"
 #endif
 
+#include "lwip/inet.h"
+#include "lwip/ip4_addr.h"
+#include "lwip/dns.h"
+
 #include "protocol_examples_common.h"
 
 const char *epaper_idf_wifi_tag = "epaper-idf-wifi";
+
+static const char epaper_idf_wifi_hostname[] = CONFIG_LWIP_LOCAL_HOSTNAME;
+static ip_addr_t epaper_idf_wifi_ip;
+static bool dns_finished = false;
+
+// ip_addr_t ip;
+// ip4_addr_t ip4;
+// ip4_addr_t gw4;
+// ip4_addr_t msk4;
 
 esp_event_loop_handle_t epaper_idf_wifi_event_loop_handle;
 static struct epaper_idf_wifi_task_action_value_t wifi_task_action_value;
@@ -57,6 +70,24 @@ static int retry_num = 0;
 
 #endif
 
+static void dns_event_handler(const char *hostname, const ip_addr_t *ip, void *arg)
+{
+	if (hostname == NULL) {
+		ESP_LOGW(epaper_idf_wifi_tag, "No DNS hostname specified.");
+		dns_finished = true;
+		return;
+	}
+
+	if (ip == NULL) {
+		ESP_LOGW(epaper_idf_wifi_tag, "IP address not found for DNS hostname: %s", hostname);
+		dns_finished = true;
+		return;
+	}
+
+	epaper_idf_wifi_ip = *ip;
+
+	dns_finished = true;
+}
 
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
@@ -134,6 +165,41 @@ static void epaper_idf_wifi_ap_init(void)
 
 	ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point: SSID: %s password:%s channel: %d",
 		CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
+
+	// DNS lookup.
+	IP_ADDR4(&epaper_idf_wifi_ip, 192, 168, 4, 1);
+
+	ESP_LOGI(epaper_idf_wifi_tag, "Get IP for DNS hostname: %s", epaper_idf_wifi_hostname);
+	
+	esp_err_t res = dns_gethostbyname(epaper_idf_wifi_hostname, &epaper_idf_wifi_ip, dns_event_handler, NULL);
+	
+	if (res != ERR_OK) {
+		ESP_LOGW(epaper_idf_wifi_tag, "Failed getting IP for DNS hostname: %s\nResolving it to the AP's IP address: %s", epaper_idf_wifi_hostname, CONFIG_EXAMPLE_WIFI_AP_IP);
+		
+		// TODO: Use the proper AP IP from Kconfig menu here.
+		IP_ADDR4(&epaper_idf_wifi_ip, 192, 168, 4, 1);
+
+	} else {
+		ESP_LOGI(
+			epaper_idf_wifi_tag, 
+			"IP address found for DNS hostname: %s: %i.%i.%i.%i\n",
+			epaper_idf_wifi_hostname,
+			ip4_addr1(&epaper_idf_wifi_ip.u_addr.ip4), 
+			ip4_addr2(&epaper_idf_wifi_ip.u_addr.ip4), 
+			ip4_addr3(&epaper_idf_wifi_ip.u_addr.ip4), 
+			ip4_addr4(&epaper_idf_wifi_ip.u_addr.ip4)
+		);
+	}
+
+	ESP_LOGI(
+		epaper_idf_wifi_tag, 
+		"Using IP address for DNS hostname: %s: %i.%i.%i.%i\n",
+		epaper_idf_wifi_hostname,
+		ip4_addr1(&epaper_idf_wifi_ip.u_addr.ip4), 
+		ip4_addr2(&epaper_idf_wifi_ip.u_addr.ip4), 
+		ip4_addr3(&epaper_idf_wifi_ip.u_addr.ip4), 
+		ip4_addr4(&epaper_idf_wifi_ip.u_addr.ip4)
+	);
 }
 #endif /**< End CONFIG_EXAMPLE_WIFI_AP_ENABLED */
 

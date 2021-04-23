@@ -32,6 +32,8 @@ idf_component_register(
     $ENV{IDF_PATH}/components/fatfs/vfs/vfs_fat.c
     $ENV{IDF_PATH}/components/json/cJSON/cJSON.c
     $ENV{IDF_PATH}/components/json/cJSON/cJSON_Utils.c
+    $ENV{IDF_PATH}/components/lwip/lwip/src/core/ipv4/ip4_addr.c
+    $ENV{IDF_PATH}/components/lwip/lwip/src/core/dns.c
     $ENV{IDF_PATH}/components/sdmmc/sdmmc_cmd.c
     $ENV{IDF_PATH}/components/spiffs/esp_spiffs.c
     $ENV{IDF_PATH}/components/spiffs/spiffs_api.c
@@ -66,6 +68,7 @@ idf_component_register(
     $ENV{IDF_PATH}/components/fatfs/src
     $ENV{IDF_PATH}/components/fatfs/vfs
     $ENV{IDF_PATH}/components/json/cJSON
+    $ENV{IDF_PATH}/components/lwip/lwip/src/include
     $ENV{IDF_PATH}/components/mbedtls/esp_crt_bundle/include
     $ENV{IDF_PATH}/components/mbedtls/mbedtls/include
     $ENV{IDF_PATH}/components/mbedtls/port/include
