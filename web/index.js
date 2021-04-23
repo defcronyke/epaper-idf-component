@@ -79,7 +79,15 @@ function initStatus() {
         window.history.replaceState({}, document.title, newPath);
 
         const utilStatus = document.getElementById('util-status');
-        utilStatus.innerText = 'The device has been restarted and is ready to use again after ' + i + ' ready checks.';
+        var restartedMsg = 'The device has restarted and is ready to use again after ' + i + ' ready check';
+        if (i > 1) {
+            restartedMsg += 's';
+        }
+        restartedMsg += '.';
+
+        console.log(restartedMsg);
+        
+        utilStatus.innerText = restartedMsg;
     }
 }
 
