@@ -28,6 +28,11 @@ _You can test this project at your own risk if you want, but it's not ready for 
 # Clone the current stable version (well it's not really stable yet though):
 git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
+# Install 3rd-party Javascript dependencies for the web app portion:
+cd components/epaper-idf-component/web && \
+npm i && \
+cd ../../..
+
 # (Optional) Or clone the current development version instead:
 #git clone --recursive https://gitlab.com/defcronyke/epaper-idf.git
 ```
@@ -140,6 +145,8 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 
 ### Prerequisites (ESP-IDF-based)
 
+1. You need to have [`python`](https://www.python.org/downloads/) and the [`pip`](https://pypi.org/project/pip/) utility installed. Install those however they're meant to be installed on your OS first.
+1. You need to have [`nodejs`](https://nodejs.org/en/download/) and the [`npm`](https://docs.npmjs.com/cli/commands/npm) utility installed. Install those however they're meant to be installed on your OS first. Sometimes `npm` is included with `nodejs`, and sometimes it's not.
 1. Install the current stable version of Espressif's ESP32 IDF:  
    [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html)
 1. If on ESP32 IDF v4.2, their release is bugged, so you have to do the following additional steps to fix it:
