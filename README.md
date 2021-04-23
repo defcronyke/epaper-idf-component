@@ -35,9 +35,7 @@ cd epaper-idf
 
 # Make sure you have "nodejs" and "npm" installed first, then install
 # some 3rd-party Javascript dependencies for the web app portion:
-cd components/epaper-idf-component/web && \
-npm i && \
-cd ../../..
+./update-git-repos.sh
 ```
 
 ## How to update this project if you've already cloned it before
