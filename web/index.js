@@ -18,7 +18,8 @@ function reconnect(timeout, i) {
 
         fetch(window.location.href)
         .then(function() {
-            window.location.reload();
+            var newURL = window.location.href + '?restarted=' + i;
+            window.location.href = newURL;
         })
         .catch(function(err) {
             console.log(err);
@@ -67,6 +68,20 @@ function restartButtonHandler() {
     }
 }
 
+function initStatus() {
+    console.log('initializing status areas...');
+
+    if (window.location.href.match(/([\?\&](restarted))+/)) {
+        var i = window.location.href.replace(/(.+[\?\&](restarted\=))/, '');
+
+        const newPath = window.location.pathname.replace(/([\?\&](restarted))+/, '');
+        window.history.replaceState({}, document.title, newPath);
+
+        const utilStatus = document.getElementById('util-status');
+        utilStatus.innerText = 'The device has been restarted and is ready to use again after ' + i + ' ready checks.';
+    }
+}
+
 function initButtons() {
     console.log('initializing buttons...');
 
@@ -83,6 +98,7 @@ function initButtons() {
 function main() {
     console.log('js loaded');
 
+    initStatus();
     initButtons();
 }
 
