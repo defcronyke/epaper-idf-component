@@ -288,27 +288,30 @@ The [website for configuring the firmware](https://defcronyke.gitlab.io/epaper-i
    ./serve.sh
    ```
 
-   - With the development server running, you can use the following URL to preview the site as you're working on it:  
-     [`http://127.0.0.1:3000`](http://127.0.0.1:3000)
+   With the development server running, you can use the following URL to preview the site as you're working on it:  
+   [`http://127.0.0.1:3000`](http://127.0.0.1:3000)
 
 1. (Optional) To run a development server which minifies the files first before serving them, you can use the `./serve-min.sh` script if you want:
 
    ```shell
+   # (Optional) Serve the minified dev version:
    ./serve-min.sh
    ```
 
 1. (Optional) To run a production server (a nodejs `http-server`) which serves the final files that are output by webpack, you can use the `./serve-prod.sh` script if you want:
 
    ```shell
+   # (Optional) Serve the production version:
    ./serve-prod.sh
    ```
 
-   - Note that the production server's URL is different than the one for the development server. The port is different. You can use the following URL to view the production version of the site while you're running the production server:  
-     [`http://127.0.0.1:8080`](http://127.0.0.1:8080)
+   Note that the production server's URL is different than the one for the development server. The port is different. You can use the following URL to view the production version of the site while you're running the production server:  
+   [`http://127.0.0.1:8080`](http://127.0.0.1:8080)
 
 1. (Optional) If you just want to build the website's source files with webpack, to make the production version of the site, you can use the `./build.sh` script, but you don't need to do it really, since most of the other helper scripts will do it automatically anyway:
 
    ```shell
+   # (Optional) Build the website:
    ./build.sh
    ```
 
