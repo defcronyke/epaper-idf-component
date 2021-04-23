@@ -231,6 +231,8 @@ esp_err_t start_httpd(const char *base_path)
 		.user_ctx = rest_context};
 	httpd_register_uri_handler(server, &common_get_uri);
 
+	ESP_LOGI(HTTPD_TAG, "Started HTTP Server");
+
 	return ESP_OK;
 err_start:
 	free(rest_context);
