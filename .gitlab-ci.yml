@@ -1,4 +1,4 @@
-# epaper-idf
+# epaper-idf-component
 #
 # Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 #
@@ -15,12 +15,8 @@ build-job:
   image: espressif/idf:release-v4.2
   script:
     - git checkout $CI_COMMIT_REF_NAME
-    # - mkdir tmpdir
-    # - mv * tmpdir/
     - git clone -b $CI_COMMIT_REF_NAME --recursive https://gitlab.com/defcronyke/epaper-idf.git
     - cd epaper-idf
-    # - rm -rf components/epaper-idf-component
-    # - mv ../tmpdir components/epaper-idf-component
     - sed -i "s#git@gitlab.com:#https://gitlab.com/#g" .gitmodules
     - sed -i "s#github.com/#gitlab.com/#g" .gitmodules
     - mkdir certs && touch certs/ca_cert.pem
