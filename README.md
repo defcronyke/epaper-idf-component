@@ -66,6 +66,9 @@ git clone -b v0.1 --recursive https://gitlab.com/defcronyke/epaper-idf.git
 - Web config on your device:  
   LAN: [http://epaper](http://epaper)  
   Access Point: [http://192.168.4.1](http://192.168.4.1)
+- Web config development:  
+  Dev Server: [http://127.0.0.1:3000](http://127.0.0.1:3000)  
+  Production Server: [http://127.0.0.1:8080](http://127.0.0.1:8080)
 
 `Adafruit-GFX-Component` (3rd-party)
 
