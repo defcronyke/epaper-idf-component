@@ -39,7 +39,7 @@ const uint32_t epaper_idf_http_task_stack_depth = 4096;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
 const char *epaper_idf_httpd_task_name = "epaper_idf_httpd_task";
-const uint32_t epaper_idf_httpd_task_stack_depth = 4096;
+const uint32_t epaper_idf_httpd_task_stack_depth = 2048;
 UBaseType_t epaper_idf_httpd_task_priority = 5;
 
 const char *http_slideshow_task_name = "http_slideshow_task";
@@ -77,8 +77,8 @@ static void epaper_idf_wifi_finish_event_handler(void *handler_arg, esp_event_ba
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_WIFI_EVENT_FINISH");
 
-	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
-	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
+	// xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
+	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
 	// // TODO: Start the HTTPD as a task.
 	// ESP_ERROR_CHECK(start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT));
@@ -88,8 +88,8 @@ static void sta_got_ip_event_handler(void *handler_arg, esp_event_base_t base, i
 {
 	ESP_LOGI(TAG, "event received: IP_EVENT_STA_GOT_IP");
 
-	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
-	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
+	// xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
+	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
 	// // TODO: Start the HTTPD as a task.
 	// ESP_ERROR_CHECK(start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT));
@@ -101,6 +101,9 @@ static void sta_got_ip_event_handler(void *handler_arg, esp_event_base_t base, i
 static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_OTA_EVENT_FINISH");
+
+	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
 	// // TODO: Start the HTTPD as a task.
 	// ESP_ERROR_CHECK(start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT));

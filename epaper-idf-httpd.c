@@ -62,7 +62,8 @@ static bool fs_initialized = false;
 	} while (0)
 
 #define FILE_PATH_MAX (ESP_VFS_PATH_MAX + 128)
-#define SCRATCH_BUFSIZE (10240)
+#define SCRATCH_BUFSIZE (20240)
+// #define SCRATCH_BUFSIZE (10240)
 
 typedef struct rest_server_context
 {
@@ -149,7 +150,8 @@ esp_err_t init_fs(void)
 	esp_vfs_spiffs_conf_t conf = {
 		.base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT,
 		.partition_label = NULL,
-		.max_files = 5,
+		.max_files = 7,
+		// .max_files = 5,
 		.format_if_mount_failed = false};
 	esp_err_t ret = esp_vfs_spiffs_register(&conf);
 
@@ -345,7 +347,7 @@ static esp_err_t util_restart_post_handler(httpd_req_t *req) {
 	return ESP_OK;
 }
 
-esp_err_t start_httpd(const char *base_path)
+static esp_err_t start_httpd(const char *base_path)
 {
 	ESP_ERROR_CHECK(init_fs());
 
@@ -413,6 +415,7 @@ esp_err_t start_httpd(const char *base_path)
 		.method = HTTP_GET,
 		.handler = system_info_get_handler,
 		.user_ctx = rest_context};
+	httpd_register_uri_handler(server_s, &system_info_get_uri);
 
 	/* URI handler for restarting the device */
 	httpd_uri_t util_restart_post_uri = {
@@ -420,6 +423,7 @@ esp_err_t start_httpd(const char *base_path)
 		.method = HTTP_POST,
 		.handler = util_restart_post_handler,
 		.user_ctx = rest_context};
+	httpd_register_uri_handler(server_s, &util_restart_post_uri);	
 
 	/* URI handler for getting web server files */
 	httpd_uri_t common_get_uri = {
@@ -427,9 +431,6 @@ esp_err_t start_httpd(const char *base_path)
 		.method = HTTP_GET,
 		.handler = rest_common_get_handler,
 		.user_ctx = rest_context};
-
-	httpd_register_uri_handler(server_s, &system_info_get_uri);
-	httpd_register_uri_handler(server_s, &util_restart_post_uri);	
 	httpd_register_uri_handler(server_s, &common_get_uri);
 
 	ESP_LOGI(HTTPD_TAG, "Started HTTPS Server.");
@@ -456,9 +457,13 @@ void epaper_idf_httpd_task(void *pvParameter) {
 
 			start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT);
 
-			uint32_t val = 0;
+			while (1) {
+				vTaskDelay(1000 / portTICK_PERIOD_MS);
+			}
 
-			xTaskNotifyWait(0, ULONG_MAX, &val, portMAX_DELAY);
+			// uint32_t val = 0;
+
+			// xTaskNotifyWait(0, ULONG_MAX, &val, portMAX_DELAY);
 		}
 
 		vTaskDelete(NULL);
