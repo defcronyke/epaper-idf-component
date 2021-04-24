@@ -1,14 +1,26 @@
-/* HTTP Restful API Server
+/**	epaper-idf-component
 
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
+		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
+		This code is released under the license terms contained in the
+		file named LICENSE, which is found in the top-level folder in
+		this project. You must agree to follow those license terms,
+		otherwise you aren't allowed to copy, distribute, or use any 
+		part of this project in any way.
+
+		Contains some modified example code from here:
+		https://github.com/espressif/esp-idf/blob/release/v4.2/examples/protocols/http_server/restful_server/main/rest_server.c
+		https://github.com/espressif/esp-idf/blob/release/v4.2/examples/protocols/https_server/main/main.c
+
+		Original Example Code Header:
+		This example code is in the Public Domain (or CC0 licensed, at your option.)
+
+		Unless required by applicable law or agreed to in writing, this
+		software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <string.h>
 #include <fcntl.h>
-#include "esp_http_server.h"
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_vfs_semihost.h"
@@ -26,10 +38,10 @@
 #if CONFIG_PROJECT_CONNECT_WIFI
 #include "esp_wifi.h"
 #endif
+#include "esp_http_server.h"
+#include "esp_https_server.h"
 #include "cJSON.h"
 #include "epaper-idf-httpd.h"
-// #include "plant_sntp.h"
-// #include "plant_moist.h"
 
 static const char *HTTPD_TAG = "epaper-idf-httpd";
 
@@ -326,6 +338,8 @@ static esp_err_t util_restart_post_handler(httpd_req_t *req) {
 
 esp_err_t start_httpd(const char *base_path)
 {
+	ESP_LOGI(HTTPD_TAG, "Starting HTTP Server...");
+	
 	ESP_ERROR_CHECK(init_fs());
 
 	REST_CHECK(base_path, "wrong base path", err);
@@ -333,20 +347,12 @@ esp_err_t start_httpd(const char *base_path)
 	REST_CHECK(rest_context, "No memory for rest context", err);
 	strlcpy(rest_context->base_path, base_path, sizeof(rest_context->base_path));
 
-	httpd_handle_t server = NULL;
-	httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-	config.uri_match_fn = httpd_uri_match_wildcard;
-
-	ESP_LOGI(HTTPD_TAG, "Starting HTTP Server");
-	REST_CHECK(httpd_start(&server, &config) == ESP_OK, "Start server failed", err_start);
-
 	/* URI handler for getting system info */
 	httpd_uri_t system_info_get_uri = {
 		.uri = "/api/v1/system/info",
 		.method = HTTP_GET,
 		.handler = system_info_get_handler,
 		.user_ctx = rest_context};
-	httpd_register_uri_handler(server, &system_info_get_uri);
 
 	/* URI handler for restarting the device */
 	httpd_uri_t util_restart_post_uri = {
@@ -354,7 +360,6 @@ esp_err_t start_httpd(const char *base_path)
 		.method = HTTP_POST,
 		.handler = util_restart_post_handler,
 		.user_ctx = rest_context};
-	httpd_register_uri_handler(server, &util_restart_post_uri);
 
 	/* URI handler for getting web server files */
 	httpd_uri_t common_get_uri = {
@@ -362,9 +367,54 @@ esp_err_t start_httpd(const char *base_path)
 		.method = HTTP_GET,
 		.handler = rest_common_get_handler,
 		.user_ctx = rest_context};
+
+	// HTTP
+	httpd_handle_t server = NULL;
+	httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+	config.uri_match_fn = httpd_uri_match_wildcard;
+
+	REST_CHECK(httpd_start(&server, &config) == ESP_OK, "Start server failed", err_start);
+
+	ESP_LOGI(HTTPD_TAG, "Registering HTTP URI handlers.");
+	
+	httpd_register_uri_handler(server, &system_info_get_uri);
+	httpd_register_uri_handler(server, &util_restart_post_uri);
 	httpd_register_uri_handler(server, &common_get_uri);
 
-	ESP_LOGI(HTTPD_TAG, "Started HTTP Server");
+	ESP_LOGI(HTTPD_TAG, "Started HTTP Server.");
+
+	// HTTPS
+	httpd_handle_t server_s = NULL;
+	httpd_ssl_config_t config_s = HTTPD_SSL_CONFIG_DEFAULT();
+	config_s.httpd.uri_match_fn = httpd_uri_match_wildcard;
+
+	extern const unsigned char ca_cert_conf_pem_start[] asm("_binary_ca_cert_conf_pem_start");
+	extern const unsigned char ca_cert_conf_pem_end[]   asm("_binary_ca_cert_conf_pem_end");
+	// extern const unsigned char cacert_pem_start[] asm("_binary_cacert_pem_start");
+	// extern const unsigned char cacert_pem_end[]   asm("_binary_cacert_pem_end");
+	config_s.cacert_pem = ca_cert_conf_pem_start;
+	config_s.cacert_len = ca_cert_conf_pem_end - ca_cert_conf_pem_start;
+
+	extern const unsigned char ca_key_conf_pem_start[] asm("_binary_ca_key_conf_pem_start");
+	extern const unsigned char ca_key_conf_pem_end[]   asm("_binary_ca_key_conf_pem_end");
+	// extern const unsigned char prvtkey_pem_start[] asm("_binary_prvtkey_pem_start");
+	// extern const unsigned char prvtkey_pem_end[]   asm("_binary_prvtkey_pem_end");
+	config_s.prvtkey_pem = ca_key_conf_pem_start;
+	config_s.prvtkey_len = ca_key_conf_pem_end - ca_key_conf_pem_start;
+
+	esp_err_t res = httpd_ssl_start(&server_s, &config_s);
+	if (res != ESP_OK) {
+			ESP_LOGE(HTTPD_TAG, "Error starting HTTPS server: %d", res);
+			return ESP_OK;
+	}
+
+	ESP_LOGI(HTTPD_TAG, "Registering HTTPS URI handlers.");
+
+	httpd_register_uri_handler(server_s, &system_info_get_uri);
+	httpd_register_uri_handler(server_s, &util_restart_post_uri);	
+	httpd_register_uri_handler(server_s, &common_get_uri);
+
+	ESP_LOGI(HTTPD_TAG, "Started HTTPS Server.");
 
 	return ESP_OK;
 err_start:

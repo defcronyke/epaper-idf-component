@@ -15,6 +15,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "esp_event_base.h"
+#include "epaper-idf-dns.h"
 
 /** An event base type for "epaper-idf-wifi". */
 ESP_EVENT_DECLARE_BASE(EPAPER_IDF_WIFI_EVENT);

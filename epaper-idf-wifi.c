@@ -18,7 +18,6 @@
 		software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 		CONDITIONS OF ANY KIND, either express or implied.
 */
-#include "epaper-idf-wifi.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
@@ -36,6 +35,8 @@
 #include "lwip/dns.h"
 
 #include "protocol_examples_common.h"
+
+#include "epaper-idf-wifi.h"
 
 const char *epaper_idf_wifi_tag = "epaper-idf-wifi";
 
@@ -158,6 +159,9 @@ static void epaper_idf_wifi_ap_init(void)
 
 	ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point: SSID: %s password:%s channel: %d",
 		CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
+
+	// Wifi captive portal.
+	epaper_idf_dns_init();
 
 	// NOTE: For wifi captive portal whenever someone makes an ESP-IDF DNS server.
 	// // DNS lookup.
