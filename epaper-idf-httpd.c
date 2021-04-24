@@ -45,6 +45,10 @@
 
 static const char *HTTPD_TAG = "epaper-idf-httpd";
 
+esp_event_loop_handle_t epaper_idf_httpd_event_loop_handle;
+
+ESP_EVENT_DEFINE_BASE(EPAPER_IDF_HTTPD_EVENT);
+
 static bool fs_initialized = false;
 
 #define REST_CHECK(a, str, goto_tag, ...)	\
@@ -311,7 +315,10 @@ static esp_err_t system_info_get_handler(httpd_req_t *req)
 	cJSON_AddStringToObject(root, "version", IDF_VER);
 	cJSON_AddNumberToObject(root, "cores", chip_info.cores);
 	const char *sys_info = cJSON_Print(root);
+
+	// httpd_resp_send(req, sys_info, -1);
 	httpd_resp_sendstr(req, sys_info);
+
 	free((void *)sys_info);
 	cJSON_Delete(root);
 	return ESP_OK;
@@ -326,6 +333,8 @@ static esp_err_t util_restart_post_handler(httpd_req_t *req) {
 	cJSON_AddNumberToObject(root, "statusCode", 200);
 
 	const char *sys_info = cJSON_Print(root);
+	
+	// httpd_resp_send(req, sys_info, -1);
 	httpd_resp_sendstr(req, sys_info);
 
 	free((void *)sys_info);
@@ -338,14 +347,65 @@ static esp_err_t util_restart_post_handler(httpd_req_t *req) {
 
 esp_err_t start_httpd(const char *base_path)
 {
-	ESP_LOGI(HTTPD_TAG, "Starting HTTP Server...");
-	
 	ESP_ERROR_CHECK(init_fs());
 
 	REST_CHECK(base_path, "wrong base path", err);
 	rest_server_context_t *rest_context = calloc(1, sizeof(rest_server_context_t));
 	REST_CHECK(rest_context, "No memory for rest context", err);
 	strlcpy(rest_context->base_path, base_path, sizeof(rest_context->base_path));
+
+	// // HTTP
+	// ESP_LOGI(HTTPD_TAG, "Starting HTTP Server...");
+
+	// httpd_handle_t server = NULL;
+	// httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+	// config.uri_match_fn = httpd_uri_match_wildcard;
+
+	// REST_CHECK(httpd_start(&server, &config) == ESP_OK, "Start HTTP server failed", err_start);
+
+	// ESP_LOGI(HTTPD_TAG, "Registering HTTP URI handlers.");
+	
+	// httpd_register_uri_handler(server, &system_info_get_uri);
+	// httpd_register_uri_handler(server, &util_restart_post_uri);
+	// httpd_register_uri_handler(server, &common_get_uri);
+
+	// ESP_LOGI(HTTPD_TAG, "Started HTTP Server.");
+
+	// HTTPS
+	ESP_LOGI(HTTPD_TAG, "Starting HTTPS Server...");
+
+	httpd_handle_t server_s = NULL;
+	httpd_ssl_config_t config_s = HTTPD_SSL_CONFIG_DEFAULT();
+	config_s.httpd.uri_match_fn = httpd_uri_match_wildcard;
+	// config_s.transport_mode = HTTPD_SSL_TRANSPORT_INSECURE;
+
+	extern const unsigned char ca_cert_conf_pem_start[] asm("_binary_ca_cert_conf_pem_start");
+	extern const unsigned char ca_cert_conf_pem_end[]   asm("_binary_ca_cert_conf_pem_end");
+	// extern const unsigned char cacert_pem_start[] asm("_binary_cacert_pem_start");
+	// extern const unsigned char cacert_pem_end[]   asm("_binary_cacert_pem_end");
+	config_s.cacert_pem = ca_cert_conf_pem_start;
+	config_s.cacert_len = ca_cert_conf_pem_end - ca_cert_conf_pem_start;
+	// config_s.cacert_pem = cacert_pem_start;
+	// config_s.cacert_len = cacert_pem_end - cacert_pem_start;
+
+	extern const unsigned char ca_key_conf_pem_start[] asm("_binary_ca_key_conf_pem_start");
+	extern const unsigned char ca_key_conf_pem_end[]   asm("_binary_ca_key_conf_pem_end");
+	// extern const unsigned char prvtkey_pem_start[] asm("_binary_prvtkey_pem_start");
+	// extern const unsigned char prvtkey_pem_end[]   asm("_binary_prvtkey_pem_end");
+	config_s.prvtkey_pem = ca_key_conf_pem_start;
+	config_s.prvtkey_len = ca_key_conf_pem_end - ca_key_conf_pem_start;
+	// config_s.prvtkey_pem = prvtkey_pem_start;
+	// config_s.prvtkey_len = prvtkey_pem_end - prvtkey_pem_start;
+
+	REST_CHECK(httpd_ssl_start(&server_s, &config_s) == ESP_OK, "Start HTTPS server failed", err_start);
+
+	// esp_err_t res = httpd_ssl_start(&server_s, &config_s);
+	// if (res != ESP_OK) {
+	// 		ESP_LOGE(HTTPD_TAG, "Error starting HTTPS server: %d", res);
+	// 		return ESP_OK;
+	// }
+
+	ESP_LOGI(HTTPD_TAG, "Registering HTTPS URI handlers.");
 
 	/* URI handler for getting system info */
 	httpd_uri_t system_info_get_uri = {
@@ -368,48 +428,6 @@ esp_err_t start_httpd(const char *base_path)
 		.handler = rest_common_get_handler,
 		.user_ctx = rest_context};
 
-	// HTTP
-	httpd_handle_t server = NULL;
-	httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-	config.uri_match_fn = httpd_uri_match_wildcard;
-
-	REST_CHECK(httpd_start(&server, &config) == ESP_OK, "Start server failed", err_start);
-
-	ESP_LOGI(HTTPD_TAG, "Registering HTTP URI handlers.");
-	
-	httpd_register_uri_handler(server, &system_info_get_uri);
-	httpd_register_uri_handler(server, &util_restart_post_uri);
-	httpd_register_uri_handler(server, &common_get_uri);
-
-	ESP_LOGI(HTTPD_TAG, "Started HTTP Server.");
-
-	// HTTPS
-	httpd_handle_t server_s = NULL;
-	httpd_ssl_config_t config_s = HTTPD_SSL_CONFIG_DEFAULT();
-	config_s.httpd.uri_match_fn = httpd_uri_match_wildcard;
-
-	extern const unsigned char ca_cert_conf_pem_start[] asm("_binary_ca_cert_conf_pem_start");
-	extern const unsigned char ca_cert_conf_pem_end[]   asm("_binary_ca_cert_conf_pem_end");
-	// extern const unsigned char cacert_pem_start[] asm("_binary_cacert_pem_start");
-	// extern const unsigned char cacert_pem_end[]   asm("_binary_cacert_pem_end");
-	config_s.cacert_pem = ca_cert_conf_pem_start;
-	config_s.cacert_len = ca_cert_conf_pem_end - ca_cert_conf_pem_start;
-
-	extern const unsigned char ca_key_conf_pem_start[] asm("_binary_ca_key_conf_pem_start");
-	extern const unsigned char ca_key_conf_pem_end[]   asm("_binary_ca_key_conf_pem_end");
-	// extern const unsigned char prvtkey_pem_start[] asm("_binary_prvtkey_pem_start");
-	// extern const unsigned char prvtkey_pem_end[]   asm("_binary_prvtkey_pem_end");
-	config_s.prvtkey_pem = ca_key_conf_pem_start;
-	config_s.prvtkey_len = ca_key_conf_pem_end - ca_key_conf_pem_start;
-
-	esp_err_t res = httpd_ssl_start(&server_s, &config_s);
-	if (res != ESP_OK) {
-			ESP_LOGE(HTTPD_TAG, "Error starting HTTPS server: %d", res);
-			return ESP_OK;
-	}
-
-	ESP_LOGI(HTTPD_TAG, "Registering HTTPS URI handlers.");
-
 	httpd_register_uri_handler(server_s, &system_info_get_uri);
 	httpd_register_uri_handler(server_s, &util_restart_post_uri);	
 	httpd_register_uri_handler(server_s, &common_get_uri);
@@ -421,4 +439,28 @@ err_start:
 	free(rest_context);
 err:
 	return ESP_FAIL;
+}
+
+void epaper_idf_httpd_task(void *pvParameter) {
+	while (1)
+	{
+		/** Inner scope to ensure all destructors are called before vTaskDelete. */
+		{
+			// if (pvParameter != NULL) {
+			// 	httpd_task_action = EPAPER_IDF_HTTPD_TASK_ACTION_COPY(pvParameter);
+			// }
+
+			// if (httpd_task_action.value != NULL) {
+			// 	httpd_task_action_value = EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(httpd_task_action.value);
+			// }
+
+			start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT);
+
+			uint32_t val = 0;
+
+			xTaskNotifyWait(0, ULONG_MAX, &val, portMAX_DELAY);
+		}
+
+		vTaskDelete(NULL);
+	}
 }

@@ -15,14 +15,51 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_system.h"
-// #include "esp_event_base.h"
+#include "esp_event_base.h"
 
 extern SemaphoreHandle_t xMutexHTTPD;
 
-// struct httpd_arg_t
-// {
+/** An event base type for "epaper-idf-httpd". */
+ESP_EVENT_DECLARE_BASE(EPAPER_IDF_HTTPD_EVENT);
+enum	/**< The events. */
+{
+	EPAPER_IDF_HTTPD_EVENT_FINISH,	/**< An event for "this task is finished". */
+};
 
-// } httpd_arg;
+/** The event loop handle. */
+extern esp_event_loop_handle_t epaper_idf_httpd_event_loop_handle;
+
+// /** Task action IDs of actions this task can perform. */
+// enum epaper_idf_httpd_task_action_id {
+
+// };
+
+// /** Task action values. */
+// struct epaper_idf_httpd_task_action_value_t {
+
+// };
+
+// typedef void* epaper_idf_httpd_task_action_value_void_p;
+
+// #define _EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_CAST_VOID_P(x) (epaper_idf_httpd_task_action_value_void_p)&x
+// #define EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_CAST_VOID_P(x) _EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_CAST_VOID_P(x)
+
+// #define _EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(x) *(struct epaper_idf_httpd_task_action_value_t*)x
+// #define EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(x) _EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(x)
+
+// /** Task actions. */
+// struct epaper_idf_httpd_task_action_t {
+// 	enum epaper_idf_httpd_task_action_id id;
+// 	epaper_idf_httpd_task_action_value_void_p value;
+// };
+
+// typedef void* epaper_idf_httpd_task_action_void_p;
+
+// #define _EPAPER_IDF_HTTPD_TASK_ACTION_CAST_VOID_P(x) (epaper_idf_httpd_task_action_void_p)&x
+// #define EPAPER_IDF_HTTPD_TASK_ACTION_CAST_VOID_P(x) _EPAPER_IDF_HTTPD_TASK_ACTION_CAST_VOID_P(x)
+
+// #define _EPAPER_IDF_HTTPD_TASK_ACTION_COPY(x) *(struct epaper_idf_httpd_task_action_t*)x
+// #define EPAPER_IDF_HTTPD_TASK_ACTION_COPY(x) _EPAPER_IDF_HTTPD_TASK_ACTION_COPY(x)
 
 #ifdef __cplusplus
 extern "C"
@@ -31,12 +68,10 @@ extern "C"
 
 esp_err_t init_fs(void);
 
-esp_err_t start_httpd(const char *base_path);
+// esp_err_t start_httpd(const char *base_path);
 
-// /** The esp-idf task function. */
-// void epaper_idf_http_task(void *pvParameter);
-
-// void epaper_idf_http_get(struct epaper_idf_http_task_action_value_t action_value);
+/** The esp-idf task function. */
+void epaper_idf_httpd_task(void *pvParameter);
 
 #ifdef __cplusplus
 }
