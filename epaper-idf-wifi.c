@@ -132,17 +132,6 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
 static void epaper_idf_wifi_ap_init(void)
 {
-	esp_netif_t *ap_netif = esp_netif_create_default_wifi_ap();
-	assert(ap_netif);
-
-	esp_netif_ip_info_t ip_info;
-	IP4_ADDR(&ip_info.ip, 126,233,53,78);
-	IP4_ADDR(&ip_info.gw, 126,233,53,78);
-	IP4_ADDR(&ip_info.netmask, 255,0,0,0);
-	esp_netif_dhcps_stop(ap_netif);
-	esp_netif_set_ip_info(ap_netif, &ip_info);
-	esp_netif_dhcps_start(ap_netif);
-
 	wifi_config_t wifi_config_ap = {
 			.ap = {
 					.ssid = CONFIG_EXAMPLE_WIFI_AP_SSID,
