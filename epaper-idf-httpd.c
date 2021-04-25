@@ -291,14 +291,102 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
 		httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
 
 	} else {
-		const char resp[] = HTTPD_200;
+		// const char resp[] = HTTPD_200;
 
 		ESP_LOGI(HTTPD_TAG, "No redirect needed for HOST: %s", req_hdr_host_val);
 		
-		httpd_resp_set_status(req, HTTPD_200);
-		httpd_resp_set_type(req, HTTPD_TYPE_TEXT);
+		// httpd_resp_set_status(req, HTTPD_200);
+		// httpd_resp_set_type(req, HTTPD_TYPE_TEXT);
 		
-		httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+		// httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+
+		
+
+
+
+
+
+		rest_server_context_t *rest_context = (rest_server_context_t *)req->user_ctx;
+
+		char filepath[FILE_PATH_MAX];
+
+		// Find the start of any query parameters and remove them.
+		uint endpos = strlen(req->uri);
+
+		char *s = NULL;
+		s = strstr(req->uri, "?");
+
+		if (s != NULL) {
+			endpos = s - req->uri;
+		}
+
+		char req_uri[endpos + 1];
+		strlcpy(req_uri, req->uri, sizeof(req_uri));
+
+		strlcpy(filepath, rest_context->base_path, sizeof(filepath));
+		if (req_uri[strlen(req_uri) - 1] == '/')
+		{
+			strlcat(filepath, "/index.html", sizeof(filepath));
+		}
+		else
+		{
+			strlcat(filepath, req_uri, sizeof(filepath));
+		}
+
+		int fd = open(filepath, O_RDONLY, 0);
+		if (fd == -1)
+		{
+			ESP_LOGE(HTTPD_TAG, "Failed to open file : %s", filepath);
+
+			memset((void *)filepath, 0, sizeof(filepath));
+
+			strlcpy(filepath, rest_context->base_path, sizeof(filepath));
+
+			strlcat(filepath, "/index.html", sizeof(filepath));
+
+			fd = open(filepath, O_RDONLY, 0);
+			if (fd == -1)
+			{
+				ESP_LOGE(HTTPD_TAG, "Failed to open file : %s", filepath);
+
+				/* Respond with 500 Internal Server Error */
+				httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to read existing file");
+				return ESP_FAIL;
+			}
+		}
+
+		set_content_type_from_file(req, filepath);
+
+		char *chunk = rest_context->scratch;
+		ssize_t read_bytes;
+		do
+		{
+			/* Read file in chunks into the scratch buffer */
+			read_bytes = read(fd, chunk, SCRATCH_BUFSIZE);
+			if (read_bytes == -1)
+			{
+				ESP_LOGE(HTTPD_TAG, "Failed to read file : %s", filepath);
+			}
+			else if (read_bytes > 0)
+			{
+				/* Send the buffer contents as HTTP response chunk */
+				if (httpd_resp_send_chunk(req, chunk, read_bytes) != ESP_OK)
+				{
+					close(fd);
+					ESP_LOGE(HTTPD_TAG, "File sending failed!");
+					/* Abort sending file */
+					httpd_resp_sendstr_chunk(req, NULL);
+					/* Respond with 500 Internal Server Error */
+					httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to send file");
+					return ESP_FAIL;
+				}
+			}
+		} while (read_bytes > 0);
+		/* Close file after sending complete */
+		close(fd);
+		ESP_LOGI(HTTPD_TAG, "File sending complete");
+		/* Respond with an empty chunk to signal HTTP response completion */
+		httpd_resp_send_chunk(req, NULL, 0);
 	}
 
 
