@@ -35,6 +35,13 @@ idf_component_register(
     $ENV{IDF_PATH}/components/json/cJSON/cJSON_Utils.c
     $ENV{IDF_PATH}/components/lwip/lwip/src/core/ipv4/ip4_addr.c
     $ENV{IDF_PATH}/components/lwip/lwip/src/core/dns.c
+    $ENV{IDF_PATH}/components/openssl/library/ssl_methods.c
+    $ENV{IDF_PATH}/components/openssl/library/ssl_lib.c
+    $ENV{IDF_PATH}/components/openssl/library/ssl_x509.c
+    $ENV{IDF_PATH}/components/openssl/library/ssl_pkey.c
+    $ENV{IDF_PATH}/components/openssl/library/ssl_cert.c
+    $ENV{IDF_PATH}/components/openssl/platform/ssl_pm.c
+    $ENV{IDF_PATH}/components/openssl/platform/ssl_port.c
     $ENV{IDF_PATH}/components/sdmmc/sdmmc_cmd.c
     $ENV{IDF_PATH}/components/spiffs/esp_spiffs.c
     $ENV{IDF_PATH}/components/spiffs/spiffs_api.c
@@ -43,14 +50,14 @@ idf_component_register(
     $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_hydrogen.c
     $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_nucleus.c
     $ENV{IDF_PATH}/components/wear_levelling/wear_levelling.cpp
-    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_main.c
-    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_parse.c
-    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_sess.c
-    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_txrx.c
-    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_uri.c
-    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_ws.c
-    $ENV{IDF_PATH}/components/esp_http_server/src/util/ctrl_sock.c
-    $ENV{IDF_PATH}/components/esp_https_server/src/https_server.c
+    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_main.c
+    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_parse.c
+    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_sess.c
+    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_txrx.c
+    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_uri.c
+    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_ws.c
+    # $ENV{IDF_PATH}/components/esp_http_server/src/util/ctrl_sock.c
+    # $ENV{IDF_PATH}/components/esp_https_server/src/https_server.c
 
   REQUIRES
     "Adafruit-GFX-Component"
@@ -61,11 +68,15 @@ idf_component_register(
     $ENV{IDF_PATH}/components/app_update/include
     $ENV{IDF_PATH}/components/bootloader_support/include
     $ENV{IDF_PATH}/components/esp_http_client/include
-    $ENV{IDF_PATH}/components/esp_http_server/include
-    $ENV{IDF_PATH}/components/esp_http_server/src
-    $ENV{IDF_PATH}/components/esp_http_server/src/port/esp32
-    $ENV{IDF_PATH}/components/esp_http_server/src/util
-    $ENV{IDF_PATH}/components/esp_https_server/include
+    $ENV{IDF_PATH}/components/openssl/include
+    $ENV{IDF_PATH}/components/openssl/include/openssl
+    $ENV{IDF_PATH}/components/openssl/include/internal
+    $ENV{IDF_PATH}/components/openssl/include/platform
+    # $ENV{IDF_PATH}/components/esp_http_server/include
+    # $ENV{IDF_PATH}/components/esp_http_server/src
+    # $ENV{IDF_PATH}/components/esp_http_server/src/port/esp32
+    # $ENV{IDF_PATH}/components/esp_http_server/src/util
+    # $ENV{IDF_PATH}/components/esp_https_server/include
     $ENV{IDF_PATH}/components/esp_https_ota/include
     $ENV{IDF_PATH}/components/fatfs/diskio
     $ENV{IDF_PATH}/components/fatfs/src

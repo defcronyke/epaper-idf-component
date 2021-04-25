@@ -9,6 +9,16 @@
 		this project. You must agree to follow those license terms,
 		otherwise you aren't allowed to copy, distribute, or use any 
 		part of this project in any way.
+
+		Contains some modified example code from here:
+		https://github.com/espressif/esp-idf/blob/release/v4.2/examples/protocols/openssl_server/main/openssl_server_example.h
+
+		Original Example Code Header:
+		This example code is in the Public Domain (or CC0 licensed, at your option.)
+
+		Unless required by applicable law or agreed to in writing, this
+		software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <string.h>
 #include <stdlib.h>
@@ -16,6 +26,13 @@
 #include "freertos/semphr.h"
 #include "esp_system.h"
 #include "esp_event_base.h"
+
+#define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
+#define OPENSSL_EXAMPLE_TASK_PRIORITY    8
+
+#define OPENSSL_EXAMPLE_RECV_BUF_LEN       1024
+
+#define OPENSSL_EXAMPLE_LOCAL_TCP_PORT     443
 
 extern SemaphoreHandle_t xMutexHTTPD;
 

@@ -39,7 +39,7 @@ const uint32_t epaper_idf_http_task_stack_depth = 4096;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
 const char *epaper_idf_httpd_task_name = "epaper_idf_httpd_task";
-const uint32_t epaper_idf_httpd_task_stack_depth = 2048;
+const uint32_t epaper_idf_httpd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpd_task_priority = 5;
 
 const char *http_slideshow_task_name = "http_slideshow_task";
