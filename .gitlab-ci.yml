@@ -19,7 +19,7 @@ build-job:
     - cd epaper-idf
     - sed -i "s#git@gitlab.com:#https://gitlab.com/#g" .gitmodules
     - sed -i "s#github.com/#gitlab.com/#g" .gitmodules
-    - mkdir certs && touch certs/ca_cert.pem
+    - mkdir certs && touch certs/ca_cert.pem certs/ca_cert_conf.pem certs/ca_key_conf.pem
     - cp sdkconfig.ci sdkconfig
     - idf.py build
     - cp build/partition_table/partition-table.bin ..
