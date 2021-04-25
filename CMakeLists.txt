@@ -50,13 +50,13 @@ idf_component_register(
     $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_hydrogen.c
     $ENV{IDF_PATH}/components/spiffs/spiffs/src/spiffs_nucleus.c
     $ENV{IDF_PATH}/components/wear_levelling/wear_levelling.cpp
-    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_main.c
-    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_parse.c
-    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_sess.c
-    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_txrx.c
-    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_uri.c
-    # $ENV{IDF_PATH}/components/esp_http_server/src/httpd_ws.c
-    # $ENV{IDF_PATH}/components/esp_http_server/src/util/ctrl_sock.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_main.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_parse.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_sess.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_txrx.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_uri.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/httpd_ws.c
+    $ENV{IDF_PATH}/components/esp_http_server/src/util/ctrl_sock.c
     # $ENV{IDF_PATH}/components/esp_https_server/src/https_server.c
 
   REQUIRES
@@ -72,11 +72,11 @@ idf_component_register(
     $ENV{IDF_PATH}/components/openssl/include/openssl
     $ENV{IDF_PATH}/components/openssl/include/internal
     $ENV{IDF_PATH}/components/openssl/include/platform
-    # $ENV{IDF_PATH}/components/esp_http_server/include
-    # $ENV{IDF_PATH}/components/esp_http_server/src
-    # $ENV{IDF_PATH}/components/esp_http_server/src/port/esp32
-    # $ENV{IDF_PATH}/components/esp_http_server/src/util
-    # $ENV{IDF_PATH}/components/esp_https_server/include
+    $ENV{IDF_PATH}/components/esp_http_server/include
+    $ENV{IDF_PATH}/components/esp_http_server/src
+    $ENV{IDF_PATH}/components/esp_http_server/src/port/esp32
+    $ENV{IDF_PATH}/components/esp_http_server/src/util
+    $ENV{IDF_PATH}/components/esp_https_server/include
     $ENV{IDF_PATH}/components/esp_https_ota/include
     $ENV{IDF_PATH}/components/fatfs/diskio
     $ENV{IDF_PATH}/components/fatfs/src

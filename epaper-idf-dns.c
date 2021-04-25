@@ -37,6 +37,8 @@
 
 static const char *DNS_TAG = "epaper-idf-dns";
 
+// static const char* dns_not_found_ip = "126.233.53.78";
+
 static int sock_fd;
 
 //Function to put unaligned 16-bit network values

@@ -135,6 +135,14 @@ static void epaper_idf_wifi_ap_init(void)
 	esp_netif_t *ap_netif = esp_netif_create_default_wifi_ap();
 	assert(ap_netif);
 
+	esp_netif_ip_info_t ip_info;
+	IP4_ADDR(&ip_info.ip, 126,233,53,78);
+	IP4_ADDR(&ip_info.gw, 126,233,53,78);
+	IP4_ADDR(&ip_info.netmask, 255,0,0,0);
+	esp_netif_dhcps_stop(ap_netif);
+	esp_netif_set_ip_info(ap_netif, &ip_info);
+	esp_netif_dhcps_start(ap_netif);
+
 	wifi_config_t wifi_config_ap = {
 			.ap = {
 					.ssid = CONFIG_EXAMPLE_WIFI_AP_SSID,
@@ -224,12 +232,24 @@ static void epaper_idf_wifi_init(void)
 	esp_netif_t *sta_netif = esp_netif_create_default_wifi_sta();
 	assert(sta_netif);
 
+	esp_netif_t *ap_netif = esp_netif_create_default_wifi_ap();
+	assert(ap_netif);
+
+	esp_netif_ip_info_t ip_info;
+	IP4_ADDR(&ip_info.ip, 126,233,53,78);
+	IP4_ADDR(&ip_info.gw, 126,233,53,78);
+	IP4_ADDR(&ip_info.netmask, 255,0,0,0);
+	esp_netif_dhcps_stop(ap_netif);
+	esp_netif_set_ip_info(ap_netif, &ip_info);
+	esp_netif_dhcps_start(ap_netif);
+
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 
-	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
 #ifdef CONFIG_EXAMPLE_WIFI_AP_STARTUP_ALWAYS_ON_OPT
+	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 	epaper_idf_wifi_ap_init();
+#else
+	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 #endif
 
 	wifi_config_t wifi_config_sta = {
