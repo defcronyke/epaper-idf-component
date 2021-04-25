@@ -77,6 +77,9 @@ static void epaper_idf_wifi_finish_event_handler(void *handler_arg, esp_event_ba
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_WIFI_EVENT_FINISH");
 
+	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
+
 	// xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
 	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
