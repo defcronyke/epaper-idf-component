@@ -225,6 +225,9 @@ static void epaper_idf_wifi_init(void)
 	assert(ap_netif);
 
 	esp_netif_ip_info_t ip_info;
+	// TODO: There is a value "CONFIG_EXAMPLE_WIFI_AP_IP" in the 
+	// Kconfig menu which isn't actually used here, but it should 
+	// be.
 	IP4_ADDR(&ip_info.ip, 126,233,53,78);
 	IP4_ADDR(&ip_info.gw, 126,233,53,78);
 	IP4_ADDR(&ip_info.netmask, 255,0,0,0);
