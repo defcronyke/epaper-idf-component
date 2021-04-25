@@ -286,7 +286,7 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
 		ESP_LOGI(HTTPD_TAG, "Detected redirect trigger HOST: %s", redir_trigger_host);
 		
 		httpd_resp_set_status(req, resp);
-		httpd_resp_set_hdr(req, "Location", "http://192.168.4.1");
+		httpd_resp_set_hdr(req, "Location", "http://epaper");
 
 		httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
 
