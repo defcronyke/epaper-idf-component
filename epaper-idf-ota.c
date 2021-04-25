@@ -53,6 +53,9 @@
 
 static const char *TAG = "ota";
 
+// NOTE: This has to match the value in the partition table file: partitions.csv
+static const uint spiffs_partition_www_size = 0xbd000;
+
 static char ota_write_data[BUFFSIZE + 1] = { 0 };
 extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
 extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
@@ -171,10 +174,8 @@ static void ota_partition2() {
 
     update_partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_SPIFFS, "www");
 
-    const uint part2_size = 0xc8000;
-
     ESP_LOGI(TAG, "Erasing SPIFFS partition");
-    err = esp_partition_erase_range(update_partition, 0, part2_size);
+    err = esp_partition_erase_range(update_partition, 0, spiffs_partition_www_size);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to erase SPIFFS partition: %s", esp_err_to_name(err));
         esp_http_client_cleanup(client);
