@@ -13,12 +13,16 @@ module.exports = {
     entry: {
         index: {
             import: './app.js',
+            filename: 'index.js',
         },
+        // gen_204: {
+        //     import: './gen_204',
+        // },
     },
     
     output: {
         path: path.resolve(__dirname, '../public'),
-        filename: 'index.js',
+        // filename: 'index.js',
     },
 
     module: {
@@ -36,7 +40,14 @@ module.exports = {
                 options: {
                     name: '[path][name].[ext]',
                 },
-            }
+            },
+            {
+                test: /(gen_204)/,
+                loader: 'file-loader',
+                options: {
+                    name: '[path][name]',
+                },
+            },
         ],
     },
 };
