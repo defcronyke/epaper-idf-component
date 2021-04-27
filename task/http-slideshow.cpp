@@ -121,21 +121,10 @@ static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_bas
   xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
 
-  // TODO: uncomment this
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
 	xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
-}
-
-static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
-{
-	ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTP_EVENT_FINISH");
-
-	if (event_data != NULL) {
-		http_task_action_value = EPAPER_IDF_HTTP_TASK_ACTION_VALUE_COPY(event_data);
-		ESP_LOGI(TAG, "event data received");
-	}
-
-	http_slideshow_task(EPAPER_IDF_HTTP_TASK_ACTION_VALUE_CAST_VOID_P(http_task_action_value));
+#endif
 }
 
 static void epaper_idf_httpd_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
@@ -148,14 +137,31 @@ static void epaper_idf_httpd_finish_event_handler(void *handler_arg, esp_event_b
 	// }
 }
 
-static void epaper_idf_httpsd_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
+static void epaper_idf_httpsd_event_https_initialized_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
 {
-	ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTPSD_EVENT_FINISH");
+	ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED");
 
 	// if (event_data != NULL) {
 	// 	httpd_task_action_value = EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(event_data);
 	// 	ESP_LOGI(TAG, "event data received");
 	// }
+
+#ifdef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
+	xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+#endif
+}
+
+static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
+{
+	ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTP_EVENT_FINISH");
+
+	if (event_data != NULL) {
+		http_task_action_value = EPAPER_IDF_HTTP_TASK_ACTION_VALUE_COPY(event_data);
+		ESP_LOGI(TAG, "event data received");
+	}
+
+	http_slideshow_task(EPAPER_IDF_HTTP_TASK_ACTION_VALUE_CAST_VOID_P(http_task_action_value));
 }
 
 // Enter deep sleep.
@@ -312,7 +318,7 @@ void http_slideshow(void)
 		.task_core_id = tskNO_AFFINITY};
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpsd_event_loop_args, &epaper_idf_httpsd_event_loop_handle));
-	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_FINISH, epaper_idf_httpsd_finish_event_handler, epaper_idf_httpsd_event_loop_handle, NULL));
+	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, epaper_idf_httpsd_event_https_initialized_handler, epaper_idf_httpsd_event_loop_handle, NULL));
 
   // TODO: uncomment this
 	esp_event_loop_args_t epaper_idf_http_event_loop_args = {

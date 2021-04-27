@@ -44,6 +44,8 @@
 #endif
 // #include "openssl/ssl.h"
 #include "esp_netif.h"
+#include "esp_event.h"
+#include "esp_event_base.h"
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
@@ -1158,6 +1160,13 @@ reset:
 // 		}
 
 		epaper_idf_http_is_init = true;
+
+
+    // Send an event which says "this task is finished".
+    res = esp_event_post_to(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, NULL, 0, portMAX_DELAY);
+    if (res != ESP_OK) {
+      ESP_LOGE(HTTPSD_TAG, "Sending event failed");
+    }
 	}
 
 

@@ -63,7 +63,8 @@ extern SemaphoreHandle_t xMutexHTTPSD;
 ESP_EVENT_DECLARE_BASE(EPAPER_IDF_HTTPSD_EVENT);
 enum	/**< The events. */
 {
-	EPAPER_IDF_HTTPSD_EVENT_FINISH,	/**< An event for "this task is finished". */
+  EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED,  /**< An event for "the https systems are initialized". */
+	EPAPER_IDF_HTTPSD_EVENT_FINISH, /**< An event for "this task is finished". */
 };
 
 /** The event loop handle. */

@@ -56,6 +56,7 @@
 #include "mbedtls/certs.h"
 #include "esp_crt_bundle.h"
 #include "protocol_examples_common.h"
+#include "epaper-idf-httpsd.h"
 
 static const char *HTTP_TAG = "epaper-idf-http";
 
@@ -64,7 +65,11 @@ esp_event_loop_handle_t epaper_idf_http_event_loop_handle;
 static struct epaper_idf_http_task_action_value_t http_task_action_value;
 static struct epaper_idf_http_task_action_t http_task_action;
 
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
 static bool epaper_idf_http_is_init = false;
+#else
+static bool epaper_idf_http_is_init = true;
+#endif
 
 static mbedtls_net_context server_fd;
 static mbedtls_entropy_context entropy;
