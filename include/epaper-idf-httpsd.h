@@ -27,12 +27,30 @@
 #include "esp_system.h"
 #include "esp_event_base.h"
 
-#define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
-#define OPENSSL_EXAMPLE_TASK_PRIORITY    8
+// #define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
+// #define OPENSSL_EXAMPLE_TASK_PRIORITY    8
 
-#define OPENSSL_EXAMPLE_RECV_BUF_LEN       1024
+// #define OPENSSL_EXAMPLE_RECV_BUF_LEN       1024
 
-#define OPENSSL_EXAMPLE_LOCAL_TCP_PORT     443
+// #define OPENSSL_EXAMPLE_LOCAL_TCP_PORT     443
+
+
+
+
+// #define EXAMPLE_WIFI_SSID               CONFIG_WIFI_SSID
+// #define EXAMPLE_WIFI_PASS               CONFIG_WIFI_PASSWORD
+
+#define MBEDTLS_EXAMPLE_TASK_NAME        "epaper_idf_httpsd_task"
+#define MBEDTLS_EXAMPLE_TASK_STACK_WORDS 10240
+#define MBEDTLS_EXAMPLE_TASK_PRIORITY    5
+
+#define MBEDTLS_EXAMPLE_RECV_BUF_LEN       2048
+
+#define MBEDTLS_EXAMPLE_LOCAL_TCP_PORT     443
+
+
+
+
 
 extern SemaphoreHandle_t xMutexHTTPSD;
 

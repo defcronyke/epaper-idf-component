@@ -36,6 +36,9 @@ idf_component_register(
     $ENV{IDF_PATH}/components/json/cJSON/cJSON_Utils.c
     $ENV{IDF_PATH}/components/lwip/lwip/src/core/ipv4/ip4_addr.c
     $ENV{IDF_PATH}/components/lwip/lwip/src/core/dns.c
+    $ENV{IDF_PATH}/components/mbedtls/mbedtls/library/ssl_cache.c
+    $ENV{IDF_PATH}/components/mbedtls/mbedtls/library/platform.c
+    # $ENV{IDF_PATH}/components/mbedtls/mbedtls/programs/ssl/ssl_server2.c
     $ENV{IDF_PATH}/components/openssl/library/ssl_methods.c
     $ENV{IDF_PATH}/components/openssl/library/ssl_lib.c
     $ENV{IDF_PATH}/components/openssl/library/ssl_x509.c

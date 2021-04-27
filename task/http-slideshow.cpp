@@ -51,9 +51,9 @@ const uint32_t epaper_idf_httpd_task_stack_depth = 2048;
 UBaseType_t epaper_idf_httpd_task_priority = 5;
 
 const char *epaper_idf_httpsd_task_name = "epaper_idf_httpsd_task";
-const uint32_t epaper_idf_httpsd_task_stack_depth = 2048;
+const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
+// const uint32_t epaper_idf_httpsd_task_stack_depth = 2048;
 // const uint32_t epaper_idf_httpsd_task_stack_depth = 8192;
-// const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpsd_task_priority = 5;
 
 const char *http_slideshow_task_name = "http_slideshow_task";
@@ -231,14 +231,14 @@ extern "C" void http_slideshow_task(void *pvParameter)
 	ESP_LOGI(TAG, "%s loop", http_slideshow_task_name);
 	
 	/** Instantiate the io and dev variables. */
-	http_slideshow_task_init();
+	// http_slideshow_task_init();
 
 	/** NOTE:	Perform some e-paper device actions here,
 						such as drawing to the screen.
 	*/
 
 	/** Delete the io and dev variables. */
-	http_slideshow_task_cleanup();
+	// http_slideshow_task_cleanup();
 	
 	/** No deep sleep. */
 	if (http_task_action_value.no_deep_sleep)
