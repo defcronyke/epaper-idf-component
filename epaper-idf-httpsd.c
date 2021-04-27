@@ -225,15 +225,15 @@ int main( void )
 
 
 #define HTTP_RESPONSE \
-"HTTP/1.1 200 OK\r\n" \
-"Content-Type: text/html\r\n\r\n" \
+"%s %s\r\n" \
+"Content-Type: %s\r\n\r\n" \
 "%s\r\n"
 
 
-
-/* // #define HTTP_RESPONSE "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" \
-// "<h2>mbed TLS Test Server</h2>\r\n" \
-// "<p>Successful connection using: %s</p>\r\n" */
+/* // #define HTTP_RESPONSE \
+// "HTTP/1.1 200 OK\r\n" \
+// "Content-Type: text/html\r\n\r\n" \
+// "%s\r\n" */
 
 
 static const char* HTTPSD_TAG = "epaper-idf-httpsd";
@@ -1216,24 +1216,32 @@ reset:
 	}
 	while( 1 );
 
-  // ESP_LOGI(HTTPSD_TAG, "%s", mbedtls_);
+  // TODO: Add these in Kconfig menu.
+  static char* resp_proto = "HTTP/1.1";
+  static char* resp_status = "200 OK";
+  static char* resp_header_content_type = "text/html";
 
-	// /** NOTE: Example handler: GET /[*]
-	//  * 7. Write the 200 Response
-	//  */
-	// ESP_LOGI(HTTPSD_TAG, "  > Write to client:" );
-	// len = snprintf( (char *) buf, sizeof(HTTP_RESPONSE) +
-  //   strlen(mbedtls_ssl_get_ciphersuite( &ssl )) * sizeof(char), HTTP_RESPONSE,
-  //   mbedtls_ssl_get_ciphersuite( &ssl ) );
+  static const char* resp_body = "<a href=\"https://"CONFIG_LWIP_LOCAL_HOSTNAME"\">https://"CONFIG_LWIP_LOCAL_HOSTNAME"</a>\0";
 
 
   /** NOTE: Example handler: "GET /[*]"
 	 * 7. Write the 200 Response
 	 */
 	ESP_LOGI(HTTPSD_TAG, "  > Write to client:");
-	len = snprintf((char *) buf, sizeof(HTTP_RESPONSE) +
-    strlen(mbedtls_ssl_get_ciphersuite(&ssl)) * sizeof(char), HTTP_RESPONSE,
-    mbedtls_ssl_get_ciphersuite(&ssl));
+
+	len = snprintf(
+    (char*)buf,
+    strlen(HTTP_RESPONSE) * sizeof(char) +
+    strlen(resp_proto) * sizeof(char) +
+    strlen(resp_status) * sizeof(char) +
+    strlen(resp_header_content_type) * sizeof(char) +
+    strlen(resp_body) * sizeof(char),
+    HTTP_RESPONSE,
+    resp_proto,
+    resp_status,
+    resp_header_content_type,
+    resp_body
+  );
 
 
 
