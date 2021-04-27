@@ -13,3 +13,6 @@ COMPONENT_ADD_INCLUDEDIRS := include
 COMPONENT_EMBED_TXTFILES := ${PROJECT_PATH}/certs/ca_cert.pem
 COMPONENT_EMBED_TXTFILES += ${PROJECT_PATH}/certs/ca_cert_conf.pem
 COMPONENT_EMBED_TXTFILES += ${PROJECT_PATH}/certs/ca_key_conf.pem
+
+# # TODO: Support optional client verify certificate.
+# COMPONENT_EMBED_TXTFILES += ${PROJECT_PATH}/certs/client_verify_cert_conf.pem

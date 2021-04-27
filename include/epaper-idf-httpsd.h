@@ -1,5 +1,5 @@
-#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPD_H_INCLUDED__
-#define __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPD_H_INCLUDED__
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
+#define __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
 /**	epaper-idf-component
 
 		Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
@@ -27,24 +27,24 @@
 #include "esp_system.h"
 #include "esp_event_base.h"
 
-// #define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
-// #define OPENSSL_EXAMPLE_TASK_PRIORITY    8
+#define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
+#define OPENSSL_EXAMPLE_TASK_PRIORITY    8
 
-// #define OPENSSL_EXAMPLE_RECV_BUF_LEN       1024
+#define OPENSSL_EXAMPLE_RECV_BUF_LEN       1024
 
-// #define OPENSSL_EXAMPLE_LOCAL_TCP_PORT     443
+#define OPENSSL_EXAMPLE_LOCAL_TCP_PORT     443
 
-extern SemaphoreHandle_t xMutexHTTPD;
+extern SemaphoreHandle_t xMutexHTTPSD;
 
 /** An event base type for "epaper-idf-httpd". */
-ESP_EVENT_DECLARE_BASE(EPAPER_IDF_HTTPD_EVENT);
+ESP_EVENT_DECLARE_BASE(EPAPER_IDF_HTTPSD_EVENT);
 enum	/**< The events. */
 {
-	EPAPER_IDF_HTTPD_EVENT_FINISH,	/**< An event for "this task is finished". */
+	EPAPER_IDF_HTTPSD_EVENT_FINISH,	/**< An event for "this task is finished". */
 };
 
 /** The event loop handle. */
-extern esp_event_loop_handle_t epaper_idf_httpd_event_loop_handle;
+extern esp_event_loop_handle_t epaper_idf_httpsd_event_loop_handle;
 
 // /** Task action IDs of actions this task can perform. */
 // enum epaper_idf_httpd_task_action_id {
@@ -83,12 +83,12 @@ extern "C"
 {
 #endif
 
-esp_err_t init_fs(void);
+// esp_err_t init_fs(void);
 
 // esp_err_t start_httpd(const char *base_path);
 
 /** The esp-idf task function. */
-void epaper_idf_httpd_task(void *pvParameter);
+void epaper_idf_httpsd_task(void *pvParameter);
 
 #ifdef __cplusplus
 }

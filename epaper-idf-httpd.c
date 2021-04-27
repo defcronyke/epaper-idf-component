@@ -38,7 +38,7 @@
 #if CONFIG_PROJECT_CONNECT_WIFI
 #include "esp_wifi.h"
 #endif
-#include "openssl/ssl.h"
+// #include "openssl/ssl.h"
 #include "esp_netif.h"
 #include "lwip/sockets.h"
 #include "lwip/netdb.h"
@@ -676,7 +676,7 @@ static void start_httpd(void* pvParameter)
 
 
 
-	// HTTP
+	// HTTP server
 	ESP_LOGI(HTTPD_TAG, "Starting HTTP Server...");
 
 	// const char base_path[] = CONFIG_EXAMPLE_WEB_MOUNT_POINT;

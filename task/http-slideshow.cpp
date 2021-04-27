@@ -21,26 +21,39 @@ static struct epaper_idf_http_task_action_value_t http_task_action_value;
 // static struct epaper_idf_httpd_task_action_t httpd_task_action;
 // static struct epaper_idf_httpd_task_action_value_t httpd_task_action_value;
 
+// static struct epaper_idf_httpsd_task_action_t httpsd_task_action;
+// static struct epaper_idf_httpsd_task_action_value_t httpsd_task_action_value;
+
 const char *TAG = "http-slideshow";
 
 static EpaperIDFSPI* io = NULL;
 static EpaperIDFDevice* dev = NULL;
 
 const char *epaper_idf_wifi_task_name = "epaper_idf_wifi_task";
-const uint32_t epaper_idf_wifi_task_stack_depth = 4096;
+const uint32_t epaper_idf_wifi_task_stack_depth = 1024;
+// const uint32_t epaper_idf_wifi_task_stack_depth = 2048;
+// const uint32_t epaper_idf_wifi_task_stack_depth = 4096;
 UBaseType_t epaper_idf_wifi_task_priority = 5;
 
 const char *epaper_idf_ota_task_name = "epaper_idf_ota_task";
 const uint32_t epaper_idf_ota_task_stack_depth = 2048;
+// const uint32_t epaper_idf_ota_task_stack_depth = 1024;
 UBaseType_t epaper_idf_ota_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
 const uint32_t epaper_idf_http_task_stack_depth = 4096;
+// const uint32_t epaper_idf_http_task_stack_depth = 2048;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
 const char *epaper_idf_httpd_task_name = "epaper_idf_httpd_task";
-const uint32_t epaper_idf_httpd_task_stack_depth = 4096;
+const uint32_t epaper_idf_httpd_task_stack_depth = 2048;
+// const uint32_t epaper_idf_httpd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpd_task_priority = 5;
+
+const char *epaper_idf_httpsd_task_name = "epaper_idf_httpsd_task";
+const uint32_t epaper_idf_httpsd_task_stack_depth = 2048;
+// const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
+UBaseType_t epaper_idf_httpsd_task_priority = 5;
 
 const char *http_slideshow_task_name = "http_slideshow_task";
 
@@ -80,22 +93,14 @@ static void epaper_idf_wifi_finish_event_handler(void *handler_arg, esp_event_ba
 	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
-	// xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
-	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
-
-	// // TODO: Start the HTTPD as a task.
-	// ESP_ERROR_CHECK(start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT));
+  // TODO: make this optional
+  xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
 }
 
 static void sta_got_ip_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
 {
 	ESP_LOGI(TAG, "event received: IP_EVENT_STA_GOT_IP");
-
-	// xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
-	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
-
-	// // TODO: Start the HTTPD as a task.
-	// ESP_ERROR_CHECK(start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT));
 
 	xTaskCreate(&epaper_idf_ota_task, epaper_idf_ota_task_name, epaper_idf_ota_task_stack_depth * 8, NULL, epaper_idf_ota_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_ota_task_name);
@@ -108,8 +113,9 @@ static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_bas
 	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
-	// // TODO: Start the HTTPD as a task.
-	// ESP_ERROR_CHECK(start_httpd(CONFIG_EXAMPLE_WEB_MOUNT_POINT));
+  // TODO: make this optional
+  xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
 
 	xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
@@ -130,6 +136,16 @@ static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_ba
 static void epaper_idf_httpd_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTPD_EVENT_FINISH");
+
+	// if (event_data != NULL) {
+	// 	httpd_task_action_value = EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(event_data);
+	// 	ESP_LOGI(TAG, "event data received");
+	// }
+}
+
+static void epaper_idf_httpsd_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
+{
+	ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTPSD_EVENT_FINISH");
 
 	// if (event_data != NULL) {
 	// 	httpd_task_action_value = EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(event_data);
@@ -290,6 +306,17 @@ void http_slideshow(void)
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpd_event_loop_args, &epaper_idf_httpd_event_loop_handle));
 	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpd_event_loop_handle, EPAPER_IDF_HTTPD_EVENT, EPAPER_IDF_HTTPD_EVENT_FINISH, epaper_idf_httpd_finish_event_handler, epaper_idf_httpd_event_loop_handle, NULL));
+
+  // TODO: make this optional
+  esp_event_loop_args_t epaper_idf_httpsd_event_loop_args = {
+		.queue_size = 5,
+		.task_name = "epaper_idf_httpsd_event_loop_task", // task will be created
+		.task_priority = uxTaskPriorityGet(NULL),
+		.task_stack_size = epaper_idf_httpsd_task_stack_depth,
+		.task_core_id = tskNO_AFFINITY};
+
+	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpsd_event_loop_args, &epaper_idf_httpsd_event_loop_handle));
+	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_FINISH, epaper_idf_httpsd_finish_event_handler, epaper_idf_httpsd_event_loop_handle, NULL));
 
 	// Initialize wifi and connect.
 	static const epaper_idf_wifi_task_action_t wifi_task_action_connect = {

@@ -40,6 +40,7 @@
 #include "epaper-idf-ota.h"
 #include "epaper-idf-http.h"
 #include "epaper-idf-httpd.h"
+#include "epaper-idf-httpsd.h"
 
 #ifndef EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN
 #define EPAPER_IDF_DEEP_SLEEP_SECONDS_POS_MIN 15

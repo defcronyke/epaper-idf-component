@@ -14,6 +14,7 @@ idf_component_register(
     "epaper-idf-dns.c"
     "epaper-idf-http.c"
     "epaper-idf-httpd.c"
+    "epaper-idf-httpsd.c"
     "epaper-idf-io.cpp"
     "epaper-idf-ota.c"
     "epaper-idf-spi.cpp"
@@ -57,7 +58,7 @@ idf_component_register(
     $ENV{IDF_PATH}/components/esp_http_server/src/httpd_uri.c
     $ENV{IDF_PATH}/components/esp_http_server/src/httpd_ws.c
     $ENV{IDF_PATH}/components/esp_http_server/src/util/ctrl_sock.c
-    # $ENV{IDF_PATH}/components/esp_https_server/src/https_server.c
+    $ENV{IDF_PATH}/components/esp_https_server/src/https_server.c
 
   REQUIRES
     "Adafruit-GFX-Component"
@@ -106,6 +107,9 @@ idf_component_register(
     ${project_dir}/certs/ca_cert.pem
     ${project_dir}/certs/ca_cert_conf.pem
     ${project_dir}/certs/ca_key_conf.pem
+
+    # # TODO: Support optional client verify certificate.
+    # ${project_dir}/certs/client_verify_cert_conf.pem
 )
 
 # (Not part of the boilerplate)
