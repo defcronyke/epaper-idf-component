@@ -29,7 +29,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_system.h"
-// #include "esp_event_base.h"
 
 #define EPAPER_IDF_DNS_LEN 512
 
@@ -70,18 +69,15 @@ typedef struct __attribute__ ((packed)) {
 } DnsLabel;
 
 typedef struct __attribute__ ((packed)) {
-	//before: label
 	uint16_t type;
 	uint16_t cl;
 } DnsQuestionFooter;
 
 typedef struct __attribute__ ((packed)) {
-	//before: label
 	uint16_t type;
 	uint16_t cl;
 	uint32_t ttl;
 	uint16_t rdlength;
-	//after: rdata
 } DnsResourceFooter;
 
 typedef struct __attribute__ ((packed)) {

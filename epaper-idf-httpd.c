@@ -95,6 +95,7 @@ typedef struct rest_server_context
 #define CHECK_FILE_EXTENSION(filename, ext) (strcasecmp(&filename[strlen(filename) - strlen(ext)], ext) == 0)
 
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST
+#define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 esp_err_t init_fs(void)
 {
 	if (fs_initialized) {
@@ -116,6 +117,7 @@ esp_err_t init_fs(void)
 #endif
 
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SD
+#define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 esp_err_t init_fs(void)
 {
 	if (fs_initialized) {
@@ -134,7 +136,8 @@ esp_err_t init_fs(void)
 
 	esp_vfs_fat_sdmmc_mount_config_t mount_config = {
 		.format_if_mount_failed = true,
-		.max_files = 4,
+    .max_files = 10,
+		// .max_files = 4,
 		.allocation_unit_size = 16 * 1024};
 
 	sdmmc_card_t *card;
@@ -161,6 +164,7 @@ esp_err_t init_fs(void)
 #endif
 
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SF
+#define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 esp_err_t init_fs(void)
 {
 	if (fs_initialized) {
@@ -171,8 +175,9 @@ esp_err_t init_fs(void)
 	esp_vfs_spiffs_conf_t conf = {
 		.base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT,
 		.partition_label = NULL,
+    .max_files = 10,
 		// .max_files = 7,
-		.max_files = 5,
+		// .max_files = 5,
 		.format_if_mount_failed = false};
 	esp_err_t ret = esp_vfs_spiffs_register(&conf);
 
@@ -208,7 +213,7 @@ esp_err_t init_fs(void)
 
 	return ESP_OK;
 }
-#endif
+#endif  /** #endif CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST */
 
 /* Set HTTP response content type according to file extension */
 static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath)

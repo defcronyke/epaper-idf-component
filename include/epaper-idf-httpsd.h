@@ -26,6 +26,11 @@
 #include "freertos/semphr.h"
 #include "esp_system.h"
 #include "esp_event_base.h"
+#include "epaper-idf-httpd.h"
+
+// #ifndef EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
+// #define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
+// #endif
 
 // #define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
 // #define OPENSSL_EXAMPLE_TASK_PRIORITY    8

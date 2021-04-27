@@ -41,7 +41,8 @@ const uint32_t epaper_idf_ota_task_stack_depth = 2048;
 UBaseType_t epaper_idf_ota_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
-const uint32_t epaper_idf_http_task_stack_depth = 4096;
+const uint32_t epaper_idf_http_task_stack_depth = 8192;
+// const uint32_t epaper_idf_http_task_stack_depth = 4096;
 // const uint32_t epaper_idf_http_task_stack_depth = 2048;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
@@ -91,9 +92,9 @@ static void epaper_idf_wifi_finish_event_handler(void *handler_arg, esp_event_ba
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_WIFI_EVENT_FINISH");
 
-  // // TODO: uncomment this
-	// xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
-	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
+  // TODO: uncomment this
+	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
   // TODO: make this optional
   xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, NULL);
@@ -112,17 +113,17 @@ static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_bas
 {
 	ESP_LOGI(TAG, "event received: EPAPER_IDF_OTA_EVENT_FINISH");
 
-  // // TODO: uncomment this
-	// xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
-	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
+  // TODO: uncomment this
+	xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
   // TODO: make this optional
   xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, NULL);
 	ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
 
-  // // TODO: uncomment this
-	// xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
-	// ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+  // TODO: uncomment this
+	xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
+	ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 }
 
 static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
@@ -231,14 +232,14 @@ extern "C" void http_slideshow_task(void *pvParameter)
 	ESP_LOGI(TAG, "%s loop", http_slideshow_task_name);
 	
 	/** Instantiate the io and dev variables. */
-	// http_slideshow_task_init();
+	http_slideshow_task_init();
 
 	/** NOTE:	Perform some e-paper device actions here,
 						such as drawing to the screen.
 	*/
 
 	/** Delete the io and dev variables. */
-	// http_slideshow_task_cleanup();
+	http_slideshow_task_cleanup();
 	
 	/** No deep sleep. */
 	if (http_task_action_value.no_deep_sleep)
@@ -291,27 +292,16 @@ void http_slideshow(void)
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_ota_event_loop_args, &epaper_idf_ota_event_loop_handle));
 	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_ota_event_loop_handle, EPAPER_IDF_OTA_EVENT, EPAPER_IDF_OTA_EVENT_FINISH, epaper_idf_ota_finish_event_handler, epaper_idf_ota_event_loop_handle, NULL));
 
-  // // TODO: uncomment this
-	// esp_event_loop_args_t epaper_idf_http_event_loop_args = {
-	// 		.queue_size = 5,
-	// 		.task_name = "epaper_idf_http_event_loop_task", // task will be created
-	// 		.task_priority = uxTaskPriorityGet(NULL),
-	// 		.task_stack_size = epaper_idf_http_task_stack_depth,
-	// 		.task_core_id = tskNO_AFFINITY};
+  // TODO: uncomment this
+	esp_event_loop_args_t epaper_idf_httpd_event_loop_args = {
+		.queue_size = 5,
+		.task_name = "epaper_idf_httpd_event_loop_task", // task will be created
+		.task_priority = uxTaskPriorityGet(NULL),
+		.task_stack_size = epaper_idf_httpd_task_stack_depth,
+		.task_core_id = tskNO_AFFINITY};
 
-	// ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_http_event_loop_args, &epaper_idf_http_event_loop_handle));
-	// ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_http_event_loop_handle, EPAPER_IDF_HTTP_EVENT, EPAPER_IDF_HTTP_EVENT_FINISH, epaper_idf_http_finish_event_handler, epaper_idf_http_event_loop_handle, NULL));
-
-  // // TODO: uncomment this
-	// esp_event_loop_args_t epaper_idf_httpd_event_loop_args = {
-	// 	.queue_size = 5,
-	// 	.task_name = "epaper_idf_httpd_event_loop_task", // task will be created
-	// 	.task_priority = uxTaskPriorityGet(NULL),
-	// 	.task_stack_size = epaper_idf_httpd_task_stack_depth,
-	// 	.task_core_id = tskNO_AFFINITY};
-
-	// ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpd_event_loop_args, &epaper_idf_httpd_event_loop_handle));
-	// ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpd_event_loop_handle, EPAPER_IDF_HTTPD_EVENT, EPAPER_IDF_HTTPD_EVENT_FINISH, epaper_idf_httpd_finish_event_handler, epaper_idf_httpd_event_loop_handle, NULL));
+	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpd_event_loop_args, &epaper_idf_httpd_event_loop_handle));
+	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpd_event_loop_handle, EPAPER_IDF_HTTPD_EVENT, EPAPER_IDF_HTTPD_EVENT_FINISH, epaper_idf_httpd_finish_event_handler, epaper_idf_httpd_event_loop_handle, NULL));
 
   // TODO: make this optional
   esp_event_loop_args_t epaper_idf_httpsd_event_loop_args = {
@@ -323,6 +313,17 @@ void http_slideshow(void)
 
 	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpsd_event_loop_args, &epaper_idf_httpsd_event_loop_handle));
 	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_FINISH, epaper_idf_httpsd_finish_event_handler, epaper_idf_httpsd_event_loop_handle, NULL));
+
+  // TODO: uncomment this
+	esp_event_loop_args_t epaper_idf_http_event_loop_args = {
+			.queue_size = 5,
+			.task_name = "epaper_idf_http_event_loop_task", // task will be created
+			.task_priority = uxTaskPriorityGet(NULL),
+			.task_stack_size = epaper_idf_http_task_stack_depth,
+			.task_core_id = tskNO_AFFINITY};
+
+	ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_http_event_loop_args, &epaper_idf_http_event_loop_handle));
+	ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_http_event_loop_handle, EPAPER_IDF_HTTP_EVENT, EPAPER_IDF_HTTP_EVENT_FINISH, epaper_idf_http_finish_event_handler, epaper_idf_http_event_loop_handle, NULL));
 
 	// Initialize wifi and connect.
 	static const epaper_idf_wifi_task_action_t wifi_task_action_connect = {

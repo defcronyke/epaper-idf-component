@@ -259,8 +259,13 @@ static mbedtls_ssl_cache_context cache;
 
 // static char buf[1024];
 
+
+#ifndef EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 // // TODO: move these to the task: http-slideshow.cpp
 static bool fs_initialized = false;
+#endif
+
+
 static bool epaper_idf_http_is_init = false;
 // static mbedtls_net_context server_fd;
 // static mbedtls_entropy_context entropy;
@@ -313,6 +318,8 @@ typedef struct rest_server_context
 #define CHECK_FILE_EXTENSION(filename, ext) (strcasecmp(&filename[strlen(filename) - strlen(ext)], ext) == 0)
 
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST
+#ifndef EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
+#define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 esp_err_t init_fs(void)
 {
 	if (fs_initialized) {
@@ -331,9 +338,12 @@ esp_err_t init_fs(void)
 
 	return ESP_OK;
 }
+#endif  /** #endif EPAPER_IDF_COMPONENT_INIT_FS_DEFINED */
 #endif
 
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SD
+#ifndef EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
+#define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 esp_err_t init_fs(void)
 {
 	if (fs_initialized) {
@@ -377,9 +387,12 @@ esp_err_t init_fs(void)
 
 	return ESP_OK;
 }
+#endif  /** #endif EPAPER_IDF_COMPONENT_INIT_FS_DEFINED */
 #endif
 
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SF
+#ifndef EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
+#define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 esp_err_t init_fs(void)
 {
 	if (fs_initialized) {
@@ -427,7 +440,8 @@ esp_err_t init_fs(void)
 
 	return ESP_OK;
 }
-#endif
+#endif  /** #endif EPAPER_IDF_COMPONENT_INIT_FS_DEFINED */
+#endif  /** #endif CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST */
 
 
 
