@@ -54,7 +54,8 @@
 static const char *TAG = "ota";
 
 // NOTE: This has to match the value in the partition table file: partitions.csv
-static const uint spiffs_partition_www_size = 0xbd000;
+static const uint spiffs_partition_www_size = 0x76000;
+// static const uint spiffs_partition_www_size = 0xbd000;
 
 static char ota_write_data[BUFFSIZE + 1] = { 0 };
 extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
