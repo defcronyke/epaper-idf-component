@@ -157,8 +157,9 @@ static void epaper_idf_wifi_ap_init(void)
 	ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point: SSID: %s password:%s channel: %d",
 		CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
 
-	// Wifi captive portal.
-	epaper_idf_dns_init();
+  // // TODO: uncomment this
+	// // Wifi captive portal.
+	// epaper_idf_dns_init();
 
 	// NOTE: For wifi captive portal whenever someone makes an ESP-IDF DNS server.
 	// // DNS lookup.

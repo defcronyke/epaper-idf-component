@@ -38,7 +38,7 @@
 #if CONFIG_PROJECT_CONNECT_WIFI
 #include "esp_wifi.h"
 #endif
-#include "openssl/ssl.h"
+// #include "openssl/ssl.h"
 #include "esp_netif.h"
 #include "lwip/sockets.h"
 #include "lwip/netdb.h"
@@ -53,13 +53,14 @@ esp_event_loop_handle_t epaper_idf_httpsd_event_loop_handle;
 
 ESP_EVENT_DEFINE_BASE(EPAPER_IDF_HTTPSD_EVENT);
 
-// static bool fs_initialized = false;
+// TODO: move this to the task: http-slideshow.cpp
+static bool fs_initialized = false;
 
 // static char recv_buf[OPENSSL_EXAMPLE_RECV_BUF_LEN];
 
 static const char* base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT;
 
-#define OPENSSL_EXAMPLE_SERVER_ACK "HTTP/1.1 200 OK\r\n" \
+/* #define OPENSSL_EXAMPLE_SERVER_ACK "HTTP/1.1 200 OK\r\n" \
                                 "Content-Type: text/html\r\n" \
                                 "Content-Length: 106\r\n\r\n" \
                                 "<html>\r\n" \
@@ -68,7 +69,7 @@ static const char* base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT;
                                 "OpenSSL server example!\r\n" \
                                 "</body>\r\n" \
                                 "</html>\r\n" \
-                                "\r\n"
+                                "\r\n" */
 
 
 
@@ -97,121 +98,122 @@ typedef struct rest_server_context
 
 #define CHECK_FILE_EXTENSION(filename, ext) (strcasecmp(&filename[strlen(filename) - strlen(ext)], ext) == 0)
 
-// #if CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST
-// esp_err_t init_fs(void)
-// {
-// 	if (fs_initialized) {
-// 		ESP_LOGI(HTTPSD_TAG, "fs is already initialized: no-op");
-// 		return ESP_OK;
-// 	}
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST
+esp_err_t init_fs(void)
+{
+	if (fs_initialized) {
+		ESP_LOGI(HTTPSD_TAG, "fs is already initialized: no-op");
+		return ESP_OK;
+	}
 
-// 	esp_err_t ret = esp_vfs_semihost_register(CONFIG_EXAMPLE_WEB_MOUNT_POINT, CONFIG_EXAMPLE_HOST_PATH_TO_MOUNT);
-// 	if (ret != ESP_OK)
-// 	{
-// 		ESP_LOGE(HTTPSD_TAG, "Failed to register semihost driver (%s)!", esp_err_to_name(ret));
-// 		return ESP_FAIL;
-// 	}
+	esp_err_t ret = esp_vfs_semihost_register(CONFIG_EXAMPLE_WEB_MOUNT_POINT, CONFIG_EXAMPLE_HOST_PATH_TO_MOUNT);
+	if (ret != ESP_OK)
+	{
+		ESP_LOGE(HTTPSD_TAG, "Failed to register semihost driver (%s)!", esp_err_to_name(ret));
+		return ESP_FAIL;
+	}
 
-// 	fs_initialized = true;
+	fs_initialized = true;
 
-// 	return ESP_OK;
-// }
-// #endif
+	return ESP_OK;
+}
+#endif
 
-// #if CONFIG_EXAMPLE_WEB_DEPLOY_SD
-// esp_err_t init_fs(void)
-// {
-// 	if (fs_initialized) {
-// 		ESP_LOGI(HTTPSD_TAG, "fs is already initialized: no-op");
-// 		return ESP_OK;
-// 	}
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SD
+esp_err_t init_fs(void)
+{
+	if (fs_initialized) {
+		ESP_LOGI(HTTPSD_TAG, "fs is already initialized: no-op");
+		return ESP_OK;
+	}
 
-// 	sdmmc_host_t host = SDMMC_HOST_DEFAULT();
-// 	sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
+	sdmmc_host_t host = SDMMC_HOST_DEFAULT();
+	sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
 
-// 	gpio_set_pull_mode(15, GPIO_PULLUP_ONLY); // CMD
-// 	gpio_set_pull_mode(2, GPIO_PULLUP_ONLY);  // D0
-// 	gpio_set_pull_mode(4, GPIO_PULLUP_ONLY);  // D1
-// 	gpio_set_pull_mode(12, GPIO_PULLUP_ONLY); // D2
-// 	gpio_set_pull_mode(13, GPIO_PULLUP_ONLY); // D3
+	gpio_set_pull_mode(15, GPIO_PULLUP_ONLY); // CMD
+	gpio_set_pull_mode(2, GPIO_PULLUP_ONLY);  // D0
+	gpio_set_pull_mode(4, GPIO_PULLUP_ONLY);  // D1
+	gpio_set_pull_mode(12, GPIO_PULLUP_ONLY); // D2
+	gpio_set_pull_mode(13, GPIO_PULLUP_ONLY); // D3
 
-// 	esp_vfs_fat_sdmmc_mount_config_t mount_config = {
-// 		.format_if_mount_failed = true,
-// 		.max_files = 4,
-// 		.allocation_unit_size = 16 * 1024};
+	esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+		.format_if_mount_failed = true,
+    .max_files = 10,
+		// .max_files = 4,
+		.allocation_unit_size = 16 * 1024};
 
-// 	sdmmc_card_t *card;
-// 	esp_err_t ret = esp_vfs_fat_sdmmc_mount(CONFIG_EXAMPLE_WEB_MOUNT_POINT, &host, &slot_config, &mount_config, &card);
-// 	if (ret != ESP_OK)
-// 	{
-// 		if (ret == ESP_FAIL)
-// 		{
-// 			ESP_LOGE(HTTPSD_TAG, "Failed to mount filesystem.");
-// 		}
-// 		else
-// 		{
-// 			ESP_LOGE(HTTPSD_TAG, "Failed to initialize the card (%s)", esp_err_to_name(ret));
-// 		}
-// 		return ESP_FAIL;
-// 	}
-// 	/* print card info if mount successfully */
-// 	sdmmc_card_print_info(stdout, card);
+	sdmmc_card_t *card;
+	esp_err_t ret = esp_vfs_fat_sdmmc_mount(CONFIG_EXAMPLE_WEB_MOUNT_POINT, &host, &slot_config, &mount_config, &card);
+	if (ret != ESP_OK)
+	{
+		if (ret == ESP_FAIL)
+		{
+			ESP_LOGE(HTTPSD_TAG, "Failed to mount filesystem.");
+		}
+		else
+		{
+			ESP_LOGE(HTTPSD_TAG, "Failed to initialize the card (%s)", esp_err_to_name(ret));
+		}
+		return ESP_FAIL;
+	}
+	/* print card info if mount successfully */
+	sdmmc_card_print_info(stdout, card);
 
-// 	fs_initialized = true;
+	fs_initialized = true;
 
-// 	return ESP_OK;
-// }
-// #endif
+	return ESP_OK;
+}
+#endif
 
-// #if CONFIG_EXAMPLE_WEB_DEPLOY_SF
-// esp_err_t init_fs(void)
-// {
-// 	if (fs_initialized) {
-// 		ESP_LOGI(HTTPSD_TAG, "fs is already initialized: no-op");
-// 		return ESP_OK;
-// 	}
+#if CONFIG_EXAMPLE_WEB_DEPLOY_SF
+esp_err_t init_fs(void)
+{
+	if (fs_initialized) {
+		ESP_LOGI(HTTPSD_TAG, "fs is already initialized: no-op");
+		return ESP_OK;
+	}
 
-// 	esp_vfs_spiffs_conf_t conf = {
-// 		.base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT,
-// 		.partition_label = NULL,
-// 		// .max_files = 7,
-// 		.max_files = 5,
-// 		.format_if_mount_failed = false};
-// 	esp_err_t ret = esp_vfs_spiffs_register(&conf);
+	esp_vfs_spiffs_conf_t conf = {
+		.base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT,
+		.partition_label = NULL,
+		.max_files = 10,
+		// .max_files = 5,
+		.format_if_mount_failed = false};
+	esp_err_t ret = esp_vfs_spiffs_register(&conf);
 
-// 	if (ret != ESP_OK)
-// 	{
-// 		if (ret == ESP_FAIL)
-// 		{
-// 			ESP_LOGE(HTTPSD_TAG, "Failed to mount or format filesystem");
-// 		}
-// 		else if (ret == ESP_ERR_NOT_FOUND)
-// 		{
-// 			ESP_LOGE(HTTPSD_TAG, "Failed to find SPIFFS partition");
-// 		}
-// 		else
-// 		{
-// 			ESP_LOGE(HTTPSD_TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
-// 		}
-// 		return ESP_FAIL;
-// 	}
+	if (ret != ESP_OK)
+	{
+		if (ret == ESP_FAIL)
+		{
+			ESP_LOGE(HTTPSD_TAG, "Failed to mount or format filesystem");
+		}
+		else if (ret == ESP_ERR_NOT_FOUND)
+		{
+			ESP_LOGE(HTTPSD_TAG, "Failed to find SPIFFS partition");
+		}
+		else
+		{
+			ESP_LOGE(HTTPSD_TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
+		}
+		return ESP_FAIL;
+	}
 
-// 	size_t total = 0, used = 0;
-// 	ret = esp_spiffs_info(NULL, &total, &used);
-// 	if (ret != ESP_OK)
-// 	{
-// 		ESP_LOGE(HTTPSD_TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
-// 	}
-// 	else
-// 	{
-// 		ESP_LOGI(HTTPSD_TAG, "Partition size: total: %d, used: %d", total, used);
-// 	}
+	size_t total = 0, used = 0;
+	ret = esp_spiffs_info(NULL, &total, &used);
+	if (ret != ESP_OK)
+	{
+		ESP_LOGE(HTTPSD_TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
+	}
+	else
+	{
+		ESP_LOGI(HTTPSD_TAG, "Partition size: total: %d, used: %d", total, used);
+	}
 
-// 	fs_initialized = true;
+	fs_initialized = true;
 
-// 	return ESP_OK;
-// }
-// #endif
+	return ESP_OK;
+}
+#endif
 
 /* Set HTTP response content type according to file extension */
 static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath)
@@ -279,7 +281,10 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
 
 	char req_hdr_host_val[req_hdr_host_len + 1];
 
-	esp_err_t res = httpd_req_get_hdr_value_str(req, "Host", (char*)&req_hdr_host_val, sizeof(char) * req_hdr_host_len + 1);
+  
+
+	// esp_err_t res = httpd_req_get_hdr_value_str(req, "Host", (char*)&req_hdr_host_val, sizeof(char) * req_hdr_host_len + 1);
+  esp_err_t res = httpd_req_get_hdr_value_str(req, "Host", (char*)&req_hdr_host_val, req_hdr_host_len + 1);
 	if (res != ESP_OK) {
 		ESP_LOGE(HTTPSD_TAG, "failed getting HOST header value: %d", res);
 
@@ -317,6 +322,9 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
 		ESP_LOGI(HTTPSD_TAG, "Detected redirect trigger HOST: %s", redir_trigger_host);
 		
 		httpd_resp_set_status(req, resp);
+
+    
+
 		// TODO: There is a value "CONFIG_LWIP_LOCAL_HOSTNAME" in the Kconfig 
 		// menu which isn't being used here but it should be.
 		httpd_resp_set_hdr(req, "Location", "http://epaper");
@@ -507,26 +515,27 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
 	return ESP_OK;
 }
 
-/* System info GET handler */
-static esp_err_t system_info_get_handler(httpd_req_t *req)
+// /* System info GET handler */
+// static esp_err_t system_info_get_handler(httpd_req_t *req)
+// {
+// 	httpd_resp_set_type(req, "application/json");
+// 	cJSON *root = cJSON_CreateObject();
+// 	esp_chip_info_t chip_info;
+// 	esp_chip_info(&chip_info);
+// 	cJSON_AddStringToObject(root, "version", IDF_VER);
+// 	cJSON_AddNumberToObject(root, "cores", chip_info.cores);
+// 	const char *sys_info = cJSON_Print(root);
+
+// 	// httpd_resp_send(req, sys_info, -1);
+// 	httpd_resp_sendstr(req, sys_info);
+
+// 	free((void *)sys_info);
+// 	cJSON_Delete(root);
+// 	return ESP_OK;
+// }
+
+static esp_err_t util_restart_post_handler(httpd_req_t *req)
 {
-	httpd_resp_set_type(req, "application/json");
-	cJSON *root = cJSON_CreateObject();
-	esp_chip_info_t chip_info;
-	esp_chip_info(&chip_info);
-	cJSON_AddStringToObject(root, "version", IDF_VER);
-	cJSON_AddNumberToObject(root, "cores", chip_info.cores);
-	const char *sys_info = cJSON_Print(root);
-
-	// httpd_resp_send(req, sys_info, -1);
-	httpd_resp_sendstr(req, sys_info);
-
-	free((void *)sys_info);
-	cJSON_Delete(root);
-	return ESP_OK;
-}
-
-static esp_err_t util_restart_post_handler(httpd_req_t *req) {
 	httpd_resp_set_type(req, "application/json");
 
 	cJSON *root = cJSON_CreateObject();
@@ -552,8 +561,8 @@ static void start_httpsd(void* pvParameter)
   esp_err_t res = ESP_OK;
 
 
-  // // TODO: we probably should do this here also
-	// ESP_ERROR_CHECK(init_fs());
+  // TODO: we probably should do this here also
+	ESP_ERROR_CHECK(init_fs());
 
 
   // HTTPS server
@@ -597,9 +606,9 @@ static void start_httpsd(void* pvParameter)
 		// extern const unsigned char cacert_pem_start[] asm("_binary_ca_cert_conf_pem_start");
     // extern const unsigned char cacert_pem_end[]   asm("_binary_ca_cert_conf_pem_end");
 
-    extern const uint8_t cacert_pem_start[] asm("_binary_ca_cert_conf_pem_start");
-    extern const uint8_t cacert_pem_end[]   asm("_binary_ca_cert_conf_pem_end");
-    const size_t cacert_pem_bytes = cacert_pem_end - cacert_pem_start;
+    // extern const uint8_t cacert_pem_start[] asm("_binary_ca_cert_conf_pem_start");
+    // extern const uint8_t cacert_pem_end[]   asm("_binary_ca_cert_conf_pem_end");
+    // const size_t cacert_pem_bytes = cacert_pem_end - cacert_pem_start;
 
     // extern const unsigned char prvtkey_pem_start[] asm("_binary_prvtkey_pem_start");
     // extern const unsigned char prvtkey_pem_end[]   asm("_binary_prvtkey_pem_end");
@@ -607,9 +616,9 @@ static void start_httpsd(void* pvParameter)
 		// extern const unsigned char prvtkey_pem_start[] asm("_binary_ca_key_conf_pem_start");
     // extern const unsigned char prvtkey_pem_end[]   asm("_binary_ca_key_conf_pem_end");
 
-    extern const uint8_t prvtkey_pem_start[] asm("_binary_ca_key_conf_pem_start");
-    extern const uint8_t prvtkey_pem_end[]   asm("_binary_ca_key_conf_pem_end");
-    const size_t prvtkey_pem_bytes = prvtkey_pem_end - prvtkey_pem_start;
+    // extern const uint8_t prvtkey_pem_start[] asm("_binary_ca_key_conf_pem_start");
+    // extern const uint8_t prvtkey_pem_end[]   asm("_binary_ca_key_conf_pem_end");
+    // const size_t prvtkey_pem_bytes = prvtkey_pem_end - prvtkey_pem_start;
 
     
     // // TODO: Support optional client verify certificate.
@@ -619,13 +628,23 @@ static void start_httpsd(void* pvParameter)
 
 
 
-    httpd_handle_t server = NULL;
+    static httpd_handle_t server = NULL;
 	
     // Configure the HTTPS server.
     httpd_ssl_config_t config = HTTPD_SSL_CONFIG_DEFAULT();
 
+    extern const unsigned char cacert_pem_start[] asm("_binary_ca_cert_conf_pem_start");
+    extern const unsigned char cacert_pem_end[]   asm("_binary_ca_cert_conf_pem_end");
+    // const size_t cacert_pem_bytes = cacert_pem_end - cacert_pem_start;
+
+    extern const unsigned char prvtkey_pem_start[] asm("_binary_ca_key_conf_pem_start");
+    extern const unsigned char prvtkey_pem_end[]   asm("_binary_ca_key_conf_pem_end");
+    // const size_t prvtkey_pem_bytes = prvtkey_pem_end - prvtkey_pem_start;
+
+
     config.httpd.uri_match_fn = httpd_uri_match_wildcard;
-    config.httpd.lru_purge_enable = true;
+    
+    // config.httpd.lru_purge_enable = true;
 
     // TODO: Choose this in Kconfig menu.
     config.transport_mode = HTTPD_SSL_TRANSPORT_SECURE;
@@ -638,10 +657,10 @@ static void start_httpsd(void* pvParameter)
     config.port_insecure = 80;
 
     config.cacert_pem = cacert_pem_start;
-    config.cacert_len = cacert_pem_bytes;
+    config.cacert_len = cacert_pem_end - cacert_pem_start;
 
     config.prvtkey_pem = prvtkey_pem_start;
-    config.cacert_len = prvtkey_pem_bytes;
+    config.prvtkey_len = prvtkey_pem_end - prvtkey_pem_start;
 
     // // TODO: Support optional client verify certificate.
     // config.client_verify_cert_pem = client_verify_cert_pem_start;
@@ -654,39 +673,54 @@ static void start_httpsd(void* pvParameter)
 
     ESP_LOGI(HTTPSD_TAG, "Registering HTTPS server URI handlers...");
 
-    /* URI handler for getting system info */
-    httpd_uri_t system_info_get_uri = {
-      .uri = "/api/util/info",
-      .method = HTTP_GET,
-      .handler = system_info_get_handler,
-      .user_ctx = rest_context};
-    
-    res = httpd_register_uri_handler(server, &system_info_get_uri);
-    if (res != ESP_OK) {
-      ESP_LOGE(HTTPSD_TAG, "Failed registering HTTPS server URI handler: %s: %d", "/api/util/info", res);
-      goto err_start;
-    }
+
+
+    // /* URI handler for getting system info */
+    // // static const httpd_uri_t system_info_get_uri = {
+    // httpd_uri_t system_info_get_uri = {
+    //   .uri = "/api/util/info",
+    //   .method = HTTP_GET,
+    //   .handler = system_info_get_handler,
+    //   .user_ctx = rest_context,
+    // };
 
     /* URI handler for restarting the device */
+    // static const httpd_uri_t util_restart_post_uri = {
     httpd_uri_t util_restart_post_uri = {
-      .uri = "/api/util/restart",
-      .method = HTTP_POST,
-      .handler = util_restart_post_handler,
-      .user_ctx = rest_context};
+          .uri = "/api/util/restart",
+          .method = HTTP_POST,
+          .handler = util_restart_post_handler,
+          .user_ctx = rest_context,
+    };
 
+    /* URI handler for getting web server files */
+    // static const httpd_uri_t common_get_uri = {
+    httpd_uri_t common_get_uri = {
+          .uri = "/*",
+          .method = HTTP_GET,
+          .handler = rest_common_get_handler,
+          .user_ctx = rest_context,
+    };
+
+
+    
+    // // system_info_get_uri.user_ctx = rest_context;
+    // res = httpd_register_uri_handler(server, &system_info_get_uri);
+    // if (res != ESP_OK) {
+    //   ESP_LOGE(HTTPSD_TAG, "Failed registering HTTPS server URI handler: %s: %d", "/api/util/info", res);
+    //   goto err_start;
+    // }
+
+    
+    // util_restart_post_uri.user_ctx = rest_context;
     res = httpd_register_uri_handler(server, &util_restart_post_uri);	
     if (res != ESP_OK) {
       ESP_LOGE(HTTPSD_TAG, "Failed registering HTTPS server URI handler: %s: %d", "/api/util/restart", res);
       goto err_start;
     }
 
-    /* URI handler for getting web server files */
-    httpd_uri_t common_get_uri = {
-      .uri = "/*",
-      .method = HTTP_GET,
-      .handler = rest_common_get_handler,
-      .user_ctx = rest_context};
-
+    
+    // common_get_uri.user_ctx = rest_context;
     res = httpd_register_uri_handler(server, &common_get_uri);
     if (res != ESP_OK) {
       ESP_LOGE(HTTPSD_TAG, "Failed registering HTTPS server URI handler: %s: %d", "/*", res);
