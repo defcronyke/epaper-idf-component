@@ -61,8 +61,8 @@ const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpsd_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
-const uint32_t epaper_idf_http_task_stack_depth = 4096;
-// const uint32_t epaper_idf_http_task_stack_depth = 8192;
+const uint32_t epaper_idf_http_task_stack_depth = 8192;
+// const uint32_t epaper_idf_http_task_stack_depth = 4096;
 // const uint32_t epaper_idf_http_task_stack_depth = 7168;
 // const uint32_t epaper_idf_http_task_stack_depth = 2048;
 UBaseType_t epaper_idf_http_task_priority = 5;
