@@ -26,6 +26,14 @@
 #include "freertos/semphr.h"
 #include "esp_system.h"
 #include "esp_event_base.h"
+#include "mbedtls/platform.h"
+#include "mbedtls/net_sockets.h"
+#include "mbedtls/esp_debug.h"
+#include "mbedtls/ssl.h"
+#include "mbedtls/entropy.h"
+#include "mbedtls/ctr_drbg.h"
+#include "mbedtls/error.h"
+#include "mbedtls/certs.h"
 #include "epaper-idf-httpd.h"
 
 // #ifndef EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
@@ -39,32 +47,56 @@
 
 // #define OPENSSL_EXAMPLE_LOCAL_TCP_PORT     443
 
-
-
-
 // #define EXAMPLE_WIFI_SSID               CONFIG_WIFI_SSID
 // #define EXAMPLE_WIFI_PASS               CONFIG_WIFI_PASSWORD
 
-#define MBEDTLS_EXAMPLE_TASK_NAME        "epaper_idf_httpsd_task"
+#define MBEDTLS_EXAMPLE_TASK_NAME "epaper_idf_httpsd_task"
 #define MBEDTLS_EXAMPLE_TASK_STACK_WORDS 10240
-#define MBEDTLS_EXAMPLE_TASK_PRIORITY    5
+#define MBEDTLS_EXAMPLE_TASK_PRIORITY 5
 
-#define MBEDTLS_EXAMPLE_RECV_BUF_LEN       2048
+#define MBEDTLS_EXAMPLE_RECV_BUF_LEN 2048
 
-#define MBEDTLS_EXAMPLE_LOCAL_TCP_PORT     443
+#define MBEDTLS_EXAMPLE_LOCAL_TCP_PORT 443
 
+// extern unsigned char *cacert_pem_start;
+// extern unsigned char *cacert_pem_end;
+// extern unsigned int cacert_pem_bytes;
 
+// extern unsigned char *prvtkey_pem_start;
+// extern unsigned char *prvtkey_pem_end;
+// extern unsigned int prvtkey_pem_bytes;
 
+// extern unsigned char cacert_pem_start[];
+// extern unsigned char cacert_pem_end[];
+// extern unsigned int cacert_pem_bytes;
 
+// extern unsigned char prvtkey_pem_start[];
+// extern unsigned char prvtkey_pem_end[];
+// extern unsigned int prvtkey_pem_bytes;
+
+// extern mbedtls_net_context listen_fd, client_fd;
+// extern mbedtls_net_context server_fd;
+// extern mbedtls_entropy_context entropy;
+// extern mbedtls_ctr_drbg_context ctr_drbg;
+// extern mbedtls_ssl_context ssl;
+// extern mbedtls_ssl_config conf;
+// extern mbedtls_x509_crt srvcert;
+// extern mbedtls_pk_context pkey;
+
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPD_H_INCLUDED__
+extern bool fs_initialized;
+#endif
+
+// extern bool epaper_idf_httpsd_is_init;
 
 extern SemaphoreHandle_t xMutexHTTPSD;
 
 /** An event base type for "epaper-idf-httpd". */
 ESP_EVENT_DECLARE_BASE(EPAPER_IDF_HTTPSD_EVENT);
-enum	/**< The events. */
+enum /**< The events. */
 {
-  EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED,  /**< An event for "the https systems are initialized". */
-	EPAPER_IDF_HTTPSD_EVENT_FINISH, /**< An event for "this task is finished". */
+  EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, /**< An event for "the https systems are initialized". */
+                                             // EPAPER_IDF_HTTPSD_EVENT_FINISH, /**< An event for "this task is finished". */
 };
 
 /** The event loop handle. */
@@ -107,12 +139,12 @@ extern "C"
 {
 #endif
 
-// esp_err_t init_fs(void);
+  // esp_err_t init_fs(void);
 
-// esp_err_t start_httpd(const char *base_path);
+  // esp_err_t start_httpd(const char *base_path);
 
-/** The esp-idf task function. */
-void epaper_idf_httpsd_task(void *pvParameter);
+  /** The esp-idf task function. */
+  void epaper_idf_httpsd_task(void *pvParameter);
 
 #ifdef __cplusplus
 }

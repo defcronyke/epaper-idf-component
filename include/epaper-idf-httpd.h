@@ -26,9 +26,14 @@
 #include "freertos/semphr.h"
 #include "esp_system.h"
 #include "esp_event_base.h"
+#include "esp_http_server.h"
+
+// #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
+extern bool fs_initialized;
+// #endif
 
 // #ifndef EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
-#define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
+// #define EPAPER_IDF_COMPONENT_INIT_FS_DEFINED
 
 // #define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
 // #define OPENSSL_EXAMPLE_TASK_PRIORITY    8
@@ -41,9 +46,9 @@ extern SemaphoreHandle_t xMutexHTTPD;
 
 /** An event base type for "epaper-idf-httpd". */
 ESP_EVENT_DECLARE_BASE(EPAPER_IDF_HTTPD_EVENT);
-enum	/**< The events. */
+enum /**< The events. */
 {
-	EPAPER_IDF_HTTPD_EVENT_FINISH,	/**< An event for "this task is finished". */
+  EPAPER_IDF_HTTPD_EVENT_FINISH, /**< An event for "this task is finished". */
 };
 
 /** The event loop handle. */
@@ -86,12 +91,18 @@ extern "C"
 {
 #endif
 
-esp_err_t init_fs(void);
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
+  esp_err_t init_fs(void);
+#endif
 
-// esp_err_t start_httpd(const char *base_path);
+  // static esp_err_t system_info_get_handler(httpd_req_t *req);
+  // static esp_err_t util_restart_post_handler(httpd_req_t *req);
+  // static esp_err_t rest_common_get_handler(httpd_req_t *req);
 
-/** The esp-idf task function. */
-void epaper_idf_httpd_task(void *pvParameter);
+  // esp_err_t start_httpd(const char *base_path);
+
+  /** The esp-idf task function. */
+  void epaper_idf_httpd_task(void *pvParameter);
 
 #ifdef __cplusplus
 }
