@@ -37,26 +37,26 @@ EpaperIDFSPI *io = NULL;
 EpaperIDFDevice *dev = NULL;
 
 const char *epaper_idf_wifi_task_name = "epaper_idf_wifi_task";
-const uint32_t epaper_idf_wifi_task_stack_depth = 4096;
+const uint32_t epaper_idf_wifi_task_stack_depth = 2048;
+// const uint32_t epaper_idf_wifi_task_stack_depth = 4096;
 // const uint32_t epaper_idf_wifi_task_stack_depth = 3072;
-// const uint32_t epaper_idf_wifi_task_stack_depth = 2048;
 // const uint32_t epaper_idf_wifi_task_stack_depth = 1024;
 UBaseType_t epaper_idf_wifi_task_priority = 5;
 
 const char *epaper_idf_ota_task_name = "epaper_idf_ota_task";
-const uint32_t epaper_idf_ota_task_stack_depth = 4096;
-// const uint32_t epaper_idf_ota_task_stack_depth = 2048;
+const uint32_t epaper_idf_ota_task_stack_depth = 2048;
+// const uint32_t epaper_idf_ota_task_stack_depth = 4096;
 // const uint32_t epaper_idf_ota_task_stack_depth = 1024;
 UBaseType_t epaper_idf_ota_task_priority = 5;
 
 const char *epaper_idf_httpd_task_name = "epaper_idf_httpd_task";
-const uint32_t epaper_idf_httpd_task_stack_depth = 4096;
-// const uint32_t epaper_idf_httpd_task_stack_depth = 2048;
+const uint32_t epaper_idf_httpd_task_stack_depth = 2048;
+// const uint32_t epaper_idf_httpd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpd_task_priority = 5;
 
 const char *epaper_idf_httpsd_task_name = "epaper_idf_httpsd_task";
-const uint32_t epaper_idf_httpsd_task_stack_depth = 8192;
-// const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
+const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
+// const uint32_t epaper_idf_httpsd_task_stack_depth = 8192;
 // const uint32_t epaper_idf_httpsd_task_stack_depth = 2048;
 UBaseType_t epaper_idf_httpsd_task_priority = 5;
 
