@@ -72,14 +72,14 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 {
   if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
   {
-    BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
-    ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] before: esp_wifi_connect() -> STACK SIZE !!!: %d", stack_res);
+    // BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+    // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] before: esp_wifi_connect() -> STACK SIZE !!!: %d", stack_res);
 
     ESP_LOGI(epaper_idf_wifi_tag, "attempting to connect to wifi network...");
     esp_wifi_connect();
 
-    stack_res = uxTaskGetStackHighWaterMark(NULL);
-    ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: esp_wifi_connect() -> STACK SIZE !!!: %d", stack_res);
+    // stack_res = uxTaskGetStackHighWaterMark(NULL);
+    // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: esp_wifi_connect() -> STACK SIZE !!!: %d", stack_res);
   }
   else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
   {
@@ -103,8 +103,8 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     retry_num = 0;
     xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_BIT);
 
-    BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
-    ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: IP_EVENT_STA_GOT_IP -> STACK SIZE !!!: %d", stack_res);
+    // BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+    // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: IP_EVENT_STA_GOT_IP -> STACK SIZE !!!: %d", stack_res);
   }
   else if (event_id == WIFI_EVENT_AP_STACONNECTED)
   {
@@ -112,8 +112,8 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     ESP_LOGI(epaper_idf_wifi_tag, "station " MACSTR " join, AID=%d",
              MAC2STR(event->mac), event->aid);
 
-    BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
-    ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: WIFI_EVENT_AP_STACONNECTED -> STACK SIZE !!!: %d", stack_res);
+    // BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+    // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: WIFI_EVENT_AP_STACONNECTED -> STACK SIZE !!!: %d", stack_res);
   }
   else if (event_id == WIFI_EVENT_AP_STADISCONNECTED)
   {
@@ -121,8 +121,8 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     ESP_LOGI(epaper_idf_wifi_tag, "station " MACSTR " leave, AID=%d",
              MAC2STR(event->mac), event->aid);
 
-    BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
-    ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: WIFI_EVENT_AP_STADISCONNECTED -> STACK SIZE !!!: %d", stack_res);
+    // BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+    // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: WIFI_EVENT_AP_STADISCONNECTED -> STACK SIZE !!!: %d", stack_res);
   }
 }
 #endif
@@ -155,14 +155,14 @@ static void epaper_idf_wifi_ap_init(void)
   ESP_LOGI(epaper_idf_wifi_tag, "starting WiFi access point: SSID: %s password:%s channel: %d",
            CONFIG_EXAMPLE_WIFI_AP_SSID, CONFIG_EXAMPLE_WIFI_AP_PASSWORD, CONFIG_EXAMPLE_WIFI_AP_CHANNEL);
 
-  BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
-  ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] before: epaper_idf_dns_init() -> STACK SIZE !!!: %d", stack_res);
+  // BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+  // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] before: epaper_idf_dns_init() -> STACK SIZE !!!: %d", stack_res);
 
   /** NOTE: Wifi captive portal. */
   epaper_idf_dns_init();
 
-  stack_res = uxTaskGetStackHighWaterMark(NULL);
-  ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: epaper_idf_dns_init() -> STACK SIZE !!!: %d", stack_res);
+  // stack_res = uxTaskGetStackHighWaterMark(NULL);
+  // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: epaper_idf_dns_init() -> STACK SIZE !!!: %d", stack_res);
 }
 #endif /**< End CONFIG_EXAMPLE_WIFI_AP_ENABLED */
 
@@ -257,8 +257,8 @@ static void epaper_idf_wifi_init(void)
     ESP_LOGI(epaper_idf_wifi_tag, "Failed to connect to SSID: %s, password: %s",
              CONFIG_EXAMPLE_WIFI_SSID, CONFIG_EXAMPLE_WIFI_PASSWORD);
 
-    BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
-    ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: WIFI_CONNECTED_BIT || WIFI_FAIL_BIT -> STACK SIZE !!!: %d", stack_res);
+    // BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+    // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: WIFI_CONNECTED_BIT || WIFI_FAIL_BIT -> STACK SIZE !!!: %d", stack_res);
 
 #ifdef CONFIG_EXAMPLE_WIFI_AP_ENABLED
     /** Start the WiFi access point (AP) if it's configured to 

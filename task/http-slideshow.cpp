@@ -61,10 +61,10 @@ const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpsd_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
-const uint32_t epaper_idf_http_task_stack_depth = 8192;
+const uint32_t epaper_idf_http_task_stack_depth = 2048;
+// const uint32_t epaper_idf_http_task_stack_depth = 8192;
 // const uint32_t epaper_idf_http_task_stack_depth = 4096;
 // const uint32_t epaper_idf_http_task_stack_depth = 7168;
-// const uint32_t epaper_idf_http_task_stack_depth = 2048;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
 const char *http_slideshow_task_name = "http_slideshow_task";
@@ -87,17 +87,17 @@ static void http_slideshow_task_init(void)
     dev = new EpaperIDFDevice(*io);
   }
 
-  UBaseType_t stack_res = uxTaskGetStackHighWaterMark(wifi_task_handle);
-  ESP_LOGW(TAG, "!!! [ wifi task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
+  // UBaseType_t stack_res = uxTaskGetStackHighWaterMark(wifi_task_handle);
+  // ESP_LOGW(TAG, "!!! [ wifi task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
 
   // stack_res = uxTaskGetStackHighWaterMark(ota_task_handle);
   // ESP_LOGW(TAG, "!!! [ ota task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
 
-  stack_res = uxTaskGetStackHighWaterMark(httpd_task_handle);
-  ESP_LOGW(TAG, "!!! [ httpd task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
+  // stack_res = uxTaskGetStackHighWaterMark(httpd_task_handle);
+  // ESP_LOGW(TAG, "!!! [ httpd task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
 
-  stack_res = uxTaskGetStackHighWaterMark(httpsd_task_handle);
-  ESP_LOGW(TAG, "!!! [ httpsd task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
+  // stack_res = uxTaskGetStackHighWaterMark(httpsd_task_handle);
+  // ESP_LOGW(TAG, "!!! [ httpsd task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
 
   // stack_res = uxTaskGetStackHighWaterMark(http_task_handle);
   // ESP_LOGW(TAG, "!!! [ http task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);

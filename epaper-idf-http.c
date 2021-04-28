@@ -281,8 +281,8 @@ void epaper_idf_http_get(struct epaper_idf_http_task_action_value_t action_value
     mbedtls_x509_crt_verify_info(buf, sizeof(buf), "  ! ", flags);
     ESP_LOGW(HTTP_TAG, "verification info: %s", buf);
 
-    // TODO: does this work here?
-    goto exit;
+    // // TODO: does this work here?
+    // goto exit;
   }
   else
   {
@@ -382,28 +382,26 @@ void epaper_idf_http_task(void *pvParameter)
 {
   // epaper_idf_https_is_init = false;
 
-  // epaper_idf_https_is_init = false;
-
-  // while (1)
-  // {
-  if (pvParameter != NULL)
+  while (1)
   {
-    http_task_action = EPAPER_IDF_HTTP_TASK_ACTION_COPY(pvParameter);
+    if (pvParameter != NULL)
+    {
+      http_task_action = EPAPER_IDF_HTTP_TASK_ACTION_COPY(pvParameter);
+    }
+
+    if (http_task_action.value != NULL)
+    {
+      http_task_action_value = EPAPER_IDF_HTTP_TASK_ACTION_VALUE_COPY(http_task_action.value);
+    }
+
+    // BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+    // ESP_LOGW(HTTP_TAG, "!!! [ http task ] before: epaper_idf_http_get() -> STACK SIZE !!!: %d", stack_res);
+
+    epaper_idf_http_get(http_task_action_value);
+
+    BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
+    ESP_LOGW(HTTP_TAG, "!!! [ http task ] after: epaper_idf_http_get() -> STACK SIZE !!!: %d", stack_res);
+
+    vTaskDelete(NULL);
   }
-
-  if (http_task_action.value != NULL)
-  {
-    http_task_action_value = EPAPER_IDF_HTTP_TASK_ACTION_VALUE_COPY(http_task_action.value);
-  }
-
-  BaseType_t stack_res = uxTaskGetStackHighWaterMark(NULL);
-  ESP_LOGW(HTTP_TAG, "!!! [ http task ] before: epaper_idf_http_get() -> STACK SIZE !!!: %d", stack_res);
-
-  epaper_idf_http_get(http_task_action_value);
-
-  stack_res = uxTaskGetStackHighWaterMark(NULL);
-  ESP_LOGW(HTTP_TAG, "!!! [ http task ] after: epaper_idf_http_get() -> STACK SIZE !!!: %d", stack_res);
-
-  vTaskDelete(NULL);
-  // }
 }
