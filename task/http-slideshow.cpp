@@ -33,8 +33,8 @@ static struct epaper_idf_http_task_action_value_t http_task_action_value;
 
 const char *TAG = "http-slideshow";
 
-EpaperIDFSPI *io = NULL;
-EpaperIDFDevice *dev = NULL;
+static EpaperIDFSPI *io;
+static EpaperIDFDevice *dev;
 
 const char *epaper_idf_wifi_task_name = "epaper_idf_wifi_task";
 const uint32_t epaper_idf_wifi_task_stack_depth = 2048;
@@ -61,9 +61,9 @@ const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpsd_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
-const uint32_t epaper_idf_http_task_stack_depth = 2048;
+const uint32_t epaper_idf_http_task_stack_depth = 4096;
+// const uint32_t epaper_idf_http_task_stack_depth = 2048;
 // const uint32_t epaper_idf_http_task_stack_depth = 8192;
-// const uint32_t epaper_idf_http_task_stack_depth = 4096;
 // const uint32_t epaper_idf_http_task_stack_depth = 7168;
 UBaseType_t epaper_idf_http_task_priority = 5;
 
@@ -77,15 +77,8 @@ static bool no_deep_sleep_first = true;
 static void http_slideshow_task_init(void)
 {
   /** Use the appropriate epaper device. */
-  if (io == NULL)
-  {
-    io = new EpaperIDFSPI();
-  }
-
-  if (dev == NULL)
-  {
-    dev = new EpaperIDFDevice(*io);
-  }
+  // io = new EpaperIDFSPI();
+  // dev = new EpaperIDFDevice(*io);
 
   // UBaseType_t stack_res = uxTaskGetStackHighWaterMark(wifi_task_handle);
   // ESP_LOGW(TAG, "!!! [ wifi task ] http_slideshow_task_init() -> STACK SIZE !!!: %d", stack_res);
@@ -106,17 +99,8 @@ static void http_slideshow_task_init(void)
 /** Clean up the task. */
 static void http_slideshow_task_cleanup(void)
 {
-  if (dev != NULL)
-  {
-    delete dev;
-    dev = NULL;
-  }
-
-  if (io != NULL)
-  {
-    delete io;
-    io = NULL;
-  }
+  delete dev;
+  delete io;
 }
 
 static void epaper_idf_wifi_stopped_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
@@ -220,6 +204,8 @@ static void http_slideshow_deep_sleep(int32_t sleep_duration_us)
 {
   ESP_LOGI(TAG, "preparing for deep sleep");
 
+  http_slideshow_task_cleanup();
+
   ESP_ERROR_CHECK(esp_event_handler_unregister_with(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, epaper_idf_wifi_finish_event_handler));
   // TODO: Can we unregister epaper_idf_wifi_stopped_event_handler, and epaper_idf_wifi_event_loop_handle here also?
 
@@ -290,15 +276,18 @@ extern "C" void http_slideshow_task(void *pvParameter)
 
   ESP_LOGI(TAG, "%s loop", http_slideshow_task_name);
 
-  /** Instantiate the io and dev variables. */
-  http_slideshow_task_init();
+  // /** Instantiate the io and dev variables. */
+  // EpaperIDFSPI io;
+  // EpaperIDFDevice dev(io);
+
+  // http_slideshow_task_init();
 
   /** NOTE:	Perform some e-paper device actions here,
 						such as drawing to the screen.
 	*/
 
   /** Delete the io and dev variables. */
-  http_slideshow_task_cleanup();
+  // http_slideshow_task_cleanup();
 
   /** No deep sleep. */
   if (http_task_action_value.no_deep_sleep)
@@ -390,6 +379,9 @@ void http_slideshow(void)
       .id = EPAPER_IDF_WIFI_TASK_ACTION_CONNECT,
       .value = NULL,
   };
+
+  io = new EpaperIDFSPI();
+  dev = new EpaperIDFDevice(*io);
 
   xTaskCreate(&epaper_idf_wifi_task, epaper_idf_wifi_task_name, epaper_idf_wifi_task_stack_depth * 8, (void *)&wifi_task_action_connect, epaper_idf_wifi_task_priority, &wifi_task_handle);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_wifi_task_name);
