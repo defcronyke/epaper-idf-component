@@ -171,15 +171,18 @@ void epaper_idf_http_get(struct epaper_idf_http_task_action_value_t action_value
     mbedtls_esp_enable_debug_log(&conf, CONFIG_MBEDTLS_DEBUG_LEVEL);
 #endif
 
+    // mbedtls_ssl_session_reset(&ssl);
+
     if ((ret = mbedtls_ssl_setup(&ssl, &conf)) != 0)
     {
       ESP_LOGE(TAG, "mbedtls_ssl_setup returned -0x%x\n\n", -ret);
-      // goto exit;
+      goto exit;
     }
 
     epaper_idf_https_is_init = true;
   }
 
+  /** The HTTP GET request. */
   while (1)
   {
     mbedtls_net_init(&server_fd);
@@ -285,7 +288,7 @@ void epaper_idf_http_get(struct epaper_idf_http_task_action_value_t action_value
 
     mbedtls_ssl_close_notify(&ssl);
 
-    break;
+    // break;
 
   exit:
     mbedtls_ssl_session_reset(&ssl);
