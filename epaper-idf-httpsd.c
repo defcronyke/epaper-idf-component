@@ -219,7 +219,7 @@ static mbedtls_ssl_cache_context cache;
 bool fs_initialized = false;
 #endif
 
-bool epaper_idf_httpsd_is_init = false;
+static bool epaper_idf_httpsd_is_init;
 
 #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPD_H_INCLUDED__
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SEMIHOST
@@ -588,6 +588,15 @@ static void start_httpsd(void *pvParameter)
 
     ESP_LOGI(HTTPSD_TAG, "OK");
 
+    // Send an event which says "this task is initialized".
+    res = esp_event_post_to(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, NULL, 0, portMAX_DELAY);
+    if (res != ESP_OK)
+    {
+      ESP_LOGE(HTTPSD_TAG, "Sending event failed");
+    }
+
+    epaper_idf_httpsd_is_init = true;
+
   reset:
 #ifdef MBEDTLS_ERROR_C
     if (ret != 0)
@@ -601,16 +610,6 @@ static void start_httpsd(void *pvParameter)
     mbedtls_net_free(&client_fd);
 
     mbedtls_ssl_session_reset(&ssl);
-
-    // Send an event which says "this task is finished".
-    res = esp_event_post_to(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, NULL, 0, portMAX_DELAY);
-    if (res != ESP_OK)
-    {
-      ESP_LOGE(HTTPSD_TAG, "Sending event failed");
-    }
-
-    epaper_idf_httpsd_is_init = true;
-
   } /** END: if (!epaper_idf_httpsd_is_init) */
 
   /*
@@ -797,6 +796,8 @@ exit:
 
 void epaper_idf_httpsd_task(void *pvParameter)
 {
+  epaper_idf_httpsd_is_init = false;
+
   // epaper_idf_httpsd_is_init = false;
 
   // while (1)
