@@ -453,9 +453,9 @@ static void start_httpsd(void *pvParameter)
 {
   esp_err_t res = ESP_OK;
 
-#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPD_H_INCLUDED__
-  ESP_ERROR_CHECK(init_fs());
-#endif
+  // #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPD_H_INCLUDED__
+  //   ESP_ERROR_CHECK(init_fs());
+  // #endif
 
   // const unsigned char cacert_pem_start[] asm("_binary_ca_cert_conf_pem_start");
   // const unsigned char cacert_pem_end[] asm("_binary_ca_cert_conf_pem_end");
@@ -467,150 +467,173 @@ static void start_httpsd(void *pvParameter)
 
   int ret = 0, len, written, frags;
 
-  unsigned int cacert_pem_bytes = cacert_pem_end - cacert_pem_start;
-  unsigned int prvtkey_pem_bytes = prvtkey_pem_end - prvtkey_pem_start;
-
-  /** NOTE: The HTTPS system only gets initialized once. */
-  if (!epaper_idf_httpsd_is_init)
+  while (1)
   {
+    // mbedtls_net_init(&client_fd);
 
-    mbedtls_net_init(&listen_fd);
-    mbedtls_net_init(&client_fd);
-    ESP_LOGI(HTTPSD_TAG, "SSL server context create ......");
-    mbedtls_ssl_init(&ssl);
-    ESP_LOGI(HTTPSD_TAG, "OK");
-    mbedtls_ssl_config_init(&conf);
+    /** NOTE: The HTTPS system only gets initialized once. */
+    if (!epaper_idf_httpsd_is_init)
+    {
 
-#if defined(MBEDTLS_SSL_CACHE_C)
-    mbedtls_ssl_cache_init(&cache);
+#ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPD_H_INCLUDED__
+      ESP_ERROR_CHECK(init_fs());
 #endif
 
-    mbedtls_x509_crt_init(&srvcert);
-    mbedtls_pk_init(&pkey);
-    mbedtls_entropy_init(&entropy);
-    mbedtls_ctr_drbg_init(&ctr_drbg);
+      unsigned int cacert_pem_bytes = cacert_pem_end - cacert_pem_start;
+      unsigned int prvtkey_pem_bytes = prvtkey_pem_end - prvtkey_pem_start;
 
-    /** NOTE: 1. Load the certificates and private RSA key */
-    ESP_LOGI(HTTPSD_TAG, "Loading the server cert. and key...");
+      mbedtls_net_init(&listen_fd);
+      mbedtls_net_init(&client_fd);
+      ESP_LOGI(HTTPSD_TAG, "SSL server context create ......");
+      mbedtls_ssl_init(&ssl);
+      ESP_LOGI(HTTPSD_TAG, "OK");
+      mbedtls_ssl_config_init(&conf);
 
-    /** TODO: This demonstration program uses embedded test certificates.
+#if defined(MBEDTLS_SSL_CACHE_C)
+      mbedtls_ssl_cache_init(&cache);
+#endif
+
+      mbedtls_x509_crt_init(&srvcert);
+      mbedtls_pk_init(&pkey);
+      mbedtls_entropy_init(&entropy);
+      mbedtls_ctr_drbg_init(&ctr_drbg);
+
+      /** NOTE: 1. Load the certificates and private RSA key */
+      ESP_LOGI(HTTPSD_TAG, "Loading the server cert. and key...");
+
+      /** TODO: This demonstration program uses embedded test certificates.
      * Instead, you may want to use mbedtls_x509_crt_parse_file() to read the
      * server and CA certificates, as well as mbedtls_pk_parse_keyfile().
      */
-    ESP_LOGI(HTTPSD_TAG, "SSL server context set own certification......");
-    ESP_LOGI(HTTPSD_TAG, "Parsing test srv_crt......");
-    ret = mbedtls_x509_crt_parse(&srvcert, (const unsigned char *)cacert_pem_start,
-                                 cacert_pem_bytes);
-    if (ret != 0)
-    {
-      ESP_LOGI(HTTPSD_TAG, " failed\n  !  mbedtls_x509_crt_parse returned %d\n\n", ret);
-      goto exit;
-    }
-    ESP_LOGI(HTTPSD_TAG, "OK");
+      ESP_LOGI(HTTPSD_TAG, "SSL server context set own certification......");
+      ESP_LOGI(HTTPSD_TAG, "Parsing test srv_crt......");
+      ret = mbedtls_x509_crt_parse(&srvcert, (const unsigned char *)cacert_pem_start,
+                                   cacert_pem_bytes);
+      if (ret != 0)
+      {
+        ESP_LOGI(HTTPSD_TAG, " failed\n  !  mbedtls_x509_crt_parse returned %d\n\n", ret);
+        goto exit;
+      }
+      ESP_LOGI(HTTPSD_TAG, "OK");
 
-    ESP_LOGI(HTTPSD_TAG, "SSL server context set private key......");
-    ret = mbedtls_pk_parse_key(&pkey, (const unsigned char *)prvtkey_pem_start,
-                               prvtkey_pem_bytes, NULL, 0);
-    if (ret != 0)
-    {
-      ESP_LOGI(HTTPSD_TAG, " failed\n  !  mbedtls_pk_parse_key returned %d\n\n", ret);
-      goto exit;
-    }
-    ESP_LOGI(HTTPSD_TAG, "OK");
+      ESP_LOGI(HTTPSD_TAG, "SSL server context set private key......");
+      ret = mbedtls_pk_parse_key(&pkey, (const unsigned char *)prvtkey_pem_start,
+                                 prvtkey_pem_bytes, NULL, 0);
+      if (ret != 0)
+      {
+        ESP_LOGI(HTTPSD_TAG, " failed\n  !  mbedtls_pk_parse_key returned %d\n\n", ret);
+        goto exit;
+      }
+      ESP_LOGI(HTTPSD_TAG, "OK");
 
-    /*
+      /*
     * 2. Setup the listening TCP socket
     */
-    ESP_LOGI(HTTPSD_TAG, "SSL server socket bind at localhost:443 ......");
-    if ((ret = mbedtls_net_bind(&listen_fd, NULL, "443", MBEDTLS_NET_PROTO_TCP)) != 0)
-    {
-      ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_net_bind returned %d\n\n", ret);
-      goto exit;
-    }
-    ESP_LOGI(HTTPSD_TAG, "OK");
+      ESP_LOGI(HTTPSD_TAG, "SSL server socket bind at localhost:443 ......");
+      if ((ret = mbedtls_net_bind(&listen_fd, NULL, "443", MBEDTLS_NET_PROTO_TCP)) != 0)
+      {
+        ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_net_bind returned %d\n\n", ret);
+        goto exit;
+      }
+      ESP_LOGI(HTTPSD_TAG, "OK");
 
-    /*
+      /*
     * 3. Seed the RNG
     */
-    ESP_LOGI(HTTPSD_TAG, "  . Seeding the random number generator...");
-    if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-                                     (const unsigned char *)HTTPSD_TAG,
-                                     strlen(HTTPSD_TAG))) != 0)
-    {
-      ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret);
-      goto exit;
-    }
-    ESP_LOGI(HTTPSD_TAG, "OK");
+      ESP_LOGI(HTTPSD_TAG, "  . Seeding the random number generator...");
+      if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                       (const unsigned char *)HTTPSD_TAG,
+                                       strlen(HTTPSD_TAG))) != 0)
+      {
+        ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret);
+        goto exit;
+      }
+      ESP_LOGI(HTTPSD_TAG, "OK");
 
-    /*
+      /*
       * 4. Setup stuff
       */
-    ESP_LOGI(HTTPSD_TAG, "  . Setting up the SSL data....");
+      ESP_LOGI(HTTPSD_TAG, "  . Setting up the SSL data....");
 
 #ifdef CONFIG_MBEDTLS_DEBUG
-    mbedtls_esp_enable_debug_log(&conf, 5);
+      mbedtls_esp_enable_debug_log(&conf, 5);
 #endif
 
-    if ((ret = mbedtls_ssl_config_defaults(&conf,
-                                           MBEDTLS_SSL_IS_SERVER,
-                                           MBEDTLS_SSL_TRANSPORT_STREAM,
-                                           MBEDTLS_SSL_PRESET_DEFAULT)) != 0)
-    {
-      ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ssl_config_defaults returned %d\n\n", ret);
-      goto exit;
-    }
+      if ((ret = mbedtls_ssl_config_defaults(&conf,
+                                             MBEDTLS_SSL_IS_SERVER,
+                                             MBEDTLS_SSL_TRANSPORT_STREAM,
+                                             MBEDTLS_SSL_PRESET_DEFAULT)) != 0)
+      {
+        ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ssl_config_defaults returned %d\n\n", ret);
+        goto exit;
+      }
 
-    mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &ctr_drbg);
+      mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &ctr_drbg);
 
 #if defined(MBEDTLS_SSL_CACHE_C)
-    mbedtls_ssl_conf_session_cache(&conf, &cache,
-                                   mbedtls_ssl_cache_get,
-                                   mbedtls_ssl_cache_set);
+      mbedtls_ssl_conf_session_cache(&conf, &cache,
+                                     mbedtls_ssl_cache_get,
+                                     mbedtls_ssl_cache_set);
 #endif
 
-    mbedtls_ssl_conf_ca_chain(&conf, srvcert.next, NULL);
-    if ((ret = mbedtls_ssl_conf_own_cert(&conf, &srvcert, &pkey)) != 0)
-    {
-      ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ssl_conf_own_cert returned %d\n\n", ret);
-      goto exit;
-    }
+      mbedtls_ssl_conf_ca_chain(&conf, srvcert.next, NULL);
+      if ((ret = mbedtls_ssl_conf_own_cert(&conf, &srvcert, &pkey)) != 0)
+      {
+        ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ssl_conf_own_cert returned %d\n\n", ret);
+        goto exit;
+      }
 
-    if ((ret = mbedtls_ssl_setup(&ssl, &conf)) != 0)
-    {
-      ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret);
-      goto exit;
-    }
+      if ((ret = mbedtls_ssl_setup(&ssl, &conf)) != 0)
+      {
+        ESP_LOGI(HTTPSD_TAG, " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret);
+        goto exit;
+      }
 
 #if defined(MBEDTLS_TIMING_C)
-    mbedtls_ssl_set_timer_cb(&ssl, &timer, mbedtls_timing_set_delay,
-                             mbedtls_timing_get_delay);
+      mbedtls_ssl_set_timer_cb(&ssl, &timer, mbedtls_timing_set_delay,
+                               mbedtls_timing_get_delay);
 #endif
 
-    ESP_LOGI(HTTPSD_TAG, "OK");
+      ESP_LOGI(HTTPSD_TAG, "OK");
 
-    // Send an event which says "this task is initialized".
-    res = esp_event_post_to(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, NULL, 0, portMAX_DELAY);
-    if (res != ESP_OK)
-    {
-      ESP_LOGE(HTTPSD_TAG, "Sending event failed");
-    }
-
-    epaper_idf_httpsd_is_init = true;
-
-  reset:
+    reset:
 #ifdef MBEDTLS_ERROR_C
-    if (ret != 0)
-    {
-      char error_buf[200];
-      mbedtls_strerror(ret, error_buf, 200);
-      ESP_LOGI(HTTPSD_TAG, "Last error was: %d - %s\n\n", ret, error_buf);
-    }
+      if (ret != 0)
+      {
+        char error_buf[200];
+        mbedtls_strerror(ret, error_buf, 200);
+        ESP_LOGI(HTTPSD_TAG, "Last error was: %d - %s\n\n", ret, error_buf);
+      }
 #endif
 
-    mbedtls_net_free(&client_fd);
+      // break;
 
-    mbedtls_ssl_session_reset(&ssl);
-  } /** END: if (!epaper_idf_httpsd_is_init) */
+      // mbedtls_net_free(&client_fd);
+      // mbedtls_ssl_session_reset(&ssl);
+
+      if (!epaper_idf_httpsd_is_init)
+      {
+
+        // Send an event which says "this task is initialized".
+        res = esp_event_post_to(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, NULL, 0, portMAX_DELAY);
+        if (res != ESP_OK)
+        {
+          ESP_LOGE(HTTPSD_TAG, "Sending event failed");
+        }
+
+        epaper_idf_httpsd_is_init = true;
+      }
+      else
+      {
+        // mbedtls_net_free(&client_fd);
+        // mbedtls_ssl_session_reset(&ssl);
+      }
+    }
+
+    break;
+  }
+
+  // break;
 
   /*
 	 * 3. Wait until a client connects
@@ -790,8 +813,8 @@ exit:
   mbedtls_ctr_drbg_free(&ctr_drbg);
   mbedtls_entropy_free(&entropy);
 
-  ESP_LOGI(HTTPSD_TAG, "Closing Task");
-  vTaskDelete(NULL);
+  // ESP_LOGI(HTTPSD_TAG, "Closing Task");
+  // vTaskDelete(NULL);
 }
 
 void epaper_idf_httpsd_task(void *pvParameter)
@@ -809,6 +832,8 @@ void epaper_idf_httpsd_task(void *pvParameter)
   // {
   //   vTaskDelay(1000 / portTICK_PERIOD_MS);
   // }
+
+  ESP_LOGI(HTTPSD_TAG, "Closing Task");
 
   vTaskDelete(NULL);
 
