@@ -246,9 +246,9 @@ static void ota_partition2()
     else if (data_read == 0)
     {
       /*
-            * As esp_http_client_read never returns negative error code, we rely on
-            * `errno` to check for underlying transport connectivity closure if any
-            */
+      * As esp_http_client_read never returns negative error code, we rely on
+      * `errno` to check for underlying transport connectivity closure if any
+      */
       if (errno == ECONNRESET || errno == ENOTCONN)
       {
         ESP_LOGE(TAG, "Connection closed, errno = %d", errno);
@@ -430,13 +430,7 @@ void epaper_idf_ota_task(void *pvParameter)
           else
           {
             ESP_LOGE(TAG, "Diagnostics failed! Start rollback to the previous version ...");
-
-            /** NOTE: Uncomment to enable OTA rollback feature. Currently 
-              disabled due to not enough flash storage space. */
-            // esp_ota_mark_app_invalid_rollback_and_reboot();
-
-            /** NOTE: Comment out this line if enabling OTA rollback feature. */
-            esp_restart();
+            esp_ota_mark_app_invalid_rollback_and_reboot();
           }
         }
       }
