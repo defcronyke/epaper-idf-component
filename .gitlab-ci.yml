@@ -5,14 +5,15 @@
 # This code is released under the license terms contained in the
 # file named LICENSE, which is found in the top-level folder in
 # this project. You must agree to follow those license terms,
-# otherwise you aren't allowed to copy, distribute, or use any 
+# otherwise you aren't allowed to copy, distribute, or use any
 # part of this project in any way.
 
 image: alpine:latest
 
 build-job:
   stage: build
-  image: espressif/idf:release-v4.2
+  image: espressif/idf:latest
+  # image: espressif/idf:release-v4.2
   script:
     - git checkout $CI_COMMIT_REF_NAME
     - git clone -b $CI_COMMIT_REF_NAME --recursive https://gitlab.com/defcronyke/epaper-idf.git

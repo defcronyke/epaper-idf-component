@@ -263,6 +263,8 @@ static void ota_partition2()
 
     // Increment write offset counter.
     i++;
+
+    vTaskDelay(10);
   }
   ESP_LOGI(TAG, "Total Write binary data length: %d", binary_file_length);
   if (esp_http_client_is_complete_data_received(client) != true)

@@ -11,7 +11,7 @@
 #include "task/http-slideshow.h"
 
 // static TaskHandle_t dns_task_handle;
-static TaskHandle_t http_task_handle;
+// static TaskHandle_t http_task_handle;
 static TaskHandle_t httpd_task_handle;
 static TaskHandle_t httpsd_task_handle;
 static TaskHandle_t ota_task_handle;
@@ -170,23 +170,23 @@ static void epaper_idf_httpd_finish_event_handler(void *handler_arg, esp_event_b
   // }
 }
 
-static void epaper_idf_httpsd_event_https_initialized_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
-{
-  ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED");
+// static void epaper_idf_httpsd_event_https_initialized_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
+// {
+//   ESP_LOGI(TAG, "event received: EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED");
 
-  // if (event_data != NULL) {
-  // 	httpd_task_action_value = EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(event_data);
-  // 	ESP_LOGI(TAG, "event data received");
-  // }
+//   // if (event_data != NULL) {
+//   // 	httpd_task_action_value = EPAPER_IDF_HTTPD_TASK_ACTION_VALUE_COPY(event_data);
+//   // 	ESP_LOGI(TAG, "event data received");
+//   // }
 
-  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, &http_task_handle);
-  ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+//   xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, &http_task_handle);
+//   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
 
-  // #ifdef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
-  //   xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
-  //   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
-  // #endif
-}
+//   // #ifdef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
+//   //   xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
+//   //   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+//   // #endif
+// }
 
 static void epaper_idf_http_finish_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
 {
@@ -223,10 +223,12 @@ static void http_slideshow_deep_sleep(int32_t sleep_duration_us)
   ESP_LOGI(TAG, "Enabling deep sleep timer wakeup after approx: %f secs", (float)sleep_duration_us / 1000000.f);
   ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(sleep_duration_us));
 
-  // Isolate GPIO12 pin from external circuits. This is needed for modules
-  // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
-  // to minimize current consumption.
-  ESP_ERROR_CHECK(rtc_gpio_isolate(GPIO_NUM_12));
+  // #if IDF_TARGET == esp32
+  //   // Isolate GPIO12 pin from external circuits. This is needed for modules
+  //   // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
+  //   // to minimize current consumption.
+  //   ESP_ERROR_CHECK(rtc_gpio_isolate(GPIO_NUM_12));
+  // #endif
 
   // Hibernate for lowest power consumption.
   ESP_ERROR_CHECK(esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF));
@@ -354,16 +356,16 @@ void http_slideshow(void)
   ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpd_event_loop_args, &epaper_idf_httpd_event_loop_handle));
   ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpd_event_loop_handle, EPAPER_IDF_HTTPD_EVENT, EPAPER_IDF_HTTPD_EVENT_FINISH, epaper_idf_httpd_finish_event_handler, epaper_idf_httpd_event_loop_handle, NULL));
 
-  // TODO: make this optional
-  esp_event_loop_args_t epaper_idf_httpsd_event_loop_args = {
-      .queue_size = 5,
-      .task_name = "epaper_idf_httpsd_event_loop_task", // task will be created
-      .task_priority = uxTaskPriorityGet(NULL),
-      .task_stack_size = epaper_idf_httpsd_task_stack_depth,
-      .task_core_id = tskNO_AFFINITY};
+  // // TODO: make this optional
+  // esp_event_loop_args_t epaper_idf_httpsd_event_loop_args = {
+  //     .queue_size = 5,
+  //     .task_name = "epaper_idf_httpsd_event_loop_task", // task will be created
+  //     .task_priority = uxTaskPriorityGet(NULL),
+  //     .task_stack_size = epaper_idf_httpsd_task_stack_depth,
+  //     .task_core_id = tskNO_AFFINITY};
 
-  ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpsd_event_loop_args, &epaper_idf_httpsd_event_loop_handle));
-  ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, epaper_idf_httpsd_event_https_initialized_handler, epaper_idf_httpsd_event_loop_handle, NULL));
+  // ESP_ERROR_CHECK(esp_event_loop_create(&epaper_idf_httpsd_event_loop_args, &epaper_idf_httpsd_event_loop_handle));
+  // ESP_ERROR_CHECK(esp_event_handler_instance_register_with(epaper_idf_httpsd_event_loop_handle, EPAPER_IDF_HTTPSD_EVENT, EPAPER_IDF_HTTPSD_EVENT_HTTPS_INITIALIZED, epaper_idf_httpsd_event_https_initialized_handler, epaper_idf_httpsd_event_loop_handle, NULL));
 
   // TODO: uncomment this
   esp_event_loop_args_t epaper_idf_http_event_loop_args = {

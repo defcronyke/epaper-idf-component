@@ -164,6 +164,7 @@ void epaper_idf_http_get(struct epaper_idf_http_task_action_value_t action_value
 			a warning if CA verification fails but it will continue to connect.
 			You should consider using MBEDTLS_SSL_VERIFY_REQUIRED in your own code.
 		*/
+    // mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_REQUIRED);
     mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_OPTIONAL);
     mbedtls_ssl_conf_ca_chain(&conf, &cacert, NULL);
     mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &ctr_drbg);
@@ -171,7 +172,9 @@ void epaper_idf_http_get(struct epaper_idf_http_task_action_value_t action_value
     mbedtls_esp_enable_debug_log(&conf, CONFIG_MBEDTLS_DEBUG_LEVEL);
 #endif
 
-    mbedtls_ssl_session_reset(&ssl);
+    // mbedtls_ssl_session_reset(&ssl);
+
+    mbedtls_net_init(&server_fd);
 
     if ((ret = mbedtls_ssl_setup(&ssl, &conf)) != 0)
     {
@@ -185,7 +188,17 @@ void epaper_idf_http_get(struct epaper_idf_http_task_action_value_t action_value
   /** The HTTP GET request. */
   while (1)
   {
-    mbedtls_net_init(&server_fd);
+    // mbedtls_net_init(&server_fd);
+
+    uint32_t heap_size = esp_get_free_heap_size();
+
+    ESP_LOGW(TAG, "!! heap size !!: %d", heap_size);
+
+    // if ((ret = mbedtls_ssl_setup(&ssl, &conf)) != 0)
+    // {
+    //   ESP_LOGE(TAG, "mbedtls_ssl_setup returned -0x%x\n\n", -ret);
+    //   goto exit;
+    // }
 
     ESP_LOGI(TAG, "Connecting to %s:%s...", WEB_SERVER, WEB_PORT);
 
