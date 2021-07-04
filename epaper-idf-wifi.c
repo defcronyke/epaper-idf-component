@@ -64,6 +64,8 @@ static const int retries = CONFIG_EXAMPLE_WIFI_CONNECTION_RETRIES;
 static EventGroupHandle_t wifi_event_group;
 static int retry_num = 0;
 
+static bool try_reconnect = true;
+
 #endif
 
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
@@ -81,7 +83,7 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     // stack_res = uxTaskGetStackHighWaterMark(NULL);
     // ESP_LOGW(epaper_idf_wifi_tag, "!!! [ wifi task ] after: esp_wifi_connect() -> STACK SIZE !!!: %d", stack_res);
   }
-  else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
+  else if (try_reconnect && event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
   {
     if (retry_num < retries)
     {
@@ -311,87 +313,75 @@ void epaper_idf_wifi_task(void *pvParameter)
 {
   while (1)
   {
-    while (1)
+    // while (1)
+    // {
+    bool wifi_is_init = false;
+    wifi_task_action = EPAPER_IDF_WIFI_TASK_ACTION_COPY(pvParameter);
+
+    esp_err_t err = ESP_OK;
+
+    switch (wifi_task_action.id)
     {
-      bool wifi_is_init = false;
-      wifi_task_action = EPAPER_IDF_WIFI_TASK_ACTION_COPY(pvParameter);
+    /** Initialize (if necessary), and connect to a wifi network. */
+    case EPAPER_IDF_WIFI_TASK_ACTION_CONNECT:
+    {
+      ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_CONNECT");
 
-      esp_err_t err = ESP_OK;
-
-      switch (wifi_task_action.id)
+      /** Init only once. */
+      if (!wifi_is_init)
       {
-      /** Initialize (if necessary), and connect to a wifi network. */
-      case EPAPER_IDF_WIFI_TASK_ACTION_CONNECT:
-      {
-        ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_CONNECT");
-
-        /** Init only once. */
-        if (!wifi_is_init)
-        {
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
-          ESP_LOGI(epaper_idf_wifi_tag, "wifi initializing...");
+        try_reconnect = true;
+
+        ESP_LOGI(epaper_idf_wifi_tag, "wifi initializing...");
 #endif
 
-          /** Initialize wifi (or just ethernet, but that's not 
+        /** Initialize wifi (or just ethernet, but that's not 
 						currently supported, so things won't work properly
 						with wifi disabled). */
-          epaper_idf_wifi_init();
+        epaper_idf_wifi_init();
 
-          wifi_is_init = true;
-        }
-
-        break;
+        wifi_is_init = true;
       }
 
-      /** Disconnect wifi interface. */
-      case EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT:
-      {
-        ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT");
+      break;
+    }
+
+    /** Disconnect wifi interface. */
+    case EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT:
+    {
+      ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_DISCONNECT");
 
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
-        /** Disconnect wifi. */
-        epaper_idf_wifi_disconnect();
+      /** Disconnect wifi. */
+      epaper_idf_wifi_disconnect();
 #endif
 
-        break;
-      }
+      break;
+    }
 
-      /** Disconnect and stop wifi interface. */
-      case EPAPER_IDF_WIFI_TASK_ACTION_STOP:
+    /** Disconnect and stop wifi interface. */
+    case EPAPER_IDF_WIFI_TASK_ACTION_STOP:
+    {
+      ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_STOP");
+
+      if (wifi_task_action.value != NULL)
       {
-        ESP_LOGI(epaper_idf_wifi_tag, "running epaper idf wifi task action: EPAPER_IDF_WIFI_TASK_ACTION_STOP");
-
-        if (wifi_task_action.value != NULL)
-        {
-          wifi_task_action_value = EPAPER_IDF_WIFI_TASK_ACTION_VALUE_COPY(wifi_task_action.value);
-        }
+        wifi_task_action_value = EPAPER_IDF_WIFI_TASK_ACTION_VALUE_COPY(wifi_task_action.value);
+      }
 
 #ifdef CONFIG_EXAMPLE_CONNECT_WIFI
-        /** Disconnect wifi. */
-        epaper_idf_wifi_disconnect();
+      try_reconnect = false;
 
-        /** Stop wifi interface. */
-        esp_wifi_stop();
+      /** Disconnect wifi. */
+      epaper_idf_wifi_disconnect();
+
+      /** Stop wifi interface. */
+      esp_wifi_stop();
 #endif
-
-        /** Send an event which says "this task is finished". */
-        err = esp_event_post_to(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_STOPPED, EPAPER_IDF_WIFI_TASK_ACTION_VALUE_CAST_VOID_P(wifi_task_action_value), sizeof(wifi_task_action_value), portMAX_DELAY);
-        if (err != ESP_OK)
-        {
-          ESP_LOGE(epaper_idf_wifi_tag, "Sending event failed");
-        }
-
-        break;
-      }
-
-      default:
-      {
-        break;
-      }
-      }
 
       /** Send an event which says "this task is finished". */
-      err = esp_event_post_to(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, NULL, 0, portMAX_DELAY);
+      err = esp_event_post_to(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_STOPPED, EPAPER_IDF_WIFI_TASK_ACTION_VALUE_CAST_VOID_P(wifi_task_action_value), sizeof(wifi_task_action_value), portMAX_DELAY);
       if (err != ESP_OK)
       {
         ESP_LOGE(epaper_idf_wifi_tag, "Sending event failed");
@@ -400,6 +390,24 @@ void epaper_idf_wifi_task(void *pvParameter)
       break;
     }
 
+    default:
+    {
+      break;
+    }
+    }
+
+    /** Send an event which says "this task is finished". */
+    err = esp_event_post_to(epaper_idf_wifi_event_loop_handle, EPAPER_IDF_WIFI_EVENT, EPAPER_IDF_WIFI_EVENT_FINISH, NULL, 0, portMAX_DELAY);
+    if (err != ESP_OK)
+    {
+      ESP_LOGE(epaper_idf_wifi_tag, "Sending event failed");
+    }
+
+    // break;
+    // }
+
     vTaskDelete(NULL);
+
+    break;
   }
 }
