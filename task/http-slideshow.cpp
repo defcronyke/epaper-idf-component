@@ -44,8 +44,8 @@ const uint32_t epaper_idf_wifi_task_stack_depth = 2048;
 UBaseType_t epaper_idf_wifi_task_priority = 5;
 
 const char *epaper_idf_ota_task_name = "epaper_idf_ota_task";
-const uint32_t epaper_idf_ota_task_stack_depth = 2048;
-// const uint32_t epaper_idf_ota_task_stack_depth = 4096;
+const uint32_t epaper_idf_ota_task_stack_depth = 4096;
+// const uint32_t epaper_idf_ota_task_stack_depth = 2048;
 // const uint32_t epaper_idf_ota_task_stack_depth = 1024;
 UBaseType_t epaper_idf_ota_task_priority = 5;
 
