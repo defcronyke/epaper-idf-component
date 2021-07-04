@@ -236,27 +236,27 @@ esp_err_t init_fs(void)
 //   return ESP_OK;
 // }
 
-// static esp_err_t util_restart_post_handler(httpd_req_t *req)
-// {
-//   httpd_resp_set_type(req, "application/json");
+static esp_err_t util_restart_post_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "application/json");
 
-//   cJSON *root = cJSON_CreateObject();
+  cJSON *root = cJSON_CreateObject();
 
-//   cJSON_AddStringToObject(root, "msg", "success");
-//   cJSON_AddNumberToObject(root, "statusCode", 200);
+  cJSON_AddStringToObject(root, "msg", "success");
+  cJSON_AddNumberToObject(root, "statusCode", 200);
 
-//   const char *sys_info = cJSON_Print(root);
+  const char *sys_info = cJSON_Print(root);
 
-//   // httpd_resp_send(req, sys_info, -1);
-//   httpd_resp_sendstr(req, sys_info);
+  // httpd_resp_send(req, sys_info, -1);
+  httpd_resp_sendstr(req, sys_info);
 
-//   free((void *)sys_info);
-//   cJSON_Delete(root);
+  free((void *)sys_info);
+  cJSON_Delete(root);
 
-//   esp_restart();
+  esp_restart();
 
-//   return ESP_OK;
-// }
+  return ESP_OK;
+}
 
 /* Set HTTP response content type according to file extension */
 static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath)
@@ -724,13 +724,13 @@ static void start_httpd(void *pvParameter)
   //     .user_ctx = rest_context};
   // httpd_register_uri_handler(server, &system_info_get_uri);
 
-  // /* URI handler for restarting the device */
-  // httpd_uri_t util_restart_post_uri = {
-  //     .uri = "/api/util/restart",
-  //     .method = HTTP_POST,
-  //     .handler = util_restart_post_handler,
-  //     .user_ctx = rest_context};
-  // httpd_register_uri_handler(server, &util_restart_post_uri);
+  /* URI handler for restarting the device */
+  httpd_uri_t util_restart_post_uri = {
+      .uri = "/api/util/restart",
+      .method = HTTP_POST,
+      .handler = util_restart_post_handler,
+      .user_ctx = rest_context};
+  httpd_register_uri_handler(server, &util_restart_post_uri);
 
   /* URI handler for getting web server files */
   httpd_uri_t common_get_uri = {

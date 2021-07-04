@@ -155,8 +155,8 @@ static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_bas
   // ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
 
   // #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
-  //   xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
-  //   ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
+  xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
+  ESP_LOGI(TAG, "Task started: %s", epaper_idf_http_task_name);
   // #endif
 }
 
