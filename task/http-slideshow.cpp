@@ -13,7 +13,7 @@
 // static TaskHandle_t dns_task_handle;
 // static TaskHandle_t http_task_handle;
 static TaskHandle_t httpd_task_handle;
-static TaskHandle_t httpsd_task_handle;
+// static TaskHandle_t httpsd_task_handle;
 static TaskHandle_t ota_task_handle;
 static TaskHandle_t wifi_task_handle;
 
@@ -54,12 +54,12 @@ const uint32_t epaper_idf_httpd_task_stack_depth = 2048;
 // const uint32_t epaper_idf_httpd_task_stack_depth = 4096;
 UBaseType_t epaper_idf_httpd_task_priority = 5;
 
-const char *epaper_idf_httpsd_task_name = "epaper_idf_httpsd_task";
-const uint32_t epaper_idf_httpsd_task_stack_depth = 3456;
+// const char *epaper_idf_httpsd_task_name = "epaper_idf_httpsd_task";
+// const uint32_t epaper_idf_httpsd_task_stack_depth = 3456;
 // const uint32_t epaper_idf_httpsd_task_stack_depth = 4096;
 // const uint32_t epaper_idf_httpsd_task_stack_depth = 8192;
 // const uint32_t epaper_idf_httpsd_task_stack_depth = 2048;
-UBaseType_t epaper_idf_httpsd_task_priority = 5;
+// UBaseType_t epaper_idf_httpsd_task_priority = 5;
 
 const char *epaper_idf_http_task_name = "epaper_idf_http_task";
 const uint32_t epaper_idf_http_task_stack_depth = 3456;
@@ -126,9 +126,9 @@ static void epaper_idf_wifi_finish_event_handler(void *handler_arg, esp_event_ba
   xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, &httpd_task_handle);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
-  // TODO: make this optional
-  xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, &httpsd_task_handle);
-  ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
+  // // TODO: make this optional
+  // xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, &httpsd_task_handle);
+  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
 }
 
 static void sta_got_ip_event_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data)
@@ -150,9 +150,9 @@ static void epaper_idf_ota_finish_event_handler(void *handler_arg, esp_event_bas
   xTaskCreate(&epaper_idf_httpd_task, epaper_idf_httpd_task_name, epaper_idf_httpd_task_stack_depth * 8, NULL, epaper_idf_httpd_task_priority, &httpd_task_handle);
   ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpd_task_name);
 
-  // TODO: make this optional
-  xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, &httpsd_task_handle);
-  ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
+  // // TODO: make this optional
+  // xTaskCreate(&epaper_idf_httpsd_task, epaper_idf_httpsd_task_name, epaper_idf_httpsd_task_stack_depth * 8, NULL, epaper_idf_httpsd_task_priority, &httpsd_task_handle);
+  // ESP_LOGI(TAG, "Task started: %s", epaper_idf_httpsd_task_name);
 
   // #ifndef __EPAPER_IDF_COMPONENT_EPAPER_IDF_HTTPSD_H_INCLUDED__
   //   xTaskCreate(&epaper_idf_http_task, epaper_idf_http_task_name, epaper_idf_http_task_stack_depth * 8, NULL, epaper_idf_http_task_priority, NULL);
